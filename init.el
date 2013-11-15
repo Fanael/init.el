@@ -295,7 +295,7 @@ line mode."
   (global-set-key [remap move-beginning-of-line] 'smart-beginning-of-line))
 
 (defun init-el-setup-evil-mappings ()
-  (define-key evil-visual-state-map [home] 'evil-smart-beginning-of-line)
+  (define-key evil-visual-state-map [remap move-beginning-of-line] 'evil-smart-beginning-of-line)
   (define-key evil-insert-state-map (kbd "RET") 'newline-and-indent)
   (define-key evil-insert-state-map (kbd "C-p") 'auto-complete)
   (define-key evil-insert-state-map (kbd "C-e") 'emmet-expand-line)
