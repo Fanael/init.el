@@ -164,8 +164,14 @@
   (evil-mode)
   (setq evil-default-cursor t
         evil-want-fine-undo t)
-  (evil-define-operator evil-destroy (beg end type yank-handler)
-    (evil-delete beg end type ?_ yank-handler))
+  (evil-define-operator evil-destroy (beg end type)
+    "Delete text from BEG to END with TYPE. Do not save it."
+    (evil-delete beg end type ?_ nil))
+  (evil-define-motion evil-smart-beginning-of-line ()
+    "Workaround to make `smart-beginning-of-line' work in visual
+line mode."
+    :type exclusive
+    (smart-beginning-of-line))
   (global-surround-mode))
 
 (defun init-el-enable-ido ()
@@ -289,6 +295,7 @@
   (global-set-key [remap move-beginning-of-line] 'smart-beginning-of-line))
 
 (defun init-el-setup-evil-mappings ()
+  (define-key evil-visual-state-map [home] 'evil-smart-beginning-of-line)
   (define-key evil-insert-state-map (kbd "RET") 'newline-and-indent)
   (define-key evil-insert-state-map (kbd "C-p") 'auto-complete)
   (define-key evil-insert-state-map (kbd "C-e") 'emmet-expand-line)
@@ -387,7 +394,7 @@ into a new buffer."
   (interactive
    (if (use-region-p)
        (list (region-beginning) (region-end))
-     (error "No region.")))
+     (error "No region")))
   (let* ((expanded (pp-to-string (macroexpand-all (read (buffer-substring beg end)))))
          (resultbuf (generate-new-buffer "*Pp Macroexpand Output*")))
     (with-current-buffer resultbuf
