@@ -176,7 +176,8 @@ line mode."
 
 (defun init-el-enable-ido ()
   (setq ido-enable-flex-matching t
-        smex-save-file (expand-file-name ".smex-items" user-emacs-directory))
+        smex-save-file (expand-file-name ".smex-items" user-emacs-directory)
+        ido-save-directory-list-file (expand-file-name ".ido.last" user-emacs-directory))
   (ido-mode)
   (ido-ubiquitous-mode)
   (smex-initialize))
