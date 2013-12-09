@@ -260,8 +260,8 @@ line mode."
   (smartparens-global-mode)
   (setq sp-highlight-pair-overlay nil
         sp-highlight-wrap-overlay nil
-        sp-highlight-wrap-tag-overlay nil
-        sp-autoskip-closing-pair t)
+        sp-highlight-wrap-tag-overlay nil)
+  (setq-default sp-autoskip-closing-pair t)
   (sp-local-pair '(c-mode c++-mode java-mode css-mode php-mode js-mode perl-mode
                           cperl-mode)
                  "{" nil
