@@ -73,10 +73,13 @@
 (defun init-el-disable-useless-gui-stuff ()
   (tool-bar-mode -1)
   (menu-bar-mode -1)
+  (tooltip-mode -1)
+  (blink-cursor-mode -1)
   (setq use-file-dialog nil
         use-dialog-box nil))
 
 (defun init-el-start-with-empty-scratch-buffer ()
+  (fset 'display-startup-echo-area-message (lambda ()))
   (setq inhibit-splash-screen t
         initial-scratch-message ""
         initial-major-mode 'fundamental-mode))
