@@ -73,7 +73,6 @@
 (defun init-el-disable-useless-gui-stuff ()
   (tool-bar-mode -1)
   (menu-bar-mode -1)
-  (tooltip-mode -1)
   (blink-cursor-mode -1)
   (setq use-file-dialog nil
         use-dialog-box nil))
