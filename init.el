@@ -398,7 +398,7 @@ into a new buffer."
   (interactive
    (if (use-region-p)
        (list (region-beginning) (region-end))
-     (error "No region")))
+     (user-error "No region")))
   (let* ((expanded (pp-to-string (macroexpand-all (read (buffer-substring beg end)))))
          (resultbuf (generate-new-buffer "*Pp Macroexpand Output*")))
     (with-current-buffer resultbuf
