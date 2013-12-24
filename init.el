@@ -408,6 +408,26 @@ into a new buffer."
     (select-window (display-buffer resultbuf)))
   nil)
 
+(defun uniq-lines (beg end)
+  "Remove consecutive duplicate lines in region BEG to END.
+
+When there's no active region, act on the buffer."
+  (interactive
+   (if (use-region-p)
+       (list (region-beginning) (region-end))
+     (list (point-min) (point-max))))
+  (save-excursion
+    (goto-char beg)
+    (let ((previousline nil))
+      (while (and (< (point) end)
+                  (not (eobp)))
+        (let* ((bol (point-at-bol))
+               (currentline (buffer-substring-no-properties bol (point-at-eol))))
+          (if (string-equal previousline currentline)
+              (delete-region bol (progn (forward-line 1) (point)))
+            (setq previousline currentline)
+            (forward-line 1)))))))
+
 (defvar highlight-defined--face nil)
 
 (defun highlight-defined--matcher (end)
