@@ -399,7 +399,7 @@ into a new buffer."
    (if (use-region-p)
        (list (region-beginning) (region-end))
      (user-error "No region")))
-  (let* ((expanded (pp-to-string (macroexpand-all (read (buffer-substring beg end)))))
+  (let* ((expanded (pp-to-string (macroexpand-all (read (buffer-substring-no-properties beg end)))))
          (resultbuf (generate-new-buffer "*Pp Macroexpand Output*")))
     (with-current-buffer resultbuf
       (insert expanded)
