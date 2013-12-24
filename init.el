@@ -40,6 +40,7 @@
   (init-el-enable-system-clipboard)
   (init-el-change-undo-limits)
   (init-el-enable-all-commands)
+  (init-el-minimize-when-closing-last-frame-on-w32)
   (init-el-initialize-packages)
   (init-el-enable-uniquify)
   (init-el-enable-line-numbers)
@@ -118,6 +119,33 @@
 
 (defun init-el-enable-all-commands ()
   (setq disabled-command-function nil))
+
+(defun init-el-minimize-when-closing-last-frame-on-w32 ()
+  (when (eq system-type 'windows-nt)
+    (define-key special-event-map
+      [delete-frame]
+      (lambda (event)
+        (interactive "e")
+        (let ((frame (posn-window (event-start event))))
+          (if (eq (framep frame) 'w32)
+              (delete-frame frame t)
+            (handle-delete-frame event)))))
+    (defadvice delete-frame (around init-el-delete-last-frame activate)
+      (let ((terminal (frame-terminal frame)))
+        (if (>= 1 (length (init-el-frames-on-terminal terminal)))
+            (iconify-frame frame)
+          ad-do-it)))
+    (defadvice save-buffers-kill-terminal (around init-el-delete-last-frame activate)
+      (let ((frame (selected-frame)))
+        (when (eq (framep frame) 'w32)
+          (let ((terminal (frame-terminal frame)))
+            (mapc 'delete-frame (init-el-frames-on-terminal terminal))))))))
+
+(defun init-el-frames-on-terminal (terminal)
+  "Return a list of all frames displayed on TERMINAL."
+  (filtered-frame-list
+   (lambda (frame)
+     (eq terminal (frame-terminal frame)))))
 
 (defun init-el-initialize-packages ()
   (setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
