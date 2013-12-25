@@ -125,21 +125,24 @@
     (define-key special-event-map
       [delete-frame]
       (lambda (event)
+        "Never call `save-buffers-kill-emacs' when closing a w32 frame."
         (interactive "e")
         (let ((frame (posn-window (event-start event))))
           (if (eq (framep frame) 'w32)
               (delete-frame frame t)
             (handle-delete-frame event)))))
     (defadvice delete-frame (around init-el-delete-last-frame activate)
-      (let ((terminal (frame-terminal frame)))
-        (if (>= 1 (length (init-el-frames-on-terminal terminal)))
-            (iconify-frame frame)
-          ad-do-it)))
+      "Don't kill the last frame on a w32 \"terminal\", only minimize it."
+      (if (and (eq (framep frame) 'w32)
+               (>= 1 (length (init-el-frames-on-terminal (frame-terminal frame)))))
+          (iconify-frame frame)
+        ad-do-it))
     (defadvice save-buffers-kill-terminal (around init-el-delete-last-frame activate)
+      "When killing a w32 \"terminal\", kill all but one frame."
       (let ((frame (selected-frame)))
-        (when (eq (framep frame) 'w32)
-          (let ((terminal (frame-terminal frame)))
-            (mapc 'delete-frame (init-el-frames-on-terminal terminal))))))))
+        (if (eq (framep frame) 'w32)
+            (mapc 'delete-frame (init-el-frames-on-terminal (frame-terminal frame)))
+          ad-do-it)))))
 
 (defun init-el-frames-on-terminal (terminal)
   "Return a list of all frames displayed on TERMINAL."
