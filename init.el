@@ -408,7 +408,7 @@ line mode."
     "]")))
 
 (defun init-el-setup-title-bar ()
-  (setq frame-title-format "%b [%f] - Emacs"))
+  (setq icon-title-format (setq frame-title-format "%b [%f] - Emacs")))
 
 (define-globalized-minor-mode global-nlinum-mode nlinum-mode init-el-nlinum-on)
 
