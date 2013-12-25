@@ -139,9 +139,16 @@
         ad-do-it))
     (defadvice save-buffers-kill-terminal (around init-el-delete-last-frame activate)
       "When killing a w32 \"terminal\", kill all but one frame."
-      (let ((frame (selected-frame)))
-        (if (eq (framep frame) 'w32)
-            (mapc 'delete-frame (init-el-frames-on-terminal (frame-terminal frame)))
+      (let ((selectedframe (selected-frame)))
+        (if (eq (framep selectedframe) 'w32)
+            (progn
+              (dolist (frame (init-el-frames-on-terminal (frame-terminal selectedframe)))
+                ;; Don't delete the selected frame yet, because…
+                (unless (eq frame selectedframe)
+                  (delete-frame frame)))
+              ;; …it's the one to be left minimized. Or not. Let `delete-frame'
+              ;; decide.
+              (delete-frame selectedframe))
           ad-do-it)))))
 
 (defun init-el-frames-on-terminal (terminal)
