@@ -465,7 +465,7 @@ When there's no active region, act on the buffer."
         (when symbol
           (let ((face (cond
                        ((fboundp symbol)
-                        (let ((func (symbol-function symbol)))
+                        (let ((func (ad-get-orig-definition (symbol-function symbol))))
                           (while (symbolp func)
                             (setq func (symbol-function func)))
                           (cond
