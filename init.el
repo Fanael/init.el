@@ -410,12 +410,6 @@ line mode."
 (defun init-el-setup-title-bar ()
   (setq icon-title-format (setq frame-title-format "%b [%f] - Emacs")))
 
-(define-globalized-minor-mode global-nlinum-mode nlinum-mode init-el-nlinum-on)
-
-(defun init-el-nlinum-on (&optional arg)
-  (unless (minibufferp)
-    (nlinum-mode arg)))
-
 (defun smart-beginning-of-line (&optional lineoffset)
   "Move the point to the first non-white character of the current
 line. If the point is already there, move to the beginning of the
