@@ -40,7 +40,6 @@
   (init-el-enable-system-clipboard)
   (init-el-change-undo-limits)
   (init-el-enable-all-commands)
-  (init-el-minimize-when-closing-last-frame-on-w32)
   (init-el-initialize-packages)
   (init-el-enable-uniquify)
   (init-el-enable-line-numbers)
@@ -119,43 +118,6 @@
 
 (defun init-el-enable-all-commands ()
   (setq disabled-command-function nil))
-
-(defun init-el-minimize-when-closing-last-frame-on-w32 ()
-  (when (eq system-type 'windows-nt)
-    (define-key special-event-map
-      [delete-frame]
-      (lambda (event)
-        "Never call `save-buffers-kill-emacs' when closing a w32 frame."
-        (interactive "e")
-        (let ((frame (posn-window (event-start event))))
-          (if (eq (framep frame) 'w32)
-              (delete-frame frame t)
-            (handle-delete-frame event)))))
-    (defadvice delete-frame (around init-el-delete-last-frame activate)
-      "Don't kill the last frame on a w32 \"terminal\", only minimize it."
-      (if (and (eq (framep frame) 'w32)
-               (>= 1 (length (init-el-frames-on-terminal (frame-terminal frame)))))
-          (iconify-frame frame)
-        ad-do-it))
-    (defadvice save-buffers-kill-terminal (around init-el-delete-last-frame activate)
-      "When killing a w32 \"terminal\", kill all but one frame."
-      (let ((selectedframe (selected-frame)))
-        (if (eq (framep selectedframe) 'w32)
-            (progn
-              (dolist (frame (init-el-frames-on-terminal (frame-terminal selectedframe)))
-                ;; Don't delete the selected frame yet, because…
-                (unless (eq frame selectedframe)
-                  (delete-frame frame)))
-              ;; …it's the one to be left minimized. Or not. Let `delete-frame'
-              ;; decide.
-              (delete-frame selectedframe))
-          ad-do-it)))))
-
-(defun init-el-frames-on-terminal (terminal)
-  "Return a list of all frames displayed on TERMINAL."
-  (filtered-frame-list
-   (lambda (frame)
-     (eq terminal (frame-terminal frame)))))
 
 (defun init-el-initialize-packages ()
   (setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
