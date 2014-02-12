@@ -132,6 +132,7 @@
                          evil
                          fasm-mode
                          haskell-mode
+                         highlight-defined
                          htmlize
                          ido-ubiquitous
                          keyfreq
@@ -205,7 +206,13 @@ line mode."
   (global-hl-line-mode)
   (init-el-setup-colors)
   (add-hook 'prog-mode-hook 'number-font-lock-mode)
-  (add-hook 'emacs-lisp-mode-hook 'highlight-defined-mode))
+  (add-hook 'emacs-lisp-mode-hook 'highlight-defined-mode)
+  (eval-after-load 'highlight-defined
+    `(,(lambda ()
+         (set-face-attribute 'highlight-defined-builtin-function-name-face nil
+                             :inherit 'font-lock-type-face)
+         (set-face-attribute 'highlight-defined-macro-name-face nil
+                             :inherit 'font-lock-preprocessor-face)))))
 
 (defun init-el-setup-colors ()
   (if (eq system-type 'windows-nt)
@@ -421,45 +428,3 @@ When there's no active region, act on the buffer."
               (delete-region bol (progn (forward-line 1) (point)))
             (setq previousline currentline)
             (forward-line 1)))))))
-
-(defvar highlight-defined--face nil)
-
-(defun highlight-defined--matcher (end)
-  (catch 'highlight-defined--matcher
-    (while (re-search-forward "\\_<.+?\\_>" end t)
-      (let ((symbol (intern-soft (buffer-substring-no-properties (match-beginning 0) (match-end 0)))))
-        (when symbol
-          (let ((face (cond
-                       ((fboundp symbol)
-                        (let ((func (ad-get-orig-definition (symbol-function symbol))))
-                          (while (symbolp func)
-                            (setq func (symbol-function func)))
-                          (cond
-                           ((subrp func) 'font-lock-type-face)
-                           ((eq 'macro (car-safe func)) 'font-lock-preprocessor-face)
-                           (t 'font-lock-function-name-face))))
-                       ((special-variable-p symbol) 'font-lock-variable-name-face)
-                       (t nil))))
-            (when face
-              (setq highlight-defined--face face)
-              (throw 'highlight-defined--matcher t))))))
-    nil))
-
-(define-minor-mode highlight-defined-mode
-  "Minor mode for highlighting known Emacs Lisp functions and variables.
-
-Toggle highlight defined mode on or off.
-
-With a prefix argument ARG, enable highlight defined mode if ARG is
-positive, and disable it otherwise. If called from Lisp, enable
-the mode if ARG is omitted or nil, and toggle it if ARG is `toggle'."
-  :init-value nil
-  :lighter ""
-  :keymap nil
-  (let ((keywords '((highlight-defined--matcher . highlight-defined--face))))
-    (font-lock-remove-keywords nil keywords)
-    (when highlight-defined-mode
-      (font-lock-add-keywords nil keywords 'append)))
-  (when font-lock-mode
-    (font-lock-mode -1)
-    (font-lock-mode 1)))
