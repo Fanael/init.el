@@ -215,9 +215,13 @@ line mode."
                              :inherit 'font-lock-preprocessor-face)))))
 
 (defun init-el-setup-colors ()
-  (if (eq system-type 'windows-nt)
-      (set-face-attribute 'default nil :family "Consolas" :height 100)
+  (cond
+   ((find-font (font-spec :name "Consolas"))
+    (set-face-attribute 'default nil :family "Consolas" :height 100))
+   ((find-font (font-spec :name "Monospace"))
     (set-face-attribute 'default nil :family "Monospace" :height 102))
+   ((find-font (font-spec :name "Lucida Console"))
+    (set-face-attribute 'default nil :family "Lucida Console" :height 100)))
   (let ((theme 'colorsarenice-dark))
     (load-theme theme t)
     ;; Without this hook X11 has problems setting the fucking cursor color.
