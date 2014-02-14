@@ -1,5 +1,5 @@
 ;;; -*- lexical-binding: t -*-
-;; Copyright (c) 2013, Fanael Linithien
+;; Copyright (c) 2013-2014, Fanael Linithien
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
