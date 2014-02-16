@@ -32,6 +32,7 @@
 
 (defun init-el-after-init ()
   (init-el-start-server)
+  (init-el-tune-gc)
   (init-el-set-window-size)
   (init-el-disable-useless-gui-stuff)
   (init-el-start-with-empty-scratch-buffer)
@@ -66,6 +67,11 @@
 (defun init-el-start-server ()
   (when (eq system-type 'windows-nt)
     (server-start)))
+
+(defun init-el-tune-gc ()
+  ;; The default setting is too conservative on modern machines making Emacs
+  ;; spend too much time collecting garbage in alloc-heavy code.
+  (setq gc-cons-threshold (* 8 1024 1024)))
 
 (defun init-el-set-window-size ()
   (push '(width . 130) default-frame-alist)
