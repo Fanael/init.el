@@ -30,6 +30,12 @@
       byte-compile--use-old-handlers nil)
 (add-hook 'after-init-hook 'init-el-after-init)
 
+;; TODO: remove when Emacs 24.4 is released
+(defmacro init-el-with-eval-after-load (file &rest body)
+  (declare (indent defun) (debug t))
+  `(eval-after-load ,file
+     `(,(lambda () ,@body))))
+
 (defun init-el-after-init ()
   (init-el-start-server)
   (init-el-tune-gc)
@@ -52,6 +58,7 @@
   (init-el-enable-emmet)
   (init-el-setup-ignore-completion-case)
   (init-el-setup-paren-matching)
+  (init-el-setup-fonts)
   (init-el-setup-syntax-highlighting)
   (init-el-setup-dabbrev)
   (init-el-setup-auto-complete)
@@ -190,7 +197,8 @@ line mode."
         ido-save-directory-list-file (expand-file-name ".ido.last" user-emacs-directory))
   (ido-mode)
   (ido-ubiquitous-mode)
-  (smex-initialize))
+  (init-el-with-eval-after-load 'smex
+    (smex-initialize)))
 
 (defun init-el-enable-search-highlight ()
   (setq search-highlight t
@@ -208,27 +216,28 @@ line mode."
   (show-paren-mode)
   (setq show-paren-delay 0))
 
-(defun init-el-setup-syntax-highlighting ()
-  (global-font-lock-mode)
-  (global-hl-line-mode)
-  (init-el-setup-colors)
-  (add-hook 'prog-mode-hook 'number-font-lock-mode)
-  (add-hook 'emacs-lisp-mode-hook 'highlight-defined-mode)
-  (eval-after-load 'highlight-defined
-    `(,(lambda ()
-         (set-face-attribute 'highlight-defined-builtin-function-name-face nil
-                             :inherit 'font-lock-type-face)
-         (set-face-attribute 'highlight-defined-macro-name-face nil
-                             :inherit 'font-lock-preprocessor-face)))))
-
-(defun init-el-setup-colors ()
+(defun init-el-setup-fonts ()
   (if (eq system-type 'windows-nt)
       (cond
        ((find-font (font-spec :name "Consolas"))
         (set-face-attribute 'default nil :family "Consolas" :height 100))
        ((find-font (font-spec :name "Lucida Console"))
         (set-face-attribute 'default nil :family "Lucida Console" :height 100)))
-    (set-face-attribute 'default nil :family "Monospace" :height 102))
+    (set-face-attribute 'default nil :family "Monospace" :height 102)))
+
+(defun init-el-setup-syntax-highlighting ()
+  (global-font-lock-mode)
+  (global-hl-line-mode)
+  (init-el-setup-theme)
+  (add-hook 'prog-mode-hook 'number-font-lock-mode)
+  (add-hook 'emacs-lisp-mode-hook 'highlight-defined-mode)
+  (init-el-with-eval-after-load 'highlight-defined
+    (set-face-attribute 'highlight-defined-builtin-function-name-face nil
+                        :inherit 'font-lock-type-face)
+    (set-face-attribute 'highlight-defined-macro-name-face nil
+                        :inherit 'font-lock-preprocessor-face)))
+
+(defun init-el-setup-theme ()
   (let ((theme 'colorsarenice-dark))
     (load-theme theme t)
     ;; Without this hook X11 has problems setting the fucking cursor color.
@@ -257,9 +266,10 @@ line mode."
   (setq-default indent-tabs-mode nil
                 tab-width 2
                 c-basic-offset 2)
-  (c-set-offset 'substatement-open 0)
-  (c-set-offset 'defun-open 0)
-  (c-set-offset 'innamespace 0))
+  (init-el-with-eval-after-load 'cc-mode
+    (c-set-offset 'substatement-open 0)
+    (c-set-offset 'defun-open 0)
+    (c-set-offset 'innamespace 0)))
 
 (defun init-el-setup-keyfreq ()
   (setq keyfreq-file (expand-file-name ".keyfreq" user-emacs-directory))
@@ -304,19 +314,11 @@ line mode."
   (indent-according-to-mode))
 
 (defun init-el-setup-mappings ()
-  (init-el-setup-remaps)
-  (init-el-setup-evil-mappings)
-  (init-el-setup-window-mappings)
-  (init-el-setup-compile-mappings))
-
-(defun init-el-setup-remaps ()
   (global-set-key [remap execute-extended-command] 'smex)
   (global-set-key [remap list-buffers] 'ibuffer-other-window)
   (global-set-key [remap isearch-forward] 'isearch-forward-regexp)
   (global-set-key [remap isearch-backward] 'isearch-backward-regexp)
-  (global-set-key [remap move-beginning-of-line] 'smart-beginning-of-line))
-
-(defun init-el-setup-evil-mappings ()
+  (global-set-key [remap move-beginning-of-line] 'smart-beginning-of-line)
   (define-key evil-visual-state-map [remap move-beginning-of-line] 'evil-smart-beginning-of-line)
   (define-key evil-insert-state-map (kbd "RET") 'newline-and-indent)
   (define-key evil-insert-state-map (kbd "C-p") 'auto-complete)
@@ -331,15 +333,11 @@ line mode."
   (define-key evil-normal-state-map ",d" 'evil-destroy)
   (define-key evil-visual-state-map ",d" 'evil-destroy)
   (define-key evil-normal-state-map ",a" 'mark-whole-buffer)
-  (define-key evil-visual-state-map ",a" 'mark-whole-buffer))
-
-(defun init-el-setup-window-mappings ()
+  (define-key evil-visual-state-map ",a" 'mark-whole-buffer)
   (global-set-key [(shift up)] 'windmove-up)
   (global-set-key [(shift down)] 'windmove-down)
   (global-set-key [(shift left)] 'windmove-left)
-  (global-set-key [(shift right)] 'windmove-right))
-
-(defun init-el-setup-compile-mappings ()
+  (global-set-key [(shift right)] 'windmove-right)
   (global-set-key [f7] 'compile))
 
 (eval-when-compile
