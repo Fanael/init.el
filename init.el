@@ -30,10 +30,19 @@
       byte-compile--use-old-handlers nil)
 (add-hook 'after-init-hook 'init-el-after-init)
 
-;; TODO: remove when Emacs 24.4 is released
 (defmacro init-el-with-eval-after-load (file &rest body)
+  "Execute BODY after FILE is loaded.
+
+FILE can be a feature or a file name, see `eval-after-load' for
+details."
   (declare (indent defun) (debug t))
-  `(eval-after-load ,file
+  ;; Load the file at byte-compile time to avoid spurious warnings.
+  (when byte-compile-current-file
+    (unless (if (symbolp file)
+                (require file nil :no-error)
+              (load file :no-message :no-error))
+      (message "init-el-with-eval-after-load: couldn't load %s" file)))
+  `(eval-after-load ',file
      `(,(lambda () ,@body))))
 
 (defun init-el-after-init ()
@@ -197,7 +206,7 @@ line mode."
         ido-save-directory-list-file (expand-file-name ".ido.last" user-emacs-directory))
   (ido-mode)
   (ido-ubiquitous-mode)
-  (init-el-with-eval-after-load 'smex
+  (init-el-with-eval-after-load smex
     (smex-initialize)))
 
 (defun init-el-enable-search-highlight ()
@@ -231,7 +240,7 @@ line mode."
   (init-el-setup-theme)
   (add-hook 'prog-mode-hook 'number-font-lock-mode)
   (add-hook 'emacs-lisp-mode-hook 'highlight-defined-mode)
-  (init-el-with-eval-after-load 'highlight-defined
+  (init-el-with-eval-after-load highlight-defined
     (set-face-attribute 'highlight-defined-builtin-function-name-face nil
                         :inherit 'font-lock-type-face)
     (set-face-attribute 'highlight-defined-macro-name-face nil
@@ -251,7 +260,7 @@ line mode."
   (setq dabbrev-case-replace nil))
 
 (defun init-el-setup-auto-complete ()
-  (init-el-with-eval-after-load 'auto-complete
+  (init-el-with-eval-after-load auto-complete
     (require 'auto-complete-config)
     (ac-config-default)
     (setq-default ac-sources
@@ -277,7 +286,7 @@ line mode."
   (setq-default indent-tabs-mode nil
                 tab-width 2
                 c-basic-offset 2)
-  (init-el-with-eval-after-load 'cc-mode
+  (init-el-with-eval-after-load cc-mode
     (c-set-offset 'substatement-open 0)
     (c-set-offset 'defun-open 0)
     (c-set-offset 'innamespace 0)))
