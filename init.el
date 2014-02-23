@@ -30,6 +30,44 @@
       byte-compile--use-old-handlers nil)
 (add-hook 'after-init-hook 'init-el-after-init)
 
+(defun init-el-after-init ()
+  (init-el-tune-gc)
+  (init-el-set-window-size)
+  (init-el-disable-useless-gui-stuff)
+  (init-el-start-with-empty-scratch-buffer)
+  (init-el-stop-creating-silly-files)
+  (init-el-enable-backup-files)
+  (init-el-enable-fucking-utf-8)
+  (init-el-fix-scrolling)
+  (init-el-enable-system-clipboard)
+  (init-el-change-undo-limits)
+  (init-el-enable-all-commands)
+  (init-el-setup-fonts)
+  (init-el-start-server)
+  (init-el-initialize-packages)
+  (init-el-enable-uniquify)
+  (init-el-enable-line-numbers)
+  (init-el-enable-undo-tree)
+  (init-el-enable-evil)
+  (init-el-enable-ido)
+  (init-el-enable-search-highlight)
+  (init-el-enable-emmet)
+  (init-el-setup-whitespace-mode)
+  (init-el-setup-text-mode)
+  (init-el-setup-ignore-completion-case)
+  (init-el-setup-paren-matching)
+  (init-el-setup-syntax-highlighting)
+  (init-el-setup-dabbrev)
+  (init-el-setup-auto-complete)
+  (init-el-setup-haskell-mode)
+  (init-el-setup-keyfreq)
+  (init-el-setup-rainbow-delimiters)
+  (init-el-setup-smartparens)
+  (init-el-setup-indentation)
+  (init-el-setup-mappings)
+  (init-el-setup-mode-line)
+  (init-el-setup-title-bar))
+
 (defmacro init-el-with-eval-after-load (file &rest body)
   "Execute BODY after FILE is loaded.
 
@@ -44,45 +82,6 @@ details."
       (message "init-el-with-eval-after-load: couldn't load %s" file)))
   `(eval-after-load ',file
      `(,(lambda () ,@body))))
-
-(defun init-el-after-init ()
-  (init-el-start-server)
-  (init-el-tune-gc)
-  (init-el-set-window-size)
-  (init-el-disable-useless-gui-stuff)
-  (init-el-start-with-empty-scratch-buffer)
-  (init-el-disable-backup-files)
-  (init-el-enable-fucking-utf-8)
-  (init-el-fix-scrolling)
-  (init-el-enable-system-clipboard)
-  (init-el-change-undo-limits)
-  (init-el-enable-all-commands)
-  (init-el-initialize-packages)
-  (init-el-enable-uniquify)
-  (init-el-enable-line-numbers)
-  (init-el-enable-undo-tree)
-  (init-el-enable-evil)
-  (init-el-enable-ido)
-  (init-el-enable-search-highlight)
-  (init-el-enable-emmet)
-  (init-el-setup-ignore-completion-case)
-  (init-el-setup-paren-matching)
-  (init-el-setup-fonts)
-  (init-el-setup-syntax-highlighting)
-  (init-el-setup-dabbrev)
-  (init-el-setup-auto-complete)
-  (init-el-setup-haskell-mode)
-  (init-el-setup-keyfreq)
-  (init-el-setup-rainbow-delimiters)
-  (init-el-setup-smartparens)
-  (init-el-setup-indentation)
-  (init-el-setup-mappings)
-  (init-el-setup-mode-line)
-  (init-el-setup-title-bar))
-
-(defun init-el-start-server ()
-  (when (eq system-type 'windows-nt)
-    (server-start)))
 
 (defun init-el-tune-gc ()
   ;; The default setting is too conservative on modern machines making Emacs
@@ -106,9 +105,17 @@ details."
         initial-scratch-message ""
         initial-major-mode 'fundamental-mode))
 
-(defun init-el-disable-backup-files ()
-  (setq make-backup-files nil
-        auto-save-default nil))
+(defun init-el-stop-creating-silly-files ()
+  (setq auto-save-default nil
+        create-lockfiles nil))
+
+(defun init-el-enable-backup-files ()
+  (setq backup-by-copying t
+        delete-old-versions t
+        kept-old-versions 3
+        kept-new-versions 7
+        version-control t
+        backup-directory-alist '(("." . "~/.emacs.d/backups"))))
 
 (defun init-el-enable-fucking-utf-8 ()
   (prefer-coding-system 'utf-8)
@@ -121,11 +128,10 @@ details."
 
 (defun init-el-fix-scrolling ()
   (setq mouse-wheel-progressive-speed nil
-        mouse-wheel-follow-mouse 1
         scroll-step 1
         scroll-margin 3
         scroll-conservatively 100000
-        scroll-preserve-screen-position 1))
+        scroll-preserve-screen-position 'always))
 
 (defun init-el-enable-system-clipboard ()
   (setq mouse-drag-copy-region nil
@@ -141,6 +147,19 @@ details."
 
 (defun init-el-enable-all-commands ()
   (setq disabled-command-function nil))
+
+(defun init-el-setup-fonts ()
+  (if (eq system-type 'windows-nt)
+      (cond
+       ((find-font (font-spec :name "Consolas"))
+        (set-face-attribute 'default nil :family "Consolas" :height 100))
+       ((find-font (font-spec :name "Lucida Console"))
+        (set-face-attribute 'default nil :family "Lucida Console" :height 100)))
+    (set-face-attribute 'default nil :family "Monospace" :height 102)))
+
+(defun init-el-start-server ()
+  (when (eq system-type 'windows-nt)
+    (server-start)))
 
 (defun init-el-initialize-packages ()
   (setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
@@ -217,6 +236,13 @@ line mode."
   (add-hook 'sgml-mode-hook 'emmet-mode)
   (add-hook 'css-mode-hook 'emmet-mode))
 
+(defun init-el-setup-whitespace-mode ()
+  (setq whitespace-style '(face trailing lines-tail empty space-before-tab)))
+
+(defun init-el-setup-text-mode ()
+  (add-hook 'text-mode-hook 'visual-line-mode)
+  (add-hook 'text-mode-hook 'whitespace-mode))
+
 (defun init-el-setup-ignore-completion-case ()
   (setq completion-ignore-case t
         read-file-name-completion-ignore-case t))
@@ -224,15 +250,6 @@ line mode."
 (defun init-el-setup-paren-matching ()
   (show-paren-mode)
   (setq show-paren-delay 0))
-
-(defun init-el-setup-fonts ()
-  (if (eq system-type 'windows-nt)
-      (cond
-       ((find-font (font-spec :name "Consolas"))
-        (set-face-attribute 'default nil :family "Consolas" :height 100))
-       ((find-font (font-spec :name "Lucida Console"))
-        (set-face-attribute 'default nil :family "Lucida Console" :height 100)))
-    (set-face-attribute 'default nil :family "Monospace" :height 102)))
 
 (defun init-el-setup-syntax-highlighting ()
   (global-font-lock-mode)
@@ -284,7 +301,6 @@ line mode."
 
 (defun init-el-setup-indentation ()
   (setq-default indent-tabs-mode nil
-                tab-width 2
                 c-basic-offset 2)
   (init-el-with-eval-after-load cc-mode
     (c-set-offset 'substatement-open 0)
@@ -297,7 +313,7 @@ line mode."
   (keyfreq-autosave-mode))
 
 (defun init-el-setup-rainbow-delimiters ()
-  (add-hook 'change-major-mode-after-body-hook
+  (add-hook 'after-change-major-mode-hook
             (lambda ()
               (if (derived-mode-p 'lisp-mode
                                   'emacs-lisp-mode)
@@ -362,7 +378,6 @@ line mode."
 
 (eval-when-compile
   (defmacro mode-line-status-list (&rest elements)
-    (declare (indent defun))
     `(let ((strings ()))
        ,@(mapcar
           (lambda (elt)
@@ -399,10 +414,10 @@ line mode."
     "] ["
     `(:eval (,(lambda ()
                 (mode-line-status-list
-                  ((buffer-modified-p) "Mod" font-lock-warning-face)
-                  (buffer-read-only "RO" font-lock-type-face)
-                  ((buffer-narrowed-p) "Narrow" font-lock-type-face)
-                  (defining-kbd-macro "Macro" font-lock-type-face)))))
+                 ((buffer-modified-p) "Mod" font-lock-warning-face)
+                 (buffer-read-only "RO" font-lock-type-face)
+                 ((buffer-narrowed-p) "Narrow" font-lock-type-face)
+                 (defining-kbd-macro "Macro" font-lock-type-face)))))
     "]")))
 
 (defun init-el-setup-title-bar ()
