@@ -115,7 +115,7 @@ details."
         kept-old-versions 3
         kept-new-versions 7
         version-control t
-        backup-directory-alist '(("." . "~/.emacs.d/backups"))))
+        backup-directory-alist `(("." . ,(expand-file-name "backups" user-emacs-directory)))))
 
 (defun init-el-enable-fucking-utf-8 ()
   (prefer-coding-system 'utf-8)
