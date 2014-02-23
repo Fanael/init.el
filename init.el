@@ -37,7 +37,7 @@ FILE can be a feature or a file name, see `eval-after-load' for
 details."
   (declare (indent defun) (debug t))
   ;; Load the file at byte-compile time to avoid spurious warnings.
-  (when byte-compile-current-file
+  (when (bound-and-true-p byte-compile-current-file)
     (unless (if (symbolp file)
                 (require file nil :no-error)
               (load file :no-message :no-error))
