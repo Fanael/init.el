@@ -313,13 +313,8 @@ line mode."
   (keyfreq-autosave-mode))
 
 (defun init-el-setup-rainbow-delimiters ()
-  (add-hook 'after-change-major-mode-hook
-            (lambda ()
-              (if (derived-mode-p 'lisp-mode
-                                  'emacs-lisp-mode)
-                  (rainbow-delimiters-mode)
-                (when (bound-and-true-p rainbow-delimiters-mode)
-                  (rainbow-delimiters-mode -1))))))
+  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'lisp-mode-hook 'rainbow-delimiters-mode))
 
 (defun init-el-setup-smartparens ()
   (require 'smartparens-config)
