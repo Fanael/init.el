@@ -437,3 +437,11 @@ When there's no active region, act on the buffer."
               (delete-region bol (progn (forward-line 1) (point)))
             (setq previousline currentline)
             (forward-line 1)))))))
+
+(defun create-buffer (name)
+  "Create a new buffer with NAME and switch to it.
+
+The buffer starts in `fundamental-mode'."
+  (interactive "BBuffer name:")
+  (prog1 (switch-to-buffer (get-buffer-create (generate-new-buffer-name name)))
+    (fundamental-mode)))
