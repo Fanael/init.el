@@ -277,24 +277,13 @@ line mode."
   (setq dabbrev-case-replace nil))
 
 (defun init-el-setup-auto-complete ()
-  (init-el-with-eval-after-load auto-complete
-    (require 'auto-complete-config)
-    (ac-config-default)
-    (setq-default ac-sources
-                  '(ac-source-semantic
-                    ac-source-words-in-same-mode-buffers
-                    ac-source-abbrev))
-    (setq ac-auto-start nil)
-    ;; Try to run whatever major mode hooks auto-complete installed
-    ;; to ensure `ac-sources' is set correctly.
-    (let ((hooks (intern-soft (concat (symbol-name major-mode) "-hook"))))
-      (when hooks
-        (let* ((acpackage (cadr (assq 'auto-complete package-alist)) )
-               (acdirectory (file-name-as-directory (package-desc-dir acpackage))))
-          (dolist (hook (symbol-value hooks))
-            (when (and (symbolp hook)
-                       (string-equal acdirectory (file-name-directory (symbol-file hook))))
-              (funcall hook))))))))
+  (require 'auto-complete-config)
+  (ac-config-default)
+  (setq-default ac-sources
+                '(ac-source-semantic
+                  ac-source-words-in-same-mode-buffers
+                  ac-source-abbrev))
+  (setq ac-auto-start nil))
 
 (defun init-el-setup-haskell-mode ()
   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))
