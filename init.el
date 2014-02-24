@@ -473,5 +473,5 @@ When there's no active region, act on the buffer."
 
 The buffer starts in `fundamental-mode'."
   (interactive "BBuffer name:")
-  (prog1 (switch-to-buffer (get-buffer-create (generate-new-buffer-name name)))
+  (prog1 (switch-to-buffer (generate-new-buffer name))
     (fundamental-mode)))
