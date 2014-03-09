@@ -66,7 +66,8 @@
   (init-el-setup-indentation)
   (init-el-setup-mappings)
   (init-el-setup-mode-line)
-  (init-el-setup-title-bar))
+  (init-el-setup-title-bar)
+  (init-el-disable-electric-indent))
 
 (defmacro init-el-with-eval-after-load (file &rest body)
   "Execute BODY after FILE is loaded.
@@ -409,6 +410,10 @@ line mode."
 
 (defun init-el-setup-title-bar ()
   (setq icon-title-format (setq frame-title-format "%b [%f] - Emacs")))
+
+(defun init-el-disable-electric-indent ()
+  (when (bound-and-true-p electric-indent-mode)
+    (electric-indent-mode -1)))
 
 (defun smart-beginning-of-line (&optional lineoffset)
   "Move the point to the first non-white character of the current
