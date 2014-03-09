@@ -26,8 +26,7 @@
 ;; LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 ;; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-(setq package-enable-at-startup nil
-      byte-compile--use-old-handlers nil)
+(setq package-enable-at-startup nil)
 (add-hook 'after-init-hook 'init-el-after-init)
 
 (defun init-el-after-init ()
@@ -44,6 +43,7 @@
   (init-el-enable-all-commands)
   (init-el-setup-fonts)
   (init-el-start-server)
+  (init-el-setup-byte-compiler)
   (init-el-initialize-packages)
   (init-el-enable-uniquify)
   (init-el-enable-line-numbers)
@@ -160,6 +160,9 @@ details."
 (defun init-el-start-server ()
   (when (eq system-type 'windows-nt)
     (server-start)))
+
+(defun init-el-setup-byte-compiler ()
+  (setq byte-compile--use-old-handlers nil))
 
 (defun init-el-initialize-packages ()
   (setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
