@@ -210,6 +210,8 @@ details."
   (global-nlinum-mode))
 
 (defun init-el-setup-undo-tree ()
+  (setq undo-tree-visualizer-timestamps t
+        undo-tree-visualizer-lazy-drawing nil)
   (global-undo-tree-mode))
 
 (defun init-el-setup-evil ()
