@@ -31,27 +31,28 @@
 
 (defun init-el-after-init ()
   (init-el-tune-gc)
+  (init-el-use-new-byte-code-opcodes)
   (init-el-set-window-size)
   (init-el-disable-useless-gui-stuff)
   (init-el-start-with-empty-scratch-buffer)
-  (init-el-stop-creating-silly-files)
+  (init-el-prevent-silly-file-creation)
   (init-el-enable-backup-files)
-  (init-el-enable-fucking-utf-8)
+  (init-el-use-fucking-utf-8)
   (init-el-fix-scrolling)
-  (init-el-enable-system-clipboard)
-  (init-el-change-undo-limits)
-  (init-el-enable-all-commands)
+  (init-el-setup-clipboard)
+  (init-el-set-undo-limits)
+  (init-el-do-not-disable-commands)
   (init-el-setup-fonts)
-  (init-el-start-server)
-  (init-el-setup-byte-compiler)
-  (init-el-initialize-packages)
-  (init-el-enable-uniquify)
-  (init-el-enable-line-numbers)
-  (init-el-enable-undo-tree)
-  (init-el-enable-evil)
-  (init-el-enable-ido)
-  (init-el-enable-search-highlight)
-  (init-el-enable-emmet)
+  (init-el-setup-package-archives)
+  (init-el-install-required-packages)
+  (init-el-disable-electric-indent)
+  (init-el-setup-uniquify)
+  (init-el-setup-line-numbers)
+  (init-el-setup-undo-tree)
+  (init-el-setup-evil)
+  (init-el-setup-ido)
+  (init-el-setup-search-highlight)
+  (init-el-setup-emmet)
   (init-el-setup-whitespace-mode)
   (init-el-setup-text-mode)
   (init-el-setup-ignore-completion-case)
@@ -67,7 +68,7 @@
   (init-el-setup-mappings)
   (init-el-setup-mode-line)
   (init-el-setup-title-bar)
-  (init-el-disable-electric-indent))
+  (init-el-start-server))
 
 (defmacro init-el-with-eval-after-load (file &rest body)
   "Execute BODY after FILE is loaded.
@@ -89,6 +90,9 @@ details."
   ;; spend too much time collecting garbage in alloc-heavy code.
   (setq gc-cons-threshold (* 8 1024 1024)))
 
+(defun init-el-use-new-byte-code-opcodes ()
+  (setq byte-compile--use-old-handlers nil))
+
 (defun init-el-set-window-size ()
   (push '(width . 130) default-frame-alist)
   (push '(height . 45) default-frame-alist))
@@ -106,7 +110,7 @@ details."
         initial-scratch-message ""
         initial-major-mode 'fundamental-mode))
 
-(defun init-el-stop-creating-silly-files ()
+(defun init-el-prevent-silly-file-creation ()
   (setq auto-save-default nil
         create-lockfiles nil))
 
@@ -118,7 +122,7 @@ details."
         version-control t
         backup-directory-alist `(("." . ,(expand-file-name "backups" user-emacs-directory)))))
 
-(defun init-el-enable-fucking-utf-8 ()
+(defun init-el-use-fucking-utf-8 ()
   (prefer-coding-system 'utf-8)
   (set-selection-coding-system 'utf-8)
   (set-language-environment "UTF-8")
@@ -134,19 +138,19 @@ details."
         scroll-conservatively 100000
         scroll-preserve-screen-position 'always))
 
-(defun init-el-enable-system-clipboard ()
+(defun init-el-setup-clipboard ()
   (setq mouse-drag-copy-region nil
         x-select-enable-clipboard t)
   (setq-default select-active-regions nil)
   (when (boundp 'x-select-enable-primary)
     (setq x-select-enable-primary nil)))
 
-(defun init-el-change-undo-limits ()
+(defun init-el-set-undo-limits ()
   (setq undo-limit 1048576
         undo-strong-limit 1572864
         undo-outer-limit 20971520))
 
-(defun init-el-enable-all-commands ()
+(defun init-el-do-not-disable-commands ()
   (setq disabled-command-function nil))
 
 (defun init-el-setup-fonts ()
@@ -158,17 +162,12 @@ details."
         (set-face-attribute 'default nil :family "Lucida Console" :height 100)))
     (set-face-attribute 'default nil :family "Monospace" :height 102)))
 
-(defun init-el-start-server ()
-  (when (eq system-type 'windows-nt)
-    (server-start)))
-
-(defun init-el-setup-byte-compiler ()
-  (setq byte-compile--use-old-handlers nil))
-
-(defun init-el-initialize-packages ()
+(defun init-el-setup-package-archives ()
   (setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
                            ("gnu" . "http://elpa.gnu.org/packages/")))
-  (package-initialize)
+  (package-initialize))
+
+(defun init-el-install-required-packages ()
   (when (or (eq system-type 'windows-nt)
             (/= 0 (user-uid)))
     (let ((refreshed nil))
@@ -199,17 +198,21 @@ details."
             (setq refreshed t))
           (package-install package))))))
 
-(defun init-el-enable-uniquify ()
+(defun init-el-disable-electric-indent ()
+  (when (bound-and-true-p electric-indent-mode)
+    (electric-indent-mode -1)))
+
+(defun init-el-setup-uniquify ()
   (require 'uniquify)
   (setq uniquify-buffer-name-style 'post-forward))
 
-(defun init-el-enable-line-numbers ()
+(defun init-el-setup-line-numbers ()
   (global-nlinum-mode))
 
-(defun init-el-enable-undo-tree ()
+(defun init-el-setup-undo-tree ()
   (global-undo-tree-mode))
 
-(defun init-el-enable-evil ()
+(defun init-el-setup-evil ()
   (evil-mode)
   (setq evil-default-cursor t
         evil-want-fine-undo t)
@@ -223,7 +226,7 @@ line mode."
     (smart-beginning-of-line))
   (global-surround-mode))
 
-(defun init-el-enable-ido ()
+(defun init-el-setup-ido ()
   (setq ido-enable-flex-matching t
         smex-save-file (expand-file-name ".smex-items" user-emacs-directory)
         ido-save-directory-list-file (expand-file-name ".ido.last" user-emacs-directory))
@@ -232,11 +235,11 @@ line mode."
   (init-el-with-eval-after-load smex
     (smex-initialize)))
 
-(defun init-el-enable-search-highlight ()
+(defun init-el-setup-search-highlight ()
   (setq search-highlight t
         query-replace-highlight t))
 
-(defun init-el-enable-emmet ()
+(defun init-el-setup-emmet ()
   (add-hook 'sgml-mode-hook 'emmet-mode)
   (add-hook 'css-mode-hook 'emmet-mode))
 
@@ -411,9 +414,9 @@ line mode."
 (defun init-el-setup-title-bar ()
   (setq icon-title-format (setq frame-title-format "%b [%f] - Emacs")))
 
-(defun init-el-disable-electric-indent ()
-  (when (bound-and-true-p electric-indent-mode)
-    (electric-indent-mode -1)))
+(defun init-el-start-server ()
+  (when (eq system-type 'windows-nt)
+    (server-start)))
 
 (defun smart-beginning-of-line (&optional lineoffset)
   "Move the point to the first non-white character of the current
