@@ -267,10 +267,10 @@ line mode."
   (add-hook 'prog-mode-hook 'number-font-lock-mode)
   (add-hook 'emacs-lisp-mode-hook 'highlight-defined-mode)
   (init-el-with-eval-after-load highlight-defined
-    (set-face-attribute 'highlight-defined-builtin-function-name-face nil
-                        :inherit 'font-lock-type-face)
-    (set-face-attribute 'highlight-defined-macro-name-face nil
-                        :inherit 'font-lock-preprocessor-face)))
+    (dolist (faces '((highlight-defined-builtin-function-name-face . font-lock-type-face)
+                     (highlight-defined-macro-name-face . font-lock-preprocessor-face)
+                     (highlight-defined-special-form-name-face . font-lock-keyword-face)))
+      (set-face-attribute (car faces) nil :inherit (cdr faces)))))
 
 (defun init-el-setup-theme ()
   (let ((theme 'colorsarenice-dark))
