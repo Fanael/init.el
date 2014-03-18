@@ -125,7 +125,7 @@ details."
 (defun init-el-setup-auto-save ()
   (let ((autosavedir (file-name-as-directory (expand-file-name "autosave" user-emacs-directory))))
     (setq auto-save-list-file-prefix (expand-file-name ".saves-" autosavedir))
-    (setq auto-save-file-name-transforms (list (list ".*" autosavedir t)))))
+    (setq auto-save-file-name-transforms (list (list ".*" (replace-quote autosavedir) t)))))
 
 (defun init-el-use-fucking-utf-8 ()
   (prefer-coding-system 'utf-8)
