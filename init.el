@@ -35,8 +35,9 @@
   (init-el-set-window-size)
   (init-el-disable-useless-gui-stuff)
   (init-el-start-with-empty-scratch-buffer)
-  (init-el-prevent-silly-file-creation)
-  (init-el-enable-backup-files)
+  (init-el-disable-lock-files)
+  (init-el-setup-backup-files)
+  (init-el-setup-auto-save)
   (init-el-use-fucking-utf-8)
   (init-el-fix-scrolling)
   (init-el-setup-clipboard)
@@ -109,17 +110,22 @@ details."
         initial-scratch-message ""
         initial-major-mode 'fundamental-mode))
 
-(defun init-el-prevent-silly-file-creation ()
-  (setq auto-save-default nil
-        create-lockfiles nil))
+(defun init-el-disable-lock-files ()
+  (setq create-lockfiles nil))
 
-(defun init-el-enable-backup-files ()
+(defun init-el-setup-backup-files ()
   (setq backup-by-copying t
         delete-old-versions t
         kept-old-versions 3
         kept-new-versions 7
-        version-control t
-        backup-directory-alist `(("." . ,(expand-file-name "backups" user-emacs-directory)))))
+        version-control t)
+  (let ((backupdir (expand-file-name "backups" user-emacs-directory)))
+    (setq backup-directory-alist (list (cons "." backupdir)))))
+
+(defun init-el-setup-auto-save ()
+  (let ((autosavedir (file-name-as-directory (expand-file-name "autosave" user-emacs-directory))))
+    (setq auto-save-list-file-prefix (expand-file-name ".saves-" autosavedir))
+    (setq auto-save-file-name-transforms (list (list ".*" autosavedir t)))))
 
 (defun init-el-use-fucking-utf-8 ()
   (prefer-coding-system 'utf-8)
