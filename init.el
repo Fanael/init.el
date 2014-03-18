@@ -61,7 +61,6 @@
   (init-el-setup-dabbrev)
   (init-el-setup-auto-complete)
   (init-el-setup-haskell-mode)
-  (init-el-setup-keyfreq)
   (init-el-setup-rainbow-delimiters)
   (init-el-setup-smartparens)
   (init-el-setup-indentation)
@@ -180,7 +179,6 @@ details."
                          highlight-defined
                          htmlize
                          ido-ubiquitous
-                         keyfreq
                          litable
                          markdown-mode
                          nlinum
@@ -304,11 +302,6 @@ line mode."
     (c-set-offset 'substatement-open 0)
     (c-set-offset 'defun-open 0)
     (c-set-offset 'innamespace 0)))
-
-(defun init-el-setup-keyfreq ()
-  (setq keyfreq-file (expand-file-name ".keyfreq" user-emacs-directory))
-  (keyfreq-mode)
-  (keyfreq-autosave-mode))
 
 (defun init-el-setup-rainbow-delimiters ()
   (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
