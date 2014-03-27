@@ -62,7 +62,7 @@
   (init-el-setup-dabbrev)
   (init-el-setup-auto-complete)
   (init-el-setup-haskell-mode)
-  (init-el-setup-rainbow-delimiters)
+  (init-el-setup-highlight-blocks)
   (init-el-setup-smartparens)
   (init-el-setup-indentation)
   (init-el-setup-mappings)
@@ -182,6 +182,7 @@ details."
                          evil
                          fasm-mode
                          haskell-mode
+                         highlight-blocks
                          highlight-defined
                          htmlize
                          ido-ubiquitous
@@ -190,7 +191,6 @@ details."
                          nlinum
                          number-font-lock-mode
                          php-mode
-                         rainbow-delimiters
                          rainbow-mode
                          smartparens
                          smex
@@ -309,9 +309,8 @@ line mode."
     (c-set-offset 'defun-open 0)
     (c-set-offset 'innamespace 0)))
 
-(defun init-el-setup-rainbow-delimiters ()
-  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode)
-  (add-hook 'lisp-mode-hook 'rainbow-delimiters-mode))
+(defun init-el-setup-highlight-blocks ()
+  (add-hook 'prog-mode-hook 'highlight-blocks-mode))
 
 (defun init-el-setup-smartparens ()
   (require 'smartparens-config)
