@@ -308,11 +308,12 @@ line mode."
 (defun init-el-setup-auto-complete ()
   (require 'auto-complete-config)
   (ac-config-default)
+  (setq ac-auto-start nil
+        ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory))
   (setq-default ac-sources
                 '(ac-source-semantic
                   ac-source-words-in-same-mode-buffers
-                  ac-source-abbrev))
-  (setq ac-auto-start nil))
+                  ac-source-abbrev)))
 
 (defun init-el-setup-haskell-mode ()
   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))
