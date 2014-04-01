@@ -50,8 +50,9 @@
   (init-el-setup-uniquify)
   (init-el-setup-line-numbers)
   (init-el-setup-undo-tree)
-  (init-el-setup-evil)
   (init-el-setup-ido)
+  (init-el-setup-history)
+  (init-el-setup-evil)
   (init-el-setup-search-highlight)
   (init-el-setup-emmet)
   (init-el-setup-whitespace-mode)
@@ -217,8 +218,30 @@ details."
 
 (defun init-el-setup-undo-tree ()
   (setq undo-tree-visualizer-timestamps t
-        undo-tree-visualizer-lazy-drawing nil)
+        undo-tree-visualizer-lazy-drawing nil
+        undo-tree-auto-save-history t)
+  (let ((undodir (expand-file-name "undo" user-emacs-directory)))
+    (setq undo-tree-history-directory-alist (list (cons "." undodir))))
   (global-undo-tree-mode))
+
+(defun init-el-setup-ido ()
+  (setq ido-enable-flex-matching t
+        smex-history-length 256
+        smex-save-file (expand-file-name ".smex-items" user-emacs-directory)
+        ido-save-directory-list-file (expand-file-name ".ido.last" user-emacs-directory))
+  (ido-mode)
+  (ido-ubiquitous-mode)
+  (init-el-with-eval-after-load smex
+    (smex-initialize)))
+
+(defun init-el-setup-history ()
+  (setq history-length 1024
+        search-ring-max 1024
+        regexp-search-ring-max 1024
+        savehist-additional-variables '(search-ring
+                                        regexp-search-ring)
+        savehist-file (expand-file-name ".savehist" user-emacs-directory))
+  (savehist-mode))
 
 (defun init-el-setup-evil ()
   (evil-mode)
@@ -233,15 +256,6 @@ line mode."
     :type exclusive
     (smart-beginning-of-line))
   (global-surround-mode))
-
-(defun init-el-setup-ido ()
-  (setq ido-enable-flex-matching t
-        smex-save-file (expand-file-name ".smex-items" user-emacs-directory)
-        ido-save-directory-list-file (expand-file-name ".ido.last" user-emacs-directory))
-  (ido-mode)
-  (ido-ubiquitous-mode)
-  (init-el-with-eval-after-load smex
-    (smex-initialize)))
 
 (defun init-el-setup-search-highlight ()
   (setq search-highlight t
