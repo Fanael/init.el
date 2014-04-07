@@ -179,7 +179,6 @@ details."
             (/= 0 (user-uid)))
     (let ((refreshed nil))
       (dolist (package '(auto-complete
-                         colorsarenice-theme
                          emmet-mode
                          evil
                          fasm-mode
@@ -197,6 +196,7 @@ details."
                          rainbow-mode
                          smartparens
                          smex
+                         stekene-theme
                          surround
                          undo-tree))
         (unless (package-installed-p package)
@@ -281,14 +281,28 @@ line mode."
   (setq show-paren-delay 0))
 
 (defun init-el-setup-syntax-highlighting ()
-  (global-font-lock-mode)
   (global-hl-line-mode)
+  (init-el-highlight-all-special-forms)
   (init-el-setup-theme)
   (add-hook 'prog-mode-hook 'number-font-lock-mode)
   (add-hook 'prog-mode-hook 'rainbow-identifiers-mode))
 
+(defun init-el-highlight-all-special-forms ()
+  (let ((regexp
+         (eval-when-compile
+           (let ((specialforms ()))
+             (mapatoms (lambda (symbol)
+                         (when (fboundp symbol)
+                           (let ((fn (symbol-function symbol)))
+                             (when (and (subrp fn)
+                                        (eq 'unevalled (cdr (subr-arity fn))))
+                               (push (symbol-name symbol) specialforms))))))
+             (concat "(" (regexp-opt specialforms t) "\\_>")))))
+    (font-lock-add-keywords 'emacs-lisp-mode
+                            `((,regexp (1 'font-lock-keyword-face))))))
+
 (defun init-el-setup-theme ()
-  (let ((theme 'colorsarenice-dark))
+  (let ((theme 'stekene-light))
     (load-theme theme t)
     ;; Without this hook X11 has problems setting the fucking cursor color.
     (add-hook 'after-make-frame-functions
