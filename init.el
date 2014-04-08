@@ -282,8 +282,8 @@ line mode."
 
 (defun init-el-setup-syntax-highlighting ()
   (global-hl-line-mode)
-  (init-el-highlight-all-special-forms)
   (init-el-setup-theme)
+  (add-hook 'emacs-lisp-mode-hook 'init-el-highlight-all-special-forms)
   (add-hook 'prog-mode-hook 'number-font-lock-mode)
   (add-hook 'prog-mode-hook 'rainbow-identifiers-mode))
 
@@ -298,7 +298,7 @@ line mode."
                                         (eq 'unevalled (cdr (subr-arity fn))))
                                (push (symbol-name symbol) specialforms))))))
              (concat "(" (regexp-opt specialforms t) "\\_>")))))
-    (font-lock-add-keywords 'emacs-lisp-mode
+    (font-lock-add-keywords nil
                             `((,regexp (1 'font-lock-keyword-face))))))
 
 (defun init-el-setup-theme ()
