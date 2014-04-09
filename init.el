@@ -302,7 +302,7 @@ line mode."
                             `((,regexp (1 'font-lock-keyword-face))))))
 
 (defun init-el-setup-theme ()
-  (let ((theme 'stekene-light))
+  (let ((theme 'stekene-dark))
     (load-theme theme t)
     ;; Without this hook X11 has problems setting the fucking cursor color.
     (add-hook 'after-make-frame-functions
