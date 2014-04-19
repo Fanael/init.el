@@ -269,8 +269,7 @@ line mode."
   (setq whitespace-style '(face trailing lines-tail empty space-before-tab)))
 
 (defun init-el-setup-text-mode ()
-  (add-hook 'text-mode-hook 'visual-line-mode)
-  (add-hook 'text-mode-hook 'whitespace-mode))
+  (add-hook 'text-mode-hook 'visual-line-mode))
 
 (defun init-el-setup-ignore-completion-case ()
   (setq completion-ignore-case t
