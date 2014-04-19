@@ -226,6 +226,7 @@ details."
 
 (defun init-el-setup-ido ()
   (setq ido-enable-flex-matching t
+        ido-auto-merge-work-directories-length -1
         smex-history-length 256
         smex-save-file (expand-file-name ".smex-items" user-emacs-directory)
         ido-save-directory-list-file (expand-file-name ".ido.last" user-emacs-directory))
