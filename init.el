@@ -386,7 +386,6 @@ line mode."
   (define-key evil-normal-state-map ",w" 'write-file)
   (define-key evil-normal-state-map ",b" 'switch-to-buffer)
   (define-key evil-normal-state-map ",B" 'list-buffers)
-  (define-key evil-normal-state-map ",/" 'evil-ex-nohighlight)
   (define-key evil-normal-state-map ",d" 'evil-destroy)
   (define-key evil-visual-state-map ",d" 'evil-destroy)
   (define-key evil-normal-state-map ",a" 'mark-whole-buffer)
