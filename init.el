@@ -179,6 +179,7 @@ details."
             (/= 0 (user-uid)))
     (let ((refreshed nil))
       (dolist (package '(auto-complete
+                         ace-jump-mode
                          emmet-mode
                          evil
                          fasm-mode
@@ -390,6 +391,10 @@ line mode."
   (define-key evil-visual-state-map ",d" 'evil-destroy)
   (define-key evil-normal-state-map ",a" 'mark-whole-buffer)
   (define-key evil-visual-state-map ",a" 'mark-whole-buffer)
+  (define-key evil-normal-state-map ",j" 'evil-ace-jump-word-mode)
+  (define-key evil-visual-state-map ",j" 'evil-ace-jump-word-mode)
+  (define-key evil-normal-state-map ",J" 'evil-ace-jump-char-mode)
+  (define-key evil-visual-state-map ",J" 'evil-ace-jump-char-mode)
   (global-set-key [(shift up)] 'windmove-up)
   (global-set-key [(shift down)] 'windmove-down)
   (global-set-key [(shift left)] 'windmove-left)
