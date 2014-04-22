@@ -178,8 +178,8 @@ details."
   (when (or (eq system-type 'windows-nt)
             (/= 0 (user-uid)))
     (let ((refreshed nil))
-      (dolist (package '(auto-complete
-                         ace-jump-mode
+      (dolist (package '(ace-jump-mode
+                         auto-complete
                          emmet-mode
                          evil
                          fasm-mode
@@ -189,13 +189,13 @@ details."
                          ido-ubiquitous
                          litable
                          markdown-mode
-                         nlinum
                          number-font-lock-mode
                          php-mode
                          rainbow-delimiters
                          rainbow-identifiers
                          rainbow-mode
                          smartparens
+                         relative-line-numbers
                          smex
                          stekene-theme
                          surround
@@ -215,7 +215,16 @@ details."
   (setq uniquify-buffer-name-style 'post-forward))
 
 (defun init-el-setup-line-numbers ()
-  (global-nlinum-mode))
+  (setq relative-line-numbers-format
+        (lambda (offset)
+          (format "%3s" (cond
+                         ((< offset 0)
+                          (concat (number-to-string (- offset)) "↑"))
+                         ((> offset 0)
+                          (concat (number-to-string offset) "↓"))
+                         (t
+                          "→")))))
+  (global-relative-line-numbers-mode))
 
 (defun init-el-setup-undo-tree ()
   (setq undo-tree-visualizer-timestamps t
