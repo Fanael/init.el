@@ -48,7 +48,6 @@
   (init-el-install-required-packages)
   (init-el-disable-electric-indent)
   (init-el-setup-uniquify)
-  (init-el-setup-line-numbers)
   (init-el-setup-undo-tree)
   (init-el-setup-ido)
   (init-el-setup-history)
@@ -60,6 +59,7 @@
   (init-el-setup-ignore-completion-case)
   (init-el-setup-paren-matching)
   (init-el-setup-syntax-highlighting)
+  (init-el-setup-line-numbers)
   (init-el-setup-dabbrev)
   (init-el-setup-auto-complete)
   (init-el-setup-haskell-mode)
@@ -214,18 +214,6 @@ details."
   (require 'uniquify)
   (setq uniquify-buffer-name-style 'post-forward))
 
-(defun init-el-setup-line-numbers ()
-  (setq relative-line-numbers-format
-        (lambda (offset)
-          (format "%3s" (cond
-                         ((< offset 0)
-                          (concat (number-to-string (- offset)) "↑"))
-                         ((> offset 0)
-                          (concat (number-to-string offset) "↓"))
-                         (t
-                          "→")))))
-  (global-relative-line-numbers-mode))
-
 (defun init-el-setup-undo-tree ()
   (setq undo-tree-visualizer-timestamps t
         undo-tree-visualizer-lazy-drawing nil
@@ -320,6 +308,21 @@ line mode."
                 (when (eq (window-system frame) 'x)
                   (disable-theme theme)
                   (enable-theme theme))))))
+
+(defun init-el-setup-line-numbers ()
+  (setq relative-line-numbers-format
+        (lambda (offset)
+          (format "%3s" (cond
+                         ((< offset 0)
+                          (concat (number-to-string (- offset)) "↑"))
+                         ((> offset 0)
+                          (concat (number-to-string offset) "↓"))
+                         (t
+                          "→")))))
+  (global-relative-line-numbers-mode)
+  (set-face-attribute 'relative-line-numbers-current-line nil
+                      :foreground (face-attribute 'font-lock-constant-face :foreground)
+                      :background (face-attribute 'hl-line :background)))
 
 (defun init-el-setup-dabbrev ()
   (setq dabbrev-case-replace nil))
