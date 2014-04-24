@@ -314,11 +314,11 @@ line mode."
         (lambda (offset)
           (format "%3s" (cond
                          ((< offset 0)
-                          (concat (number-to-string (- offset)) "↑"))
+                          (concat (number-to-string (- offset)) "k"))
                          ((> offset 0)
-                          (concat (number-to-string offset) "↓"))
+                          (concat (number-to-string offset) "j"))
                          (t
-                          "→")))))
+                          "==>")))))
   (global-relative-line-numbers-mode)
   (set-face-attribute 'relative-line-numbers-current-line nil
                       :foreground (face-attribute 'font-lock-constant-face :foreground)
