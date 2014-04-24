@@ -319,10 +319,7 @@ line mode."
                           (concat (number-to-string offset) "j"))
                          (t
                           "==>")))))
-  (global-relative-line-numbers-mode)
-  (set-face-attribute 'relative-line-numbers-current-line nil
-                      :foreground (face-attribute 'font-lock-constant-face :foreground)
-                      :background (face-attribute 'hl-line :background)))
+  (global-relative-line-numbers-mode))
 
 (defun init-el-setup-dabbrev ()
   (setq dabbrev-case-replace nil))
