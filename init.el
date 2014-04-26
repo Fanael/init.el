@@ -404,6 +404,8 @@ line mode."
   (define-key evil-motion-state-map "," nil)
   (define-key evil-motion-state-map ",j" 'evil-ace-jump-word-mode)
   (define-key evil-motion-state-map ",k" 'evil-ace-jump-char-mode)
+  (define-key evil-motion-state-map [up] 'evil-previous-visual-line)
+  (define-key evil-motion-state-map [down] 'evil-next-visual-line)
   (global-set-key [(shift up)] 'windmove-up)
   (global-set-key [(shift down)] 'windmove-down)
   (global-set-key [(shift left)] 'windmove-left)
