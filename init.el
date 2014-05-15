@@ -283,6 +283,7 @@ line mode."
   (init-el-setup-theme)
   (add-hook 'emacs-lisp-mode-hook 'init-el-highlight-all-special-forms)
   (add-hook 'prog-mode-hook 'number-font-lock-mode)
+  (setq rainbow-identifiers-choose-face-function 'rainbow-identifiers-cie-l*a*b*-choose-face)
   (add-hook 'prog-mode-hook 'rainbow-identifiers-mode))
 
 (defun init-el-highlight-all-special-forms ()
