@@ -52,6 +52,7 @@
   (init-el-setup-ido)
   (init-el-setup-history)
   (init-el-setup-evil)
+  (init-el-setup-surround)
   (init-el-setup-search-highlight)
   (init-el-setup-emmet)
   (init-el-setup-whitespace-mode)
@@ -253,8 +254,16 @@ details."
     "Workaround to make `smart-beginning-of-line' work in visual
 line mode."
     :type exclusive
-    (smart-beginning-of-line))
-  (global-surround-mode))
+    (smart-beginning-of-line)))
+
+(defun init-el-setup-surround ()
+  (global-surround-mode)
+  (push '(?T . init-el-surround-bbcode-tag) (default-value 'surround-pairs-alist)))
+
+(defun init-el-surround-bbcode-tag ()
+  (let ((tagname (read-string "BBCode tag: " nil nil nil t)))
+    (cons (format "[%s]" tagname)
+          (format "[/%s]" tagname))))
 
 (defun init-el-setup-search-highlight ()
   (setq search-highlight t
