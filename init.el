@@ -71,6 +71,7 @@
   (init-el-setup-mode-line)
   (init-el-setup-title-bar)
   (init-el-setup-buffer-boundary-indicators)
+  (init-el-setup-paragraph-filling)
   (init-el-start-server))
 
 (defmacro init-el-with-eval-after-load (file &rest body)
@@ -91,7 +92,7 @@ details."
 (defun init-el-tune-gc ()
   ;; The default setting is too conservative on modern machines making Emacs
   ;; spend too much time collecting garbage in alloc-heavy code.
-  (setq gc-cons-threshold (* 8 1024 1024)))
+  (setq gc-cons-threshold (* 24 1024 1024)))
 
 (defun init-el-use-new-byte-code-opcodes ()
   (setq byte-compile--use-old-handlers nil))
@@ -463,6 +464,10 @@ line mode."
 (defun init-el-setup-buffer-boundary-indicators ()
   (setq-default indicate-empty-lines t
                 indicate-buffer-boundaries 'left))
+
+(defun init-el-setup-paragraph-filling ()
+  (setq sentence-end-double-space nil)
+  (setq-default fill-column 80))
 
 (defun init-el-start-server ()
   (when (eq system-type 'windows-nt)
