@@ -60,7 +60,6 @@
   (init-el-setup-ignore-completion-case)
   (init-el-setup-paren-matching)
   (init-el-setup-syntax-highlighting)
-  (init-el-setup-line-numbers)
   (init-el-setup-dabbrev)
   (init-el-setup-auto-complete)
   (init-el-setup-haskell-mode)
@@ -71,6 +70,7 @@
   (init-el-setup-mappings)
   (init-el-setup-mode-line)
   (init-el-setup-title-bar)
+  (init-el-setup-buffer-boundary-indicators)
   (init-el-start-server))
 
 (defmacro init-el-with-eval-after-load (file &rest body)
@@ -102,6 +102,7 @@ details."
 
 (defun init-el-disable-useless-gui-stuff ()
   (tool-bar-mode -1)
+  (scroll-bar-mode -1)
   (menu-bar-mode -1)
   (blink-cursor-mode -1)
   (setq use-file-dialog nil
@@ -196,7 +197,6 @@ details."
                          rainbow-identifiers
                          rainbow-mode
                          smartparens
-                         relative-line-numbers
                          smex
                          stekene-theme
                          surround
@@ -319,18 +319,6 @@ line mode."
                   (disable-theme theme)
                   (enable-theme theme))))))
 
-(defun init-el-setup-line-numbers ()
-  (setq relative-line-numbers-format
-        (lambda (offset)
-          (format "%3s" (cond
-                         ((< offset 0)
-                          (concat (number-to-string (- offset)) "k"))
-                         ((> offset 0)
-                          (concat (number-to-string offset) "j"))
-                         (t
-                          "==>")))))
-  (global-relative-line-numbers-mode))
-
 (defun init-el-setup-dabbrev ()
   (setq dabbrev-case-replace nil))
 
@@ -414,6 +402,7 @@ line mode."
   (define-key evil-motion-state-map "," nil)
   (define-key evil-motion-state-map ",j" 'evil-ace-jump-word-mode)
   (define-key evil-motion-state-map ",k" 'evil-ace-jump-char-mode)
+  (define-key evil-motion-state-map ",l" 'evil-ace-jump-line-mode)
   (define-key evil-motion-state-map [up] 'evil-previous-visual-line)
   (define-key evil-insert-state-map [up] 'evil-previous-visual-line)
   (define-key evil-motion-state-map [down] 'evil-next-visual-line)
@@ -470,6 +459,10 @@ line mode."
 
 (defun init-el-setup-title-bar ()
   (setq icon-title-format (setq frame-title-format "%b [%f] - Emacs")))
+
+(defun init-el-setup-buffer-boundary-indicators ()
+  (setq-default indicate-empty-lines t
+                indicate-buffer-boundaries 'left))
 
 (defun init-el-start-server ()
   (when (eq system-type 'windows-nt)
