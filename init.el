@@ -190,7 +190,6 @@ details."
                          highlight-blocks
                          htmlize
                          ido-ubiquitous
-                         litable
                          markdown-mode
                          number-font-lock-mode
                          php-mode
