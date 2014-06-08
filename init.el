@@ -66,6 +66,7 @@
   (init-el-setup-rainbow-delimiters)
   (init-el-setup-highlight-blocks)
   (init-el-setup-smartparens)
+  (init-el-setup-flycheck)
   (init-el-setup-indentation)
   (init-el-setup-mappings)
   (init-el-setup-mode-line)
@@ -186,6 +187,7 @@ details."
                          emmet-mode
                          evil
                          fasm-mode
+                         flycheck
                          haskell-mode
                          highlight-blocks
                          htmlize
@@ -335,14 +337,6 @@ line mode."
 (defun init-el-setup-haskell-mode ()
   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))
 
-(defun init-el-setup-indentation ()
-  (setq-default indent-tabs-mode nil
-                c-basic-offset 2)
-  (init-el-with-eval-after-load cc-mode
-    (c-set-offset 'substatement-open 0)
-    (c-set-offset 'defun-open 0)
-    (c-set-offset 'innamespace 0)))
-
 (defun init-el-setup-rainbow-delimiters ()
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
 
@@ -376,6 +370,20 @@ line mode."
   ;; Enter it.
   (forward-line -1)
   (indent-according-to-mode))
+
+(defun init-el-setup-flycheck ()
+  (add-hook 'prog-mode-hook 'flycheck-mode)
+  (setq flycheck-highlighting-mode 'lines
+        flycheck-idle-change-delay 1
+        flycheck-completion-system 'ido))
+
+(defun init-el-setup-indentation ()
+  (setq-default indent-tabs-mode nil
+                c-basic-offset 2)
+  (init-el-with-eval-after-load cc-mode
+    (c-set-offset 'substatement-open 0)
+    (c-set-offset 'defun-open 0)
+    (c-set-offset 'innamespace 0)))
 
 (defun init-el-setup-mappings ()
   (global-set-key [remap execute-extended-command] 'smex)
