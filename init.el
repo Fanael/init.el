@@ -232,6 +232,7 @@ details."
         smex-save-file (expand-file-name ".smex-items" user-emacs-directory)
         ido-save-directory-list-file (expand-file-name ".ido.last" user-emacs-directory))
   (ido-mode)
+  (ido-everywhere)
   (ido-ubiquitous-mode)
   (init-el-with-eval-after-load smex
     (smex-initialize)))
