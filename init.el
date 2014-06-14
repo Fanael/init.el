@@ -202,7 +202,8 @@ details."
                          smex
                          stekene-theme
                          surround
-                         undo-tree))
+                         undo-tree
+                         yaml-mode))
         (unless (package-installed-p package)
           (unless refreshed
             (package-refresh-contents)
