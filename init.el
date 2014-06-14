@@ -508,7 +508,8 @@ into a new buffer."
     (with-current-buffer resultbuf
       (insert expanded)
       (emacs-lisp-mode)
-      (read-only-mode))
+      (read-only-mode)
+      (set-buffer-modified-p nil))
     (select-window (display-buffer resultbuf)))
   nil)
 
