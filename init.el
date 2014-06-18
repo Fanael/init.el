@@ -189,6 +189,7 @@ details."
       (dolist (package '(ace-jump-mode
                          auto-complete
                          emmet-mode
+                         epl
                          evil
                          evil-surround
                          fasm-mode
@@ -199,6 +200,7 @@ details."
                          ido-ubiquitous
                          markdown-mode
                          number-font-lock-mode
+                         parent-mode
                          php-mode
                          rainbow-delimiters
                          rainbow-identifiers
@@ -338,14 +340,36 @@ line mode."
   (setq dabbrev-case-replace nil))
 
 (defun init-el-setup-auto-complete ()
-  (require 'auto-complete-config)
-  (ac-config-default)
-  (setq ac-auto-start nil
-        ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory))
-  (setq-default ac-sources
-                '(ac-source-semantic
-                  ac-source-words-in-same-mode-buffers
-                  ac-source-abbrev)))
+  (init-el-with-eval-after-load auto-complete
+    (require 'auto-complete-config)
+    (ac-config-default)
+    (setq ac-auto-start nil
+          ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory))
+    (setq-default ac-sources
+                  '(ac-source-semantic
+                    ac-source-words-in-same-mode-buffers
+                    ac-source-abbrev))
+    ;; `ac-config-default' installs some hooks that set `ac-sources' according
+    ;; to the major mode, run them.
+    (init-el-run-auto-complete-hooks)))
+
+(defun init-el-run-auto-complete-hooks ()
+  ;; This is a huge hack, but there's no other way to make `auto-complete'
+  ;; behave sanely when configured inside `with-eval-after-load'.
+  ;; TODO: fix the "Error in post-command-hook (evil-repeat-post-hook):
+  ;; (wrong-type-argument number-or-marker-p nil)"
+  (require 'epl)
+  (require 'parent-mode)
+  (let ((acdirectory (file-name-as-directory (epl-package-directory (epl-find-installed-package 'auto-complete)))))
+    (dolist (buffer (buffer-list))
+      (with-current-buffer buffer
+        (dolist (mode (parent-mode-list major-mode))
+          (let ((hooksymbol (intern-soft (concat (symbol-name mode) "-hook"))))
+            (when hooksymbol
+              (dolist (hook (symbol-value hooksymbol))
+                (when (and (symbolp hook)
+                           (string= (file-name-directory (symbol-file hook)) acdirectory))
+                  (funcall hook))))))))))
 
 (defun init-el-setup-haskell-mode ()
   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))
