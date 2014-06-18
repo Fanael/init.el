@@ -540,7 +540,9 @@ line mode."
 
 (defun init-el-start-server ()
   (when (eq system-type 'windows-nt)
-    (server-start)))
+    (run-with-idle-timer 0.5 nil
+                         (lambda ()
+                           (server-start)))))
 
 (defun smart-beginning-of-line (&optional lineoffset)
   "Move the point to the first non-white character of the current
