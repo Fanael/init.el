@@ -190,6 +190,7 @@ details."
                          auto-complete
                          emmet-mode
                          evil
+                         evil-surround
                          fasm-mode
                          flycheck
                          haskell-mode
@@ -205,7 +206,6 @@ details."
                          smartparens
                          smex
                          stekene-theme
-                         surround
                          undo-tree
                          yaml-mode))
         (unless (package-installed-p package)
@@ -267,8 +267,8 @@ line mode."
     (smart-beginning-of-line)))
 
 (defun init-el-setup-surround ()
-  (global-surround-mode)
-  (push '(?T . init-el-surround-bbcode-tag) (default-value 'surround-pairs-alist)))
+  (global-evil-surround-mode)
+  (push '(?T . init-el-surround-bbcode-tag) (default-value 'evil-surround-pairs-alist)))
 
 (defun init-el-surround-bbcode-tag ()
   (let ((tagname (read-string "BBCode tag: " nil nil nil t)))
