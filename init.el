@@ -381,6 +381,15 @@ line mode."
   (add-hook 'prog-mode-hook 'highlight-blocks-mode))
 
 (defun init-el-setup-smartparens ()
+  (let ((oldfn (symbol-function 'self-insert-command)))
+    (fset 'self-insert-command
+          (lambda (count)
+            (interactive "p")
+            (fset 'self-insert-command oldfn)
+            (init-el-setup-smartparens-1)
+            (self-insert-command count)))))
+
+(defun init-el-setup-smartparens-1 ()
   (require 'smartparens-config)
   (smartparens-global-mode)
   (setq sp-highlight-pair-overlay nil
