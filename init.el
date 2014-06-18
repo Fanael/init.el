@@ -59,7 +59,11 @@
   (init-el-setup-text-mode)
   (init-el-setup-ignore-completion-case)
   (init-el-setup-paren-matching)
-  (init-el-setup-syntax-highlighting)
+  (init-el-setup-theme)
+  (init-el-setup-line-highlighting)
+  (init-el-setup-emacs-lisp-special-form-highlighting)
+  (init-el-setup-number-highlighting)
+  (init-el-setup-rainbow-identifiers)
   (init-el-setup-dabbrev)
   (init-el-setup-auto-complete)
   (init-el-setup-haskell-mode)
@@ -293,13 +297,21 @@ line mode."
   (show-paren-mode)
   (setq show-paren-delay 0))
 
-(defun init-el-setup-syntax-highlighting ()
-  (global-hl-line-mode)
-  (init-el-setup-theme)
-  (add-hook 'emacs-lisp-mode-hook 'init-el-highlight-all-special-forms)
-  (add-hook 'prog-mode-hook 'number-font-lock-mode)
-  (setq rainbow-identifiers-choose-face-function 'rainbow-identifiers-cie-l*a*b*-choose-face)
-  (add-hook 'prog-mode-hook 'rainbow-identifiers-mode))
+(defun init-el-setup-theme ()
+  (let ((theme 'stekene-dark))
+    (load-theme theme t)
+    ;; Without this hook X11 has problems setting the fucking cursor color.
+    (add-hook 'after-make-frame-functions
+              (lambda (frame)
+                (when (eq (window-system frame) 'x)
+                  (disable-theme theme)
+                  (enable-theme theme))))))
+
+(defun init-el-setup-line-highlighting ()
+  (global-hl-line-mode))
+
+(defun init-el-setup-emacs-lisp-special-form-highlighting ()
+  (add-hook 'emacs-lisp-mode-hook 'init-el-highlight-all-special-forms))
 
 (defun init-el-highlight-all-special-forms ()
   (let ((regexp
@@ -315,15 +327,12 @@ line mode."
     (font-lock-add-keywords nil
                             `((,regexp (1 'font-lock-keyword-face))))))
 
-(defun init-el-setup-theme ()
-  (let ((theme 'stekene-dark))
-    (load-theme theme t)
-    ;; Without this hook X11 has problems setting the fucking cursor color.
-    (add-hook 'after-make-frame-functions
-              (lambda (frame)
-                (when (eq (window-system frame) 'x)
-                  (disable-theme theme)
-                  (enable-theme theme))))))
+(defun init-el-setup-number-highlighting ()
+  (add-hook 'prog-mode-hook 'number-font-lock-mode))
+
+(defun init-el-setup-rainbow-identifiers ()
+  (setq rainbow-identifiers-choose-face-function 'rainbow-identifiers-cie-l*a*b*-choose-face)
+  (add-hook 'prog-mode-hook 'rainbow-identifiers-mode))
 
 (defun init-el-setup-dabbrev ()
   (setq dabbrev-case-replace nil))
