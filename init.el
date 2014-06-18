@@ -347,6 +347,7 @@ line mode."
     (ac-config-default)
     (global-auto-complete-mode)
     (setq ac-auto-start nil
+          ac-expand-on-auto-complete nil
           ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory))
     ;; `ac-config-default' installs some hooks that set `ac-sources' according
     ;; to the major mode, run them.
