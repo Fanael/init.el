@@ -371,6 +371,12 @@ line mode."
                            (string= (file-name-directory (symbol-file hook)) acdirectory))
                   (funcall hook))))))))))
 
+(defun init-el-auto-complete ()
+  (interactive)
+  (unless (bound-and-true-p auto-complete-mode)
+    (auto-complete-mode))
+  (auto-complete))
+
 (defun init-el-setup-jedi ()
   (setq jedi:complete-on-dot t)
   (add-hook 'python-mode-hook 'jedi:setup))
@@ -459,7 +465,7 @@ line mode."
   (global-set-key [remap move-beginning-of-line] 'smart-beginning-of-line)
   (define-key evil-motion-state-map [remap move-beginning-of-line] 'evil-smart-beginning-of-line)
   (define-key evil-insert-state-map (kbd "RET") 'newline-and-indent)
-  (define-key evil-insert-state-map (kbd "C-p") 'auto-complete)
+  (define-key evil-insert-state-map (kbd "C-p") 'init-el-auto-complete)
   (define-key evil-insert-state-map (kbd "C-e") 'emmet-expand-line)
   (define-key evil-normal-state-map " " 'evil-ex)
   (define-key evil-visual-state-map " " 'evil-ex)
