@@ -66,6 +66,7 @@
   (init-el-setup-rainbow-identifiers)
   (init-el-setup-dabbrev)
   (init-el-setup-auto-complete)
+  (init-el-setup-jedi)
   (init-el-setup-haskell-mode)
   (init-el-setup-rainbow-delimiters)
   (init-el-setup-highlight-blocks)
@@ -198,6 +199,7 @@ details."
                          highlight-blocks
                          htmlize
                          ido-ubiquitous
+                         jedi
                          markdown-mode
                          number-font-lock-mode
                          parent-mode
@@ -343,12 +345,9 @@ line mode."
   (init-el-with-eval-after-load auto-complete
     (require 'auto-complete-config)
     (ac-config-default)
+    (global-auto-complete-mode)
     (setq ac-auto-start nil
           ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory))
-    (setq-default ac-sources
-                  '(ac-source-semantic
-                    ac-source-words-in-same-mode-buffers
-                    ac-source-abbrev))
     ;; `ac-config-default' installs some hooks that set `ac-sources' according
     ;; to the major mode, run them.
     (init-el-run-auto-complete-hooks)))
@@ -370,6 +369,10 @@ line mode."
                 (when (and (symbolp hook)
                            (string= (file-name-directory (symbol-file hook)) acdirectory))
                   (funcall hook))))))))))
+
+(defun init-el-setup-jedi ()
+  (setq jedi:complete-on-dot t)
+  (add-hook 'python-mode-hook 'jedi:setup))
 
 (defun init-el-setup-haskell-mode ()
   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))
