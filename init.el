@@ -343,9 +343,7 @@ line mode."
 
 (defun init-el-setup-auto-complete ()
   (init-el-with-eval-after-load auto-complete
-    (require 'auto-complete-config)
     (ac-config-default)
-    (global-auto-complete-mode)
     (setq ac-auto-start nil
           ac-expand-on-auto-complete nil
           ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory))
