@@ -354,8 +354,6 @@ line mode."
 (defun init-el-run-auto-complete-hooks ()
   ;; This is a huge hack, but there's no other way to make `auto-complete'
   ;; behave sanely when configured inside `with-eval-after-load'.
-  ;; TODO: fix the "Error in post-command-hook (evil-repeat-post-hook):
-  ;; (wrong-type-argument number-or-marker-p nil)"
   (require 'epl)
   (require 'parent-mode)
   (let ((acdirectory (file-name-as-directory (epl-package-directory (epl-find-installed-package 'auto-complete)))))
@@ -363,7 +361,7 @@ line mode."
       (with-current-buffer buffer
         (dolist (mode (parent-mode-list major-mode))
           (let ((hooksymbol (intern-soft (concat (symbol-name mode) "-hook"))))
-            (when hooksymbol
+            (when (boundp hooksymbol) 
               (dolist (hook (symbol-value hooksymbol))
                 (when (and (symbolp hook)
                            (string= (file-name-directory (symbol-file hook)) acdirectory))
