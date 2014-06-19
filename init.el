@@ -463,7 +463,7 @@ line mode."
   (global-set-key [remap move-beginning-of-line] 'smart-beginning-of-line)
   (define-key evil-motion-state-map [remap move-beginning-of-line] 'evil-smart-beginning-of-line)
   (define-key evil-insert-state-map (kbd "RET") 'newline-and-indent)
-  (define-key evil-insert-state-map (kbd "C-p") 'init-el-auto-complete)
+  (define-key evil-insert-state-map (kbd "C-<SPC>") 'init-el-auto-complete)
   (define-key evil-insert-state-map (kbd "C-e") 'emmet-expand-line)
   (define-key evil-normal-state-map " " 'evil-ex)
   (define-key evil-visual-state-map " " 'evil-ex)
