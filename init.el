@@ -176,7 +176,7 @@ details."
         (set-face-attribute 'default nil :family "Consolas" :height 100))
        ((find-font (font-spec :name "Lucida Console"))
         (set-face-attribute 'default nil :family "Lucida Console" :height 100)))
-    (set-face-attribute 'default nil :family "Monospace" :height 102)))
+    (set-face-attribute 'default nil :family "Monospace" :height 100)))
 
 (defun init-el-setup-package-archives ()
   (setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
