@@ -427,23 +427,9 @@ line mode."
   (add-hook 'prog-mode-hook 'flycheck-mode)
   (setq flycheck-idle-change-delay 1
         flycheck-completion-system 'ido)
-  (add-hook 'flycheck-mode-on-hook 'init-el-flycheck-set-major-mode-defaults))
-
-(defun init-el-flycheck-set-major-mode-defaults ()
-  (pcase major-mode
-    ((or `c++-mode `c-mode)
-     (when (flycheck-check-executable 'c/c++-gcc)
-       (setq flycheck-disabled-checkers '(c/c++-clang)))
-     (setq flycheck-cppcheck-checks '("style" "missingInclude")
-           flycheck-cppcheck-inconclusive t)
-     (let ((warnings '("all" "extra" "conversion" "sign-conversion"))
-           (std (pcase major-mode
-                  (`c++-mode "c++11")
-                  (`c-mode "c99"))))
-       (setq flycheck-gcc-warnings warnings
-             flycheck-clang-warnings warnings
-             flycheck-gcc-language-standard std
-             flycheck-clang-language-standard std)))))
+  (setq-default flycheck-cppcheck-checks '("style" "missingInclude")
+                flycheck-cppcheck-inconclusive t
+                flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)))
 
 (defun init-el-setup-indentation ()
   (setq-default indent-tabs-mode nil
