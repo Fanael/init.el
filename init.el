@@ -72,6 +72,7 @@
   (init-el-setup-highlight-blocks)
   (init-el-setup-smartparens)
   (init-el-setup-flycheck)
+  (init-el-setup-line-numbers)
   (init-el-setup-indentation)
   (init-el-setup-mappings)
   (init-el-setup-mode-line)
@@ -207,6 +208,7 @@ details."
                          rainbow-delimiters
                          rainbow-identifiers
                          rainbow-mode
+                         relative-line-numbers
                          smartparens
                          smex
                          stekene-theme
@@ -431,6 +433,18 @@ line mode."
                 flycheck-cppcheck-inconclusive t
                 flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)))
 
+(defun init-el-setup-line-numbers ()
+  (setq relative-line-numbers-format
+        (lambda (offset)
+          (format "%3s" (cond
+                         ((< offset 0)
+                          (concat (number-to-string (- offset)) "k"))
+                         ((> offset 0)
+                          (concat (number-to-string offset) "j"))
+                         (t
+                          "==>")))))
+  (global-relative-line-numbers-mode))
+
 (defun init-el-setup-indentation ()
   (setq-default indent-tabs-mode nil
                 c-basic-offset 2)
@@ -464,7 +478,6 @@ line mode."
   (define-key evil-motion-state-map "," nil)
   (define-key evil-motion-state-map ",j" 'evil-ace-jump-word-mode)
   (define-key evil-motion-state-map ",k" 'evil-ace-jump-char-mode)
-  (define-key evil-motion-state-map ",l" 'evil-ace-jump-line-mode)
   (define-key evil-motion-state-map [up] 'evil-previous-visual-line)
   (define-key evil-insert-state-map [up] 'evil-previous-visual-line)
   (define-key evil-motion-state-map [down] 'evil-next-visual-line)
