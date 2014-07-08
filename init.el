@@ -371,9 +371,14 @@ line mode."
 
 (defun init-el-auto-complete ()
   (interactive)
-  (unless (bound-and-true-p auto-complete-mode)
-    (auto-complete-mode))
-  (auto-complete))
+  (unless (local-variable-p 'init-el-in-auto-complete)
+    (unwind-protect
+        (progn
+          (make-local-variable 'init-el-in-auto-complete)
+          (unless (bound-and-true-p auto-complete-mode)
+            (auto-complete-mode))
+          (auto-complete))
+      (kill-local-variable 'init-el-in-auto-complete))))
 
 (defun init-el-setup-jedi ()
   (setq jedi:complete-on-dot t)
