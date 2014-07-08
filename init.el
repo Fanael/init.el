@@ -163,9 +163,9 @@ details."
     (setq x-select-enable-primary nil)))
 
 (defun init-el-set-undo-limits ()
-  (setq undo-limit 1048576
-        undo-strong-limit 1572864
-        undo-outer-limit 20971520))
+  (setq undo-limit (* 16 1024 1024)
+        undo-strong-limit (* 24 1024 1024)
+        undo-outer-limit (* 64 1024 1024)))
 
 (defun init-el-do-not-disable-commands ()
   (setq disabled-command-function nil))
