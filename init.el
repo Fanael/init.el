@@ -436,13 +436,9 @@ line mode."
 (defun init-el-setup-line-numbers ()
   (setq relative-line-numbers-format
         (lambda (offset)
-          (format "%3s" (cond
-                         ((< offset 0)
-                          (concat (number-to-string (- offset)) "k"))
-                         ((> offset 0)
-                          (concat (number-to-string offset) "j"))
-                         (t
-                          "==>")))))
+          (if (= offset 0)
+              "=>"
+            (format "%2d" (abs offset)))))
   (global-relative-line-numbers-mode))
 
 (defun init-el-setup-indentation ()
