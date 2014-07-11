@@ -610,11 +610,11 @@ The buffer starts in `fundamental-mode'."
     (fundamental-mode)))
 
 (defun open-directory-in-external-browser (directory)
-  (interactive (pcase (buffer-file-name)
-                 ((and (pred identity) bufferfile)
-                  (list (file-name-directory bufferfile)))
-                 (_
-                  (list default-directory))))
+  "Open DIRECTORY in the system's default file browser."
+  (interactive (let ((bufferfile (buffer-file-name)))
+                 (list (if bufferfile
+                           (file-name-directory bufferfile)
+                         default-directory))))
   (pcase system-type
     (`windows-nt
      (w32-shell-execute "open" directory nil 1))
