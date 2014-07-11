@@ -198,11 +198,11 @@ details."
                          flycheck
                          haskell-mode
                          highlight-blocks
+                         highlight-numbers
                          htmlize
                          ido-ubiquitous
                          jedi
                          markdown-mode
-                         number-font-lock-mode
                          parent-mode
                          php-mode
                          rainbow-delimiters
@@ -334,7 +334,7 @@ line mode."
                             `((,regexp (1 'font-lock-keyword-face))))))
 
 (defun init-el-setup-number-highlighting ()
-  (add-hook 'prog-mode-hook 'number-font-lock-mode))
+  (add-hook 'prog-mode-hook 'highlight-numbers-mode))
 
 (defun init-el-setup-rainbow-identifiers ()
   (setq rainbow-identifiers-choose-face-function 'rainbow-identifiers-cie-l*a*b*-choose-face)
