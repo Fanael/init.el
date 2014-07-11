@@ -608,3 +608,17 @@ The buffer starts in `fundamental-mode'."
   (interactive "BBuffer name:")
   (prog1 (switch-to-buffer (generate-new-buffer name))
     (fundamental-mode)))
+
+(defun open-directory-in-external-browser (directory)
+  (interactive (pcase (buffer-file-name)
+                 ((and (pred identity) bufferfile)
+                  (list (file-name-directory bufferfile)))
+                 (_
+                  (list default-directory))))
+  (pcase system-type
+    (`windows-nt
+     (w32-shell-execute "open" directory nil 1))
+    (`gnu/linux
+     (start-process "" nil "xdg-open" directory))
+    (_
+     (error "Unknown operating system"))))
