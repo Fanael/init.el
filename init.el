@@ -191,7 +191,6 @@ details."
       (dolist (package '(ace-jump-mode
                          auto-complete
                          emmet-mode
-                         epl
                          evil
                          evil-surround
                          fasm-mode
@@ -203,7 +202,6 @@ details."
                          ido-ubiquitous
                          jedi
                          markdown-mode
-                         parent-mode
                          php-mode
                          rainbow-delimiters
                          rainbow-identifiers
@@ -344,30 +342,10 @@ line mode."
   (setq dabbrev-case-replace nil))
 
 (defun init-el-setup-auto-complete ()
-  (init-el-with-eval-after-load auto-complete
-    (ac-config-default)
-    (setq ac-auto-start nil
-          ac-expand-on-auto-complete nil
-          ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory))
-    ;; `ac-config-default' installs some hooks that set `ac-sources' according
-    ;; to the major mode, run them.
-    (init-el-run-auto-complete-hooks)))
-
-(defun init-el-run-auto-complete-hooks ()
-  ;; This is a huge hack, but there's no other way to make `auto-complete'
-  ;; behave sanely when configured inside `with-eval-after-load'.
-  (require 'epl)
-  (require 'parent-mode)
-  (let ((acdirectory (file-name-as-directory (epl-package-directory (epl-find-installed-package 'auto-complete)))))
-    (dolist (buffer (buffer-list))
-      (with-current-buffer buffer
-        (dolist (mode (parent-mode-list major-mode))
-          (let ((hooksymbol (intern-soft (concat (symbol-name mode) "-hook"))))
-            (when (boundp hooksymbol) 
-              (dolist (hook (symbol-value hooksymbol))
-                (when (and (symbolp hook)
-                           (string= (file-name-directory (symbol-file hook)) acdirectory))
-                  (funcall hook))))))))))
+  (ac-config-default)
+  (setq ac-auto-start nil
+        ac-expand-on-auto-complete nil
+        ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory)))
 
 (defun init-el-auto-complete ()
   (interactive)
@@ -394,15 +372,6 @@ line mode."
   (add-hook 'prog-mode-hook 'highlight-blocks-mode))
 
 (defun init-el-setup-smartparens ()
-  (let ((oldfn (symbol-function 'self-insert-command)))
-    (fset 'self-insert-command
-          (lambda (count)
-            (interactive "p")
-            (fset 'self-insert-command oldfn)
-            (init-el-setup-smartparens-1)
-            (self-insert-command count)))))
-
-(defun init-el-setup-smartparens-1 ()
   (require 'smartparens-config)
   (smartparens-global-mode)
   (setq sp-highlight-pair-overlay nil
@@ -546,9 +515,7 @@ line mode."
 
 (defun init-el-start-server ()
   (when (eq system-type 'windows-nt)
-    (run-with-idle-timer 0.5 nil
-                         (lambda ()
-                           (server-start)))))
+    (server-start)))
 
 (defun smart-beginning-of-line (&optional lineoffset)
   "Move the point to the first non-white character of the current
