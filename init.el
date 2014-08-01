@@ -111,6 +111,8 @@ details."
 (defun init-el-disable-useless-gui-stuff ()
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
+  (when (fboundp 'horizontal-scroll-bar-mode)
+    (horizontal-scroll-bar-mode -1))
   (menu-bar-mode -1)
   (blink-cursor-mode -1)
   (setq use-file-dialog nil
