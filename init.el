@@ -471,15 +471,11 @@ Each element can be one of the following:
    string is not propertized.
  * (:symbol-name SYMBOL :face FACE) - the name of the SYMBOL propertized with
    FACE.
- * (:status-list :variables VARLIST :body BODY) - comma-separated list of
-   strings.
-   VARLIST is the variable list to bind with `let*' before evaluating
-   the BODY.
-   BODY is a list of element, each of which should be of the form (:predicate
-   PREDICATE :result RESULT :face FACE), where PREDICATE is an expression
-   evaluating to a boolean value determining whether to display RESULT, RESULT
-   is a string expression to be displayed, and FACE is the face to propertize
-   RESULT with."
+ * (:status-list BODY) - comma-separated list of strings.
+   BODY is a list of elements, each of which should be of the form (:predicate
+   PREDICATE :result RESULT :face FACE), where PREDICATE is a boolean expression
+   determining whether to display RESULT, RESULT is a string expression to be
+   displayed, and FACE is the face to propertize RESULT with."
     (let ((result ())
           (pendingstring nil))
       (dolist (element elements)
@@ -497,10 +493,9 @@ Each element can be one of the following:
              (setq pendingstring string)))
           (`(:symbol-name ,symbol :face ,face)
            (push ``(:eval (,(lambda ()
-                              (propertize (symbol-name ,symbol)
-                                          'face ,face))))
+                              (propertize (symbol-name ,symbol) 'face ,face))))
                  result))
-          (`(:status-list :variables ,variables :body ,body)
+          (`(:status-list ,body)
            (let ((body `(let ((strings ()))
                           ,@(mapcar
                              (lambda (element)
@@ -515,10 +510,7 @@ Each element can be one of the following:
                                   (error "invalid status list element %S" element))))
                              (reverse body))
                           (mapconcat 'identity strings ","))))
-             (push ``(:eval (,(lambda ()
-                                (let* ,variables
-                                  ,body))))
-                   result)))
+             (push ``(:eval (,(lambda () ,body))) result)))
           (_
            (error "unrecognized element: %S" element))))
       (when pendingstring
@@ -545,25 +537,21 @@ Each element can be one of the following:
      (:symbol-name buffer-file-coding-system :face font-lock-builtin-face)
      (:string "] [" :face nil)
      (:symbol-name evil-state :face font-lock-function-name-face)
-     (:string "] [" :face nil)
+     (:string "] %[[" :face nil)
      (:status-list
-      :variables ((depth (- (recursion-depth) (minibuffer-depth))))
-      :body ((:predicate (> depth 0)
-                         :result (format "Rec[%d]" depth)
-                         :face font-lock-function-name-face)
-             (:predicate (buffer-modified-p)
-                         :result "Mod"
-                         :face font-lock-warning-face)
-             (:predicate buffer-read-only
-                         :result "RO"
-                         :face font-lock-type-face)
-             (:predicate (buffer-narrowed-p)
-                         :result "Narrow"
-                         :face font-lock-type-face)
-             (:predicate defining-kbd-macro
-                         :result "Macro"
-                         :face font-lock-type-face)))
-     (:string "]" :face nil)))))
+      ((:predicate (buffer-modified-p)
+                   :result "Mod"
+                   :face font-lock-warning-face)
+       (:predicate buffer-read-only
+                   :result "RO"
+                   :face font-lock-type-face)
+       (:predicate (buffer-narrowed-p)
+                   :result "Narrow"
+                   :face font-lock-type-face)
+       (:predicate defining-kbd-macro
+                   :result "Macro"
+                   :face font-lock-type-face)))
+     (:string "]%]" :face nil)))))
 
 (defun init-el-setup-title-bar ()
   (setq icon-title-format (setq frame-title-format "%b [%f] - Emacs")))
