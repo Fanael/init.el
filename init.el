@@ -497,6 +497,10 @@ line mode."
                             'face 'font-lock-builtin-face))))
     "] ["
     `(:eval (,(lambda ()
+                (propertize (symbol-name evil-state)
+                            'face 'font-lock-function-name-face))))
+    "] ["
+    `(:eval (,(lambda ()
                 (let ((depth (- (recursion-depth) (minibuffer-depth))))
                   (mode-line-status-list
                    ((> depth 0) (format "Rec[%d]" depth) font-lock-function-name-face)
