@@ -261,8 +261,9 @@ details."
 
 (defun init-el-setup-evil ()
   (evil-mode)
-  (setq evil-default-cursor t
-        evil-want-fine-undo t)
+  (setq evil-want-fine-undo t
+        evil-echo-state nil
+        evil-ex-substitute-global t)
   (evil-define-operator evil-destroy (beg end type)
     "Delete text from BEG to END with TYPE. Do not save it."
     (evil-delete beg end type ?_ nil))
