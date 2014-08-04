@@ -465,13 +465,13 @@ line mode."
     `(let ((strings ()))
        ,@(mapcar
           (lambda (elt)
-            (let* ((predicate (pop elt))
-                   (string (pop elt))
-                   (face (pop elt)))
-              (unless (stringp string)
-                (error "Expected string, got %s" (type-of string)))
-              `(when ,predicate
-                 (push (eval-when-compile (propertize ,string 'face ,face)) strings))))
+            (pcase elt
+              (`(,predicate ,string ,face)
+               (let ((stringexp `(propertize ,string 'face ,face)))
+                 (when (stringp string)
+                   (setq stringexp `(eval-when-compile ,stringexp)))
+                 `(when ,predicate
+                    (push ,stringexp strings))))))
           (reverse elements))
        (mapconcat 'identity strings ","))))
 
@@ -497,11 +497,13 @@ line mode."
                             'face 'font-lock-builtin-face))))
     "] ["
     `(:eval (,(lambda ()
-                (mode-line-status-list
-                 ((buffer-modified-p) "Mod" font-lock-warning-face)
-                 (buffer-read-only "RO" font-lock-type-face)
-                 ((buffer-narrowed-p) "Narrow" font-lock-type-face)
-                 (defining-kbd-macro "Macro" font-lock-type-face)))))
+                (let ((depth (- (recursion-depth) (minibuffer-depth))))
+                  (mode-line-status-list
+                   ((> depth 0) (format "Rec[%d]" depth) font-lock-function-name-face)
+                   ((buffer-modified-p) "Mod" font-lock-warning-face)
+                   (buffer-read-only "RO" font-lock-type-face)
+                   ((buffer-narrowed-p) "Narrow" font-lock-type-face)
+                   (defining-kbd-macro "Macro" font-lock-type-face))))))
     "]")))
 
 (defun init-el-setup-title-bar ()
