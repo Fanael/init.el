@@ -459,6 +459,10 @@ line mode."
   (global-set-key [(shift down)] 'windmove-down)
   (global-set-key [(shift left)] 'windmove-left)
   (global-set-key [(shift right)] 'windmove-right)
+  (add-hook 'org-shiftup-final-hook 'windmove-up)
+  (add-hook 'org-shiftleft-final-hook 'windmove-left)
+  (add-hook 'org-shiftdown-final-hook 'windmove-down)
+  (add-hook 'org-shiftright-final-hook 'windmove-right)
   (global-set-key [f7] 'compile))
 
 (eval-when-compile
