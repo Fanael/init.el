@@ -119,10 +119,10 @@ details."
         use-dialog-box nil))
 
 (defun init-el-start-with-empty-scratch-buffer ()
-  (fset 'display-startup-echo-area-message (lambda ()))
+  (fset #'display-startup-echo-area-message (lambda ()))
   (setq inhibit-splash-screen t
         initial-scratch-message ""
-        initial-major-mode 'fundamental-mode))
+        initial-major-mode #'fundamental-mode))
 
 (defun init-el-disable-lock-files ()
   (setq create-lockfiles nil))
@@ -287,14 +287,14 @@ line mode."
         query-replace-highlight t))
 
 (defun init-el-setup-emmet ()
-  (add-hook 'sgml-mode-hook 'emmet-mode)
-  (add-hook 'css-mode-hook 'emmet-mode))
+  (add-hook 'sgml-mode-hook #'emmet-mode)
+  (add-hook 'css-mode-hook #'emmet-mode))
 
 (defun init-el-setup-whitespace-mode ()
   (setq whitespace-style '(face trailing lines-tail empty space-before-tab)))
 
 (defun init-el-setup-text-mode ()
-  (add-hook 'text-mode-hook 'visual-line-mode))
+  (add-hook 'text-mode-hook #'visual-line-mode))
 
 (defun init-el-setup-ignore-completion-case ()
   (setq completion-ignore-case t
@@ -318,7 +318,7 @@ line mode."
   (global-hl-line-mode))
 
 (defun init-el-setup-emacs-lisp-special-form-highlighting ()
-  (add-hook 'emacs-lisp-mode-hook 'init-el-highlight-all-special-forms))
+  (add-hook 'emacs-lisp-mode-hook #'init-el-highlight-all-special-forms))
 
 (defun init-el-highlight-all-special-forms ()
   (let ((regexp
@@ -335,11 +335,11 @@ line mode."
                             `((,regexp (1 'font-lock-keyword-face))))))
 
 (defun init-el-setup-number-highlighting ()
-  (add-hook 'prog-mode-hook 'highlight-numbers-mode))
+  (add-hook 'prog-mode-hook #'highlight-numbers-mode))
 
 (defun init-el-setup-rainbow-identifiers ()
-  (setq rainbow-identifiers-choose-face-function 'rainbow-identifiers-cie-l*a*b*-choose-face)
-  (add-hook 'prog-mode-hook 'rainbow-identifiers-mode))
+  (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face)
+  (add-hook 'prog-mode-hook #'rainbow-identifiers-mode))
 
 (defun init-el-setup-dabbrev ()
   (setq dabbrev-case-replace nil))
@@ -363,16 +363,16 @@ line mode."
 
 (defun init-el-setup-jedi ()
   (setq jedi:complete-on-dot t)
-  (add-hook 'python-mode-hook 'jedi:setup))
+  (add-hook 'python-mode-hook #'jedi:setup))
 
 (defun init-el-setup-haskell-mode ()
-  (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))
+  (add-hook 'haskell-mode-hook #'turn-on-haskell-indentation))
 
 (defun init-el-setup-rainbow-delimiters ()
-  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode))
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
 (defun init-el-setup-highlight-blocks ()
-  (add-hook 'prog-mode-hook 'highlight-blocks-mode))
+  (add-hook 'prog-mode-hook #'highlight-blocks-mode))
 
 (defun init-el-setup-smartparens ()
   (require 'smartparens-config)
@@ -403,7 +403,7 @@ line mode."
   (indent-according-to-mode))
 
 (defun init-el-setup-flycheck ()
-  (add-hook 'prog-mode-hook 'flycheck-mode)
+  (add-hook 'prog-mode-hook #'flycheck-mode)
   (setq flycheck-idle-change-delay 1
         flycheck-completion-system 'ido)
   (setq-default flycheck-cppcheck-checks '("style" "missingInclude")
@@ -427,43 +427,43 @@ line mode."
     (c-set-offset 'innamespace 0)))
 
 (defun init-el-setup-mappings ()
-  (global-set-key [remap execute-extended-command] 'smex)
-  (global-set-key [remap list-buffers] 'ibuffer-other-window)
-  (global-set-key [remap isearch-forward] 'isearch-forward-regexp)
-  (global-set-key [remap isearch-backward] 'isearch-backward-regexp)
-  (global-set-key [remap move-beginning-of-line] 'smart-beginning-of-line)
-  (define-key evil-motion-state-map [remap move-beginning-of-line] 'evil-smart-beginning-of-line)
-  (define-key evil-insert-state-map (kbd "RET") 'newline-and-indent)
-  (define-key evil-insert-state-map (kbd "C-<SPC>") 'init-el-auto-complete)
-  (define-key evil-insert-state-map (kbd "C-e") 'emmet-expand-line)
-  (define-key evil-normal-state-map " " 'evil-ex)
-  (define-key evil-visual-state-map " " 'evil-ex)
-  (define-key evil-normal-state-map ",e" 'find-file)
-  (define-key evil-normal-state-map ",w" 'write-file)
-  (define-key evil-normal-state-map ",b" 'switch-to-buffer)
-  (define-key evil-visual-state-map ",b" 'switch-to-buffer)
-  (define-key evil-normal-state-map ",B" 'list-buffers)
-  (define-key evil-visual-state-map ",B" 'list-buffers)
-  (define-key evil-normal-state-map ",d" 'evil-destroy)
-  (define-key evil-visual-state-map ",d" 'evil-destroy)
-  (define-key evil-normal-state-map ",a" 'mark-whole-buffer)
-  (define-key evil-visual-state-map ",a" 'mark-whole-buffer)
+  (global-set-key [remap execute-extended-command] #'smex)
+  (global-set-key [remap list-buffers] #'ibuffer-other-window)
+  (global-set-key [remap isearch-forward] #'isearch-forward-regexp)
+  (global-set-key [remap isearch-backward] #'isearch-backward-regexp)
+  (global-set-key [remap move-beginning-of-line] #'smart-beginning-of-line)
+  (define-key evil-motion-state-map [remap move-beginning-of-line] #'evil-smart-beginning-of-line)
+  (define-key evil-insert-state-map (kbd "RET") #'newline-and-indent)
+  (define-key evil-insert-state-map (kbd "C-<SPC>") #'init-el-auto-complete)
+  (define-key evil-insert-state-map (kbd "C-e") #'emmet-expand-line)
+  (define-key evil-normal-state-map " " #'evil-ex)
+  (define-key evil-visual-state-map " " #'evil-ex)
+  (define-key evil-normal-state-map ",e" #'find-file)
+  (define-key evil-normal-state-map ",w" #'write-file)
+  (define-key evil-normal-state-map ",b" #'switch-to-buffer)
+  (define-key evil-visual-state-map ",b" #'switch-to-buffer)
+  (define-key evil-normal-state-map ",B" #'list-buffers)
+  (define-key evil-visual-state-map ",B" #'list-buffers)
+  (define-key evil-normal-state-map ",d" #'evil-destroy)
+  (define-key evil-visual-state-map ",d" #'evil-destroy)
+  (define-key evil-normal-state-map ",a" #'mark-whole-buffer)
+  (define-key evil-visual-state-map ",a" #'mark-whole-buffer)
   (define-key evil-motion-state-map "," nil)
-  (define-key evil-motion-state-map ",j" 'evil-ace-jump-word-mode)
-  (define-key evil-motion-state-map ",k" 'evil-ace-jump-char-mode)
-  (define-key evil-motion-state-map [up] 'evil-previous-visual-line)
-  (define-key evil-insert-state-map [up] 'evil-previous-visual-line)
-  (define-key evil-motion-state-map [down] 'evil-next-visual-line)
-  (define-key evil-insert-state-map [down] 'evil-next-visual-line)
-  (global-set-key [(shift up)] 'windmove-up)
-  (global-set-key [(shift down)] 'windmove-down)
-  (global-set-key [(shift left)] 'windmove-left)
-  (global-set-key [(shift right)] 'windmove-right)
-  (add-hook 'org-shiftup-final-hook 'windmove-up)
-  (add-hook 'org-shiftleft-final-hook 'windmove-left)
-  (add-hook 'org-shiftdown-final-hook 'windmove-down)
-  (add-hook 'org-shiftright-final-hook 'windmove-right)
-  (global-set-key [f7] 'compile))
+  (define-key evil-motion-state-map ",j" #'evil-ace-jump-word-mode)
+  (define-key evil-motion-state-map ",k" #'evil-ace-jump-char-mode)
+  (define-key evil-motion-state-map [up] #'evil-previous-visual-line)
+  (define-key evil-insert-state-map [up] #'evil-previous-visual-line)
+  (define-key evil-motion-state-map [down] #'evil-next-visual-line)
+  (define-key evil-insert-state-map [down] #'evil-next-visual-line)
+  (global-set-key [(shift up)] #'windmove-up)
+  (global-set-key [(shift down)] #'windmove-down)
+  (global-set-key [(shift left)] #'windmove-left)
+  (global-set-key [(shift right)] #'windmove-right)
+  (add-hook 'org-shiftup-final-hook #'windmove-up)
+  (add-hook 'org-shiftleft-final-hook #'windmove-left)
+  (add-hook 'org-shiftdown-final-hook #'windmove-down)
+  (add-hook 'org-shiftright-final-hook #'windmove-right)
+  (global-set-key [f7] #'compile))
 
 (eval-when-compile
   (defmacro init-el-make-mode-line (elements)
@@ -513,7 +513,7 @@ Each element can be one of the following:
                                  (_
                                   (error "invalid status list element %S" element))))
                              (reverse body))
-                          (mapconcat 'identity strings ","))))
+                          (mapconcat #'identity strings ","))))
              (push ``(:eval (,(lambda () ,body))) result)))
           (_
            (error "unrecognized element: %S" element))))
