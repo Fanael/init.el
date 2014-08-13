@@ -241,6 +241,7 @@ details."
         ido-auto-merge-work-directories-length -1
         ido-use-filename-at-point 'guess
         ido-default-file-method 'selected-window
+        ido-default-buffer-method 'selected-window
         smex-history-length 256
         smex-save-file (expand-file-name ".smex-items" user-emacs-directory)
         ido-save-directory-list-file (expand-file-name ".ido.last" user-emacs-directory))
