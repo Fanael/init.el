@@ -339,8 +339,7 @@ line mode."
   (add-hook 'prog-mode-hook #'highlight-numbers-mode))
 
 (defun init-el-setup-rainbow-identifiers ()
-  (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face)
-  (add-hook 'prog-mode-hook #'rainbow-identifiers-mode))
+  (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face))
 
 (defun init-el-setup-dabbrev ()
   (setq dabbrev-case-replace nil))
@@ -464,6 +463,7 @@ line mode."
   (add-hook 'org-shiftdown-final-hook #'windmove-down)
   (add-hook 'org-shiftright-final-hook #'windmove-right)
   (global-set-key [f5] #'relative-line-numbers-mode)
+  (global-set-key [f6] #'rainbow-identifiers-mode)
   (global-set-key [f7] #'compile))
 
 (eval-when-compile
