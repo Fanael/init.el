@@ -64,6 +64,7 @@
   (init-el-setup-emacs-lisp-special-form-highlighting)
   (init-el-setup-number-highlighting)
   (init-el-setup-rainbow-identifiers)
+  (init-el-setup-highlight-quoted)
   (init-el-setup-dabbrev)
   (init-el-setup-auto-complete)
   (init-el-setup-jedi)
@@ -200,6 +201,7 @@ details."
                          haskell-mode
                          highlight-blocks
                          highlight-numbers
+                         highlight-quoted
                          htmlize
                          ido-ubiquitous
                          jedi
@@ -339,7 +341,12 @@ line mode."
   (add-hook 'prog-mode-hook #'highlight-numbers-mode))
 
 (defun init-el-setup-rainbow-identifiers ()
-  (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face))
+  (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face)
+  (setq rainbow-identifiers-faces-to-override '(highlight-quoted-symbol)))
+
+(defun init-el-setup-highlight-quoted ()
+  (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
+  (add-hook 'lisp-mode-hook #'highlight-quoted-mode))
 
 (defun init-el-setup-dabbrev ()
   (setq dabbrev-case-replace nil))
