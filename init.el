@@ -144,11 +144,10 @@ details."
 
 (defun init-el-use-fucking-utf-8 ()
   (prefer-coding-system 'utf-8)
-  (set-selection-coding-system 'utf-8)
   (set-language-environment "UTF-8")
   (setq locale-coding-system 'utf-8)
-  (when (eq system-type 'windows-nt)
-    (set-clipboard-coding-system 'utf-16le))
+  (unless (eq system-type 'windows-nt)
+    (set-selection-coding-system 'utf-8))
   (setq-default buffer-file-coding-system 'utf-8-unix))
 
 (defun init-el-fix-scrolling ()
