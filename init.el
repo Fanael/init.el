@@ -307,7 +307,7 @@ line mode."
   (setq show-paren-delay 0))
 
 (defun init-el-setup-theme ()
-  (let ((theme 'stekene-dark))
+  (let ((theme 'stekene-light))
     (load-theme theme t)
     ;; Without this hook X11 has problems setting the fucking cursor color.
     (add-hook 'after-make-frame-functions
