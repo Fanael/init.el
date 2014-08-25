@@ -307,14 +307,7 @@ line mode."
   (setq show-paren-delay 0))
 
 (defun init-el-setup-theme ()
-  (let ((theme 'stekene-light))
-    (load-theme theme t)
-    ;; Without this hook X11 has problems setting the fucking cursor color.
-    (add-hook 'after-make-frame-functions
-              (lambda (frame)
-                (when (eq (window-system frame) 'x)
-                  (disable-theme theme)
-                  (enable-theme theme))))))
+  (load-theme 'stekene-light t))
 
 (defun init-el-setup-line-highlighting ()
   (global-hl-line-mode))
