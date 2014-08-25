@@ -344,10 +344,13 @@ line mode."
   (setq dabbrev-case-replace nil))
 
 (defun init-el-setup-auto-complete ()
-  (ac-config-default)
-  (setq ac-auto-start nil
-        ac-expand-on-auto-complete nil
-        ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory)))
+  (run-with-idle-timer
+   0.1 nil
+   (lambda ()
+     (ac-config-default)
+     (setq ac-auto-start nil
+           ac-expand-on-auto-complete nil
+           ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory)))))
 
 (defun init-el-auto-complete ()
   (interactive)
@@ -374,16 +377,19 @@ line mode."
   (add-hook 'prog-mode-hook #'highlight-blocks-mode))
 
 (defun init-el-setup-smartparens ()
-  (require 'smartparens-config)
-  (smartparens-global-mode)
-  (setq sp-highlight-pair-overlay nil
-        sp-highlight-wrap-overlay nil
-        sp-highlight-wrap-tag-overlay nil)
-  (setq-default sp-autoskip-closing-pair t)
-  (sp-local-pair '(c-mode c++-mode java-mode css-mode php-mode js-mode perl-mode
-                          cperl-mode)
-                 "{" nil
-                 :post-handlers '((init-el-smartparens-create-and-enter-block "RET"))))
+  (run-with-idle-timer
+   0.1 nil
+   (lambda ()
+     (require 'smartparens-config)
+     (smartparens-global-mode)
+     (setq sp-highlight-pair-overlay nil
+           sp-highlight-wrap-overlay nil
+           sp-highlight-wrap-tag-overlay nil)
+     (setq-default sp-autoskip-closing-pair t)
+     (sp-local-pair '(c-mode c++-mode java-mode css-mode php-mode js-mode perl-mode
+                             cperl-mode)
+                    "{" nil
+                    :post-handlers '((init-el-smartparens-create-and-enter-block "RET"))))))
 
 (defun init-el-smartparens-create-and-enter-block (&rest _)
   (save-excursion
@@ -570,7 +576,7 @@ Each element can be one of the following:
 
 (defun init-el-start-server ()
   (when (eq system-type 'windows-nt)
-    (server-start)))
+    (run-with-idle-timer 0.1 nil #'server-start)))
 
 (defun smart-beginning-of-line (&optional lineoffset)
   "Move the point to the first non-white character of the current
