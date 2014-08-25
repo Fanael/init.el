@@ -333,8 +333,8 @@ line mode."
   (add-hook 'prog-mode-hook #'highlight-numbers-mode))
 
 (defun init-el-setup-rainbow-identifiers ()
-  (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face)
-  (setq rainbow-identifiers-faces-to-override '(highlight-quoted-symbol)))
+  (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face
+        rainbow-identifiers-faces-to-override '(highlight-quoted-symbol)))
 
 (defun init-el-setup-highlight-quoted ()
   (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
