@@ -368,7 +368,7 @@ line mode."
   (add-hook 'python-mode-hook #'jedi:setup))
 
 (defun init-el-setup-haskell-mode ()
-  (add-hook 'haskell-mode-hook #'turn-on-haskell-indent))
+  (add-hook 'haskell-mode-hook #'turn-on-haskell-indentation))
 
 (defun init-el-setup-rainbow-delimiters ()
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
