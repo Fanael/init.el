@@ -477,96 +477,55 @@ line mode."
   (global-set-key [f7] #'compile))
 
 (eval-when-compile
-  (defmacro init-el-make-mode-line (elements)
-    "Make the mode line format list.
-
-ELEMENTS is a list of mode line elements.
-Each element can be one of the following:
- * (:string STRING :face FACE) - STRING propertized with FACE. If FACE is nil,
-   string is not propertized.
- * (:symbol-name SYMBOL :face FACE) - the name of the SYMBOL propertized with
-   FACE.
- * (:status-list BODY) - comma-separated list of strings.
-   BODY is a list of elements, each of which should be of the form (:predicate
-   PREDICATE :result RESULT :face FACE), where PREDICATE is a boolean expression
-   determining whether to display RESULT, RESULT is a string expression to be
-   displayed, and FACE is the face to propertize RESULT with."
-    (let ((result ())
-          (pendingstring nil))
-      (dolist (element elements)
-        (pcase element
-          ((or `(:string ,string :face ,face)
-               (guard (when pendingstring
-                        ;; Not a string, flush the pending string.
-                        (push pendingstring result)
-                        (setq pendingstring nil))
-                      nil))
-           (when face
-             (setq string (propertize string 'face face)))
-           (if pendingstring
-               (setq pendingstring (concat pendingstring string))
-             (setq pendingstring string)))
-          (`(:symbol-name ,symbol :face ,face)
-           (push ``(:eval (,(lambda ()
-                              (propertize (symbol-name ,symbol) 'face ,face))))
-                 result))
-          (`(:status-list ,body)
-           (let ((body `(let ((strings ()))
-                          ,@(mapcar
-                             (lambda (element)
-                               (pcase element
-                                 (`(:predicate ,predicate :result ,result :face ,face)
-                                  (let ((resultexpr `(propertize ,result 'face ,face)))
-                                    (when (stringp result)
-                                      (setq resultexpr `(eval-when-compile ,resultexpr)))
-                                    `(when ,predicate
-                                       (push ,resultexpr strings))))
-                                 (_
-                                  (error "invalid status list element %S" element))))
-                             (reverse body))
-                          (mapconcat #'identity strings ","))))
-             (push ``(:eval (,(lambda () ,body))) result)))
-          (_
-           (error "unrecognized element: %S" element))))
-      (when pendingstring
-        (push pendingstring result))
-      `(list ,@(nreverse result)))))
+  (defmacro init-el-mode-line-status-list (&rest elements)
+    `(let ((strings ()))
+       ,@(mapcar
+          (lambda (elt)
+            (pcase elt
+              (`(,predicate ,string ,face)
+               (unless (stringp string)
+                 (error "Expected string, got %s" (type-of string)))
+               `(when ,predicate
+                  (push (eval-when-compile (propertize ,string 'face ,face)) strings)))
+              (_
+               (error "unknown mode line status element %S" elt))))
+          (reverse elements))
+       (mapconcat #'identity strings ","))))
 
 (defun init-el-setup-mode-line ()
   (setq-default
    mode-line-format
-   (init-el-make-mode-line
-    ((:string " " :face nil)
-     (:string "%b" :face font-lock-keyword-face)
-     (:string " (" :face nil)
-     (:string "%02l" :face font-lock-type-face)
-     (:string "," :face nil)
-     (:string "%02c" :face font-lock-type-face)
-     (:string ") [" :face nil)
-     (:string "%p" :face font-lock-constant-face)
-     (:string "/" :face nil)
-     (:string "%I" :face font-lock-constant-face)
-     (:string "] [" :face nil)
-     (:string "%m" :face font-lock-string-face)
-     (:string "] [" :face nil)
-     (:symbol-name buffer-file-coding-system :face font-lock-builtin-face)
-     (:string "] [" :face nil)
-     (:symbol-name evil-state :face font-lock-function-name-face)
-     (:string "] %[[" :face nil)
-     (:status-list
-      ((:predicate (buffer-modified-p)
-                   :result "Mod"
-                   :face font-lock-warning-face)
-       (:predicate buffer-read-only
-                   :result "RO"
-                   :face font-lock-type-face)
-       (:predicate (buffer-narrowed-p)
-                   :result "Narrow"
-                   :face font-lock-type-face)
-       (:predicate defining-kbd-macro
-                   :result "Macro"
-                   :face font-lock-type-face)))
-     (:string "]%]" :face nil)))))
+   (list
+    (eval-when-compile
+      (concat
+       " "
+       (propertize "%b" 'face 'font-lock-keyword-face)
+       " ("
+       (propertize "%02l" 'face 'font-lock-type-face)
+       ","
+       (propertize "%02c" 'face 'font-lock-type-face)
+       ") ["
+       (propertize "%p" 'face 'font-lock-constant-face)
+       "/"
+       (propertize "%I" 'face 'font-lock-constant-face)
+       "] ["
+       (propertize "%m" 'face 'font-lock-string-face)
+       "] ["))
+    `(:eval (,(lambda ()
+                (propertize (symbol-name buffer-file-coding-system)
+                            'face 'font-lock-builtin-face))))
+    "] ["
+    `(:eval (,(lambda ()
+                (propertize (symbol-name evil-state)
+                            'face 'font-lock-function-name-face))))
+    "] %[["
+    `(:eval (,(lambda ()
+                (init-el-mode-line-status-list
+                 ((buffer-modified-p) "Mod" font-lock-warning-face)
+                 (buffer-read-only "RO" font-lock-type-face)
+                 ((buffer-narrowed-p) "Narrow" font-lock-type-face)
+                 (defining-kbd-macro "Macro" font-lock-type-face)))))
+    "]%]")))
 
 (defun init-el-setup-title-bar ()
   (setq icon-title-format (setq frame-title-format "%b [%f] - Emacs")))
