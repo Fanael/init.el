@@ -49,6 +49,7 @@
   (init-el-disable-electric-indent)
   (init-el-setup-uniquify)
   (init-el-setup-undo-tree)
+  (init-el-setup-ignore-completion-case)
   (init-el-setup-ido)
   (init-el-setup-history)
   (init-el-setup-evil)
@@ -57,7 +58,6 @@
   (init-el-setup-emmet)
   (init-el-setup-whitespace-mode)
   (init-el-setup-text-mode)
-  (init-el-setup-ignore-completion-case)
   (init-el-setup-paren-matching)
   (init-el-setup-theme)
   (init-el-setup-line-highlighting)
@@ -245,6 +245,11 @@ details."
     (setq undo-tree-history-directory-alist (list (cons "." undodir))))
   (global-undo-tree-mode))
 
+(defun init-el-setup-ignore-completion-case ()
+  (setq completion-ignore-case t
+        read-buffer-completion-ignore-case t
+        read-file-name-completion-ignore-case t))
+
 (defun init-el-setup-ido ()
   (setq ido-enable-flex-matching t
         ido-auto-merge-work-directories-length -1
@@ -305,10 +310,6 @@ line mode."
 
 (defun init-el-setup-text-mode ()
   (add-hook 'text-mode-hook #'visual-line-mode))
-
-(defun init-el-setup-ignore-completion-case ()
-  (setq completion-ignore-case t
-        read-file-name-completion-ignore-case t))
 
 (defun init-el-setup-paren-matching ()
   (show-paren-mode)
