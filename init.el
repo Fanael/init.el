@@ -88,11 +88,11 @@
 FILE can be a feature or a file name, see `eval-after-load' for
 details."
   (declare (indent defun) (debug t))
+  (unless (symbolp file)
+    (error "init-el-with-eval-after-load: %S is not a symbol" file))
   ;; Load the file at byte-compile time to avoid spurious warnings.
   (when (bound-and-true-p byte-compile-current-file)
-    (unless (if (symbolp file)
-                (require file nil :no-error)
-              (load file :no-message :no-error))
+    (unless (require file nil t)
       (message "init-el-with-eval-after-load: couldn't load %s" file)))
   `(eval-after-load ',file
      `(,(lambda () ,@body))))
