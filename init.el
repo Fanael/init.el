@@ -47,8 +47,8 @@
   (init-el-setup-uniquify)
   (init-el-setup-undo-tree)
   (init-el-setup-ignore-completion-case)
-  (init-el-setup-ido)
   (init-el-setup-history)
+  (init-el-setup-helm)
   (init-el-setup-evil)
   (init-el-setup-surround)
   (init-el-setup-search-highlight)
@@ -203,11 +203,11 @@ details."
                          fasm-mode
                          flycheck
                          haskell-mode
+                         helm
                          highlight-blocks
                          highlight-numbers
                          highlight-quoted
                          htmlize
-                         ido-ubiquitous
                          jedi
                          markdown-mode
                          php-mode
@@ -216,7 +216,6 @@ details."
                          rainbow-mode
                          relative-line-numbers
                          smartparens
-                         smex
                          stekene-theme
                          undo-tree
                          yaml-mode))
@@ -247,21 +246,6 @@ details."
         read-buffer-completion-ignore-case t
         read-file-name-completion-ignore-case t))
 
-(defun init-el-setup-ido ()
-  (setq ido-enable-flex-matching t
-        ido-auto-merge-work-directories-length -1
-        ido-use-filename-at-point 'guess
-        ido-default-file-method 'selected-window
-        ido-default-buffer-method 'selected-window
-        smex-history-length 256
-        smex-save-file (expand-file-name ".smex-items" user-emacs-directory)
-        ido-save-directory-list-file (expand-file-name ".ido.last" user-emacs-directory))
-  (ido-mode)
-  (ido-everywhere)
-  (ido-ubiquitous-mode)
-  (init-el-with-eval-after-load smex
-    (smex-initialize)))
-
 (defun init-el-setup-history ()
   (setq history-length 1024
         search-ring-max 1024
@@ -270,6 +254,11 @@ details."
                                         regexp-search-ring)
         savehist-file (expand-file-name ".savehist" user-emacs-directory))
   (savehist-mode))
+
+(defun init-el-setup-helm ()
+  (init-el-deferred
+    (cl-letf (((symbol-function #'message) #'ignore))
+      (helm-mode))))
 
 (defun init-el-setup-evil ()
   (evil-mode)
@@ -411,8 +400,7 @@ line mode."
 
 (defun init-el-setup-flycheck ()
   (add-hook 'prog-mode-hook #'flycheck-mode)
-  (setq flycheck-idle-change-delay 1
-        flycheck-completion-system 'ido)
+  (setq flycheck-idle-change-delay 1)
   (setq-default flycheck-cppcheck-checks '("style" "missingInclude")
                 flycheck-cppcheck-inconclusive t
                 flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)))
@@ -433,7 +421,7 @@ line mode."
     (c-set-offset 'innamespace 0)))
 
 (defun init-el-setup-mappings ()
-  (global-set-key [remap execute-extended-command] #'smex)
+  (global-set-key [remap execute-extended-command] #'helm-M-x)
   (global-set-key [remap list-buffers] #'ibuffer-other-window)
   (global-set-key [remap isearch-forward] #'isearch-forward-regexp)
   (global-set-key [remap isearch-backward] #'isearch-backward-regexp)
