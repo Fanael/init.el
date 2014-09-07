@@ -599,3 +599,13 @@ The buffer starts in `fundamental-mode'."
      (start-process "" nil "xdg-open" directory))
     (_
      (error "Unknown operating system"))))
+
+(defun url-unhex-buffer-or-region (beg end)
+  "Unhex the region from BEG to END.
+
+When there's no active region, act on whole buffer."
+  (interactive
+   (if (region-active-p)
+       (list (region-beginning) (region-end))
+     (list (point-min) (point-max))))
+  (insert (url-unhex-string (delete-and-extract-region beg end))))
