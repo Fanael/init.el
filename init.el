@@ -48,6 +48,7 @@
   (init-el-setup-undo-tree)
   (init-el-setup-ignore-completion-case)
   (init-el-setup-history)
+  (init-el-setup-recentf)
   (init-el-setup-helm)
   (init-el-setup-evil)
   (init-el-setup-surround)
@@ -254,6 +255,11 @@ details."
                                         regexp-search-ring)
         savehist-file (expand-file-name ".savehist" user-emacs-directory))
   (savehist-mode))
+
+(defun init-el-setup-recentf ()
+  (setq recentf-max-saved-items 1024
+        recentf-save-file (expand-file-name ".recentf" user-emacs-directory))
+  (recentf-mode))
 
 (defun init-el-setup-helm ()
   (init-el-deferred
