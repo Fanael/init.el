@@ -48,7 +48,6 @@
   (init-el-setup-undo-tree)
   (init-el-setup-ignore-completion-case)
   (init-el-setup-history)
-  (init-el-setup-recentf)
   (init-el-setup-helm)
   (init-el-setup-evil)
   (init-el-setup-surround)
@@ -256,11 +255,6 @@ details."
         savehist-file (expand-file-name ".savehist" user-emacs-directory))
   (savehist-mode))
 
-(defun init-el-setup-recentf ()
-  (setq recentf-max-saved-items 1024
-        recentf-save-file (expand-file-name ".recentf" user-emacs-directory))
-  (recentf-mode))
-
 (defun init-el-setup-helm ()
   (init-el-deferred
     (helm-mode)))
@@ -463,7 +457,6 @@ line mode."
   (add-hook 'org-shiftdown-final-hook #'windmove-down)
   (add-hook 'org-shiftright-final-hook #'windmove-right)
   (global-set-key (kbd "<f5> i") #'rainbow-identifiers-mode)
-  (global-set-key (kbd "<f5> r") #'helm-recentf)
   (global-set-key [f7] #'compile)
   (init-el-with-eval-after-load helm
     (define-key helm-map "\t" #'helm-execute-persistent-action)
