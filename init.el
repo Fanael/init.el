@@ -339,11 +339,10 @@ line mode."
   (setq dabbrev-case-replace nil))
 
 (defun init-el-setup-auto-complete ()
-  (init-el-deferred
-    (ac-config-default)
-    (setq ac-auto-start nil
-          ac-expand-on-auto-complete nil
-          ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory))))
+  (ac-config-default)
+  (setq ac-auto-start nil
+        ac-expand-on-auto-complete nil
+        ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory)))
 
 (defun init-el-auto-complete ()
   (interactive)
