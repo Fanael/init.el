@@ -257,7 +257,8 @@ details."
 
 (defun init-el-setup-helm ()
   (init-el-deferred
-    (helm-mode)))
+    (cl-letf (((symbol-function #'message) #'ignore))
+      (helm-mode))))
 
 (defun init-el-setup-evil ()
   (evil-mode)
