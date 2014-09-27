@@ -82,8 +82,7 @@
 (defmacro init-el-with-eval-after-load (file &rest body)
   "Execute BODY after FILE is loaded.
 
-FILE can be a feature or a file name, see `eval-after-load' for
-details."
+FILE can be a feature or a file name, see `eval-after-load' for details."
   (declare (indent defun) (debug t))
   (unless (symbolp file)
     (error "init-el-with-eval-after-load: %S is not a symbol" file))
@@ -542,8 +541,8 @@ With argument LINEOFFSET not nil or 1, move forward LINEOFFSET - 1 lines first."
       (move-beginning-of-line 1))))
 
 (defun macroexpand-all-in-region (beg end)
-  "Expand all macros in given region and pretty-print the result
-into a new buffer."
+  "Expand all macros in given region and pretty-print the result into a new
+buffer."
   (interactive
    (if (use-region-p)
        (list (region-beginning) (region-end))
