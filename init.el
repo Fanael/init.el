@@ -79,18 +79,16 @@
   (init-el-setup-paragraph-filling)
   (init-el-start-server))
 
-(defmacro init-el-with-eval-after-load (file &rest body)
-  "Execute BODY after FILE is loaded.
-
-FILE can be a feature or a file name, see `eval-after-load' for details."
+(defmacro init-el-with-eval-after-load (feature &rest body)
+  "Execute BODY after FEATURE is loaded."
   (declare (indent defun) (debug t))
-  (unless (symbolp file)
-    (error "init-el-with-eval-after-load: %S is not a symbol" file))
+  (unless (symbolp feature)
+    (error "init-el-with-eval-after-load: %S is not a symbol" feature))
   ;; Load the file at byte-compile time to avoid spurious warnings.
   (when (bound-and-true-p byte-compile-current-file)
-    (unless (require file nil t)
-      (message "init-el-with-eval-after-load: couldn't load %s" file)))
-  `(eval-after-load ',file
+    (unless (require feature nil t)
+      (message "init-el-with-eval-after-load: couldn't load %s" feature)))
+  `(eval-after-load ',feature
      `(,(lambda () ,@body))))
 
 (defmacro init-el-deferred (&rest body)
