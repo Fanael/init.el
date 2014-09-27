@@ -530,18 +530,16 @@ line mode."
     (init-el-deferred (server-start))))
 
 (defun smart-beginning-of-line (&optional lineoffset)
-  "Move the point to the first non-white character of the current
-line. If the point is already there, move to the beginning of the
-line instead. With argument LINEOFFSET not nil or 1, behave like
-`beginning-of-line' instead."
+  "Move the point to the first non-white character of the current line.
+If the point is already there, move to the beginning of the line instead.
+With argument LINEOFFSET not nil or 1, move forward LINEOFFSET - 1 lines first."
   (interactive "^p")
-  (setq lineoffset (or lineoffset 1))
-  (if (= lineoffset 1)
-      (let ((oldpos (point)))
-        (back-to-indentation)
-        (when (= oldpos (point))
-          (move-beginning-of-line 1)))
-    (move-beginning-of-line lineoffset)))
+  (unless (memq lineoffset '(nil 1))
+    (move-beginning-of-line lineoffset))
+  (let ((oldpos (point)))
+    (back-to-indentation)
+    (when (= oldpos (point))
+      (move-beginning-of-line 1))))
 
 (defun macroexpand-all-in-region (beg end)
   "Expand all macros in given region and pretty-print the result
