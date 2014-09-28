@@ -186,9 +186,12 @@
 (defun init-el-setup-package-archives ()
   (setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
                            ("gnu" . "http://elpa.gnu.org/packages/")))
-  (when (eq system-type 'windows-nt)
-    (setq package-check-signature nil))
-  (package-initialize))
+  (package-initialize)
+  (when (boundp 'package-check-signature)
+    (require 'epg-config)
+    (unless (executable-find epg-gpg-program)
+      ;; No GPG, disable package signing.
+      (setq package-check-signature nil))))
 
 (defun init-el-install-required-packages ()
   (when (or (eq system-type 'windows-nt)
