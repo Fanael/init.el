@@ -186,6 +186,8 @@
 (defun init-el-setup-package-archives ()
   (setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
                            ("gnu" . "http://elpa.gnu.org/packages/")))
+  (when (eq system-type 'windows-nt)
+    (setq package-check-signature nil))
   (package-initialize))
 
 (defun init-el-install-required-packages ()
