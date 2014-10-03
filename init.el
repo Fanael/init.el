@@ -94,7 +94,7 @@
 (defmacro init-el-deferred (&rest body)
   (declare (indent defun) (debug t))
   `(run-with-idle-timer 0.1 nil ,(pcase body
-                                   (`((,functionname))
+                                   (`(#',functionname)
                                     `#',functionname)
                                    (_
                                     `(lambda () ,@body)))))
@@ -529,7 +529,7 @@ line mode."
 
 (defun init-el-start-server ()
   (when (eq system-type 'windows-nt)
-    (init-el-deferred (server-start))))
+    (init-el-deferred #'server-start)))
 
 (defun smart-beginning-of-line (&optional lineoffset)
   "Move the point to the first non-white character of the current line.
