@@ -564,10 +564,10 @@ When there's no active region, act on the buffer."
                   (not (eobp)))
         (let* ((bol (line-beginning-position))
                (currentline (buffer-substring-no-properties bol (line-end-position))))
+          (forward-line 1)
           (if (string-equal previousline currentline)
-              (delete-region bol (progn (forward-line 1) (point)))
-            (setq previousline currentline)
-            (forward-line 1)))))))
+              (delete-region bol (point))
+            (setq previousline currentline)))))))
 
 (defun create-buffer (name)
   "Create a new buffer with NAME and switch to it.
