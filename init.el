@@ -62,7 +62,6 @@
   (init-el-setup-number-highlighting)
   (init-el-setup-rainbow-identifiers)
   (init-el-setup-highlight-quoted)
-  (init-el-setup-dabbrev)
   (init-el-setup-auto-complete)
   (init-el-setup-jedi)
   (init-el-setup-haskell-mode)
@@ -329,9 +328,6 @@ line mode."
 (defun init-el-setup-highlight-quoted ()
   (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
   (add-hook 'lisp-mode-hook #'highlight-quoted-mode))
-
-(defun init-el-setup-dabbrev ()
-  (setq dabbrev-case-replace nil))
 
 (defun init-el-setup-auto-complete ()
   (ac-config-default)
