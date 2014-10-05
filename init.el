@@ -153,7 +153,6 @@
 
 (defun init-el-fix-scrolling ()
   (setq mouse-wheel-progressive-speed nil
-        scroll-step 1
         scroll-margin 3
         scroll-conservatively 100000
         scroll-preserve-screen-position 'always))
