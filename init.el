@@ -533,8 +533,8 @@ With argument LINEOFFSET not nil or 1, move forward LINEOFFSET - 1 lines first."
       (move-beginning-of-line 1))))
 
 (defun macroexpand-all-in-region (beg end)
-  "Expand all macros in given region and pretty-print the result into a new
-buffer."
+  "Expand all macros in region BEG to END.
+The result is shown pretty-printed in a new buffer."
   (interactive
    (if (use-region-p)
        (list (region-beginning) (region-end))
@@ -552,7 +552,8 @@ buffer."
 (defun uniq-lines (beg end)
   "Remove consecutive duplicate lines in region BEG to END.
 
-When there's no active region, act on the buffer."
+When there's no active region, act on the visible portion of the current
+buffer."
   (interactive
    (if (use-region-p)
        (list (region-beginning) (region-end))
@@ -578,7 +579,10 @@ The buffer starts in `fundamental-mode'."
     (fundamental-mode)))
 
 (defun open-directory-in-external-browser (directory)
-  "Open DIRECTORY in the system's default file browser."
+  "Open DIRECTORY in the system's default file browser.
+
+When called interactively, open the directory containing the file visited in the
+current buffer, if any; otherwise open `default-directory'."
   (interactive (let ((bufferfile (buffer-file-name)))
                  (list (if bufferfile
                            (file-name-directory bufferfile)
