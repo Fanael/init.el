@@ -160,8 +160,6 @@
         scroll-preserve-screen-position 'always))
 
 (defun init-el-setup-clipboard ()
-  (setq mouse-drag-copy-region nil
-        x-select-enable-clipboard t)
   (setq-default select-active-regions nil)
   (when (boundp 'x-select-enable-primary)
     (setq x-select-enable-primary nil)))
