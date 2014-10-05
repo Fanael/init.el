@@ -269,13 +269,7 @@ line mode."
     (smart-beginning-of-line)))
 
 (defun init-el-setup-surround ()
-  (global-evil-surround-mode)
-  (push '(?T . init-el-surround-bbcode-tag) (default-value 'evil-surround-pairs-alist)))
-
-(defun init-el-surround-bbcode-tag ()
-  (let ((tagname (read-string "BBCode tag: " nil nil nil t)))
-    (cons (format "[%s]" tagname)
-          (format "[/%s]" tagname))))
+  (global-evil-surround-mode))
 
 (defun init-el-setup-search-highlight ()
   (setq search-highlight t
