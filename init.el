@@ -66,7 +66,6 @@
   (init-el-setup-jedi)
   (init-el-setup-haskell-mode)
   (init-el-setup-rainbow-delimiters)
-  (init-el-setup-highlight-blocks)
   (init-el-setup-smartparens)
   (init-el-setup-flycheck)
   (init-el-setup-line-numbers)
@@ -349,9 +348,6 @@ line mode."
 (defun init-el-setup-rainbow-delimiters ()
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
-(defun init-el-setup-highlight-blocks ()
-  (add-hook 'prog-mode-hook #'highlight-blocks-mode))
-
 (defun init-el-setup-smartparens ()
   (init-el-deferred
     (require 'smartparens-config)
@@ -445,6 +441,7 @@ line mode."
   (global-set-key [f5] #'relative-line-numbers-mode)
   (global-set-key [f6] #'rainbow-identifiers-mode)
   (global-set-key [f7] #'compile)
+  (global-set-key [f8] #'highlight-blocks-now)
   (init-el-with-eval-after-load helm
     (define-key helm-map "\t" #'helm-execute-persistent-action)
     (define-key helm-map (kbd "C-z") #'helm-select-action)))
