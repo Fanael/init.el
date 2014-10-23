@@ -179,7 +179,7 @@
     (set-face-attribute 'default nil :family "Monospace" :height 100)))
 
 (defun init-el-setup-package-archives ()
-  (setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
+  (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                            ("gnu" . "http://elpa.gnu.org/packages/")))
   (package-initialize))
 
