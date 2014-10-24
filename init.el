@@ -348,8 +348,21 @@ line mode."
 
 (defun init-el-setup-slime ()
   (setq inferior-lisp-program "sbcl")
-  (add-hook 'lisp-mode-hook (lambda ()
-                              (push 'ac-source-slime-simple ac-sources))))
+  (add-hook 'lisp-mode-hook #'init-el-setup-slime-first-time)
+  (dolist (hook '(lisp-mode-hook
+                  inferior-slime-mode-hook
+                  slime-repl-mode-hook))
+    (add-hook hook #'set-up-slime-ac)))
+
+(defun init-el-setup-slime-first-time ()
+  (slime-setup '(slime-repl
+                 inferior-slime
+                 slime-asdf
+                 slime-editing-commands
+                 slime-fancy-inspector
+                 slime-xref-browser
+                 slime-highlight-edits))
+  (remove-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
 
 (defun init-el-setup-haskell-mode ()
   (add-hook 'haskell-mode-hook #'turn-on-haskell-indentation))
