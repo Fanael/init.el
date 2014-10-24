@@ -561,15 +561,16 @@ buffer."
      (list (point-min) (point-max))))
   (save-excursion
     (goto-char beg)
-    (let ((previousline nil))
-      (while (and (< (point) end)
-                  (not (eobp)))
-        (let* ((bol (line-beginning-position))
-               (currentline (buffer-substring-no-properties bol (line-end-position))))
-          (forward-line 1)
-          (if (string-equal previousline currentline)
-              (delete-region bol (point))
-            (setq previousline currentline)))))))
+    (save-restriction
+      (narrow-to-region beg end)
+      (let ((previousline nil))
+        (while (not (eobp))
+          (let* ((bol (line-beginning-position))
+                 (currentline (buffer-substring-no-properties bol (line-end-position))))
+            (forward-line 1)
+            (if (string-equal previousline currentline)
+                (delete-region bol (point))
+              (setq previousline currentline))))))))
 
 (defun create-buffer (name)
   "Create a new buffer with NAME and switch to it.
