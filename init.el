@@ -349,19 +349,22 @@ line mode."
 (defun init-el-setup-slime ()
   (setq inferior-lisp-program "sbcl")
   (add-hook 'lisp-mode-hook #'init-el-setup-slime-first-time)
-  (dolist (hook '(lisp-mode-hook
-                  inferior-slime-mode-hook
-                  slime-repl-mode-hook))
-    (add-hook hook #'set-up-slime-ac)))
+  (add-hook 'lisp-mode-hook #'set-up-slime-ac)
+  (add-hook 'slime-repl-mode-hook #'set-up-slime-ac))
 
 (defun init-el-setup-slime-first-time ()
-  (slime-setup '(slime-repl
-                 inferior-slime
-                 slime-asdf
+  (slime-setup '(slime-asdf
+                 slime-autodoc
                  slime-editing-commands
                  slime-fancy-inspector
-                 slime-xref-browser
-                 slime-highlight-edits))
+                 slime-fancy-trace
+                 slime-fontifying-fu
+                 slime-highlight-edits
+                 slime-package-fu
+                 slime-references
+                 slime-repl
+                 slime-trace-dialog
+                 slime-xref-browser))
   (remove-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
 
 (defun init-el-setup-haskell-mode ()
