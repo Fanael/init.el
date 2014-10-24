@@ -572,14 +572,6 @@ buffer."
                 (delete-region bol (point))
               (setq previousline currentline))))))))
 
-(defun create-buffer (name)
-  "Create a new buffer with NAME and switch to it.
-
-The buffer starts in `fundamental-mode'."
-  (interactive "BBuffer name:")
-  (prog1 (switch-to-buffer (generate-new-buffer name))
-    (fundamental-mode)))
-
 (defun open-directory-in-external-browser (directory)
   "Open DIRECTORY in the system's default file browser.
 
