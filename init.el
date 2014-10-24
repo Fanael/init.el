@@ -581,10 +581,8 @@ current buffer, if any; otherwise open `default-directory'."
                  (list (if bufferfile
                            (file-name-directory bufferfile)
                          default-directory))))
-  (pcase system-type
-    (`windows-nt
-     (w32-shell-execute "open" directory nil 1))
-    (`gnu/linux
-     (start-process "" nil "xdg-open" directory))
-    (_
-     (error "Unknown operating system"))))
+  (if (fboundp 'w32-shell-execute)
+      (w32-shell-execute "open" directory nil 1)
+    (condition-case nil
+        (start-process "" nil "xdg-open" directory)
+      (file-error (error "Don't know how to open a directory on this system")))))
