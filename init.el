@@ -64,6 +64,7 @@
   (init-el-setup-highlight-quoted)
   (init-el-setup-auto-complete)
   (init-el-setup-jedi)
+  (init-el-setup-slime)
   (init-el-setup-haskell-mode)
   (init-el-setup-rainbow-delimiters)
   (init-el-setup-smartparens)
@@ -187,7 +188,8 @@
   (when (or (eq system-type 'windows-nt)
             (/= 0 (user-uid)))
     (let ((refreshed nil))
-      (dolist (package '(ace-jump-mode
+      (dolist (package '(ac-slime
+                         ace-jump-mode
                          auto-complete
                          emmet-mode
                          evil
@@ -208,6 +210,7 @@
                          rainbow-identifiers
                          rainbow-mode
                          relative-line-numbers
+                         slime
                          smartparens
                          stekene-theme
                          undo-tree
@@ -342,6 +345,11 @@ line mode."
 (defun init-el-setup-jedi ()
   (setq jedi:complete-on-dot t)
   (add-hook 'python-mode-hook #'jedi:setup))
+
+(defun init-el-setup-slime ()
+  (setq inferior-lisp-program "sbcl")
+  (add-hook 'lisp-mode-hook (lambda ()
+                              (push 'ac-source-slime-simple ac-sources))))
 
 (defun init-el-setup-haskell-mode ()
   (add-hook 'haskell-mode-hook #'turn-on-haskell-indentation))
