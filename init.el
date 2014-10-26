@@ -76,6 +76,7 @@
   (init-el-setup-title-bar)
   (init-el-setup-buffer-boundary-indicators)
   (init-el-setup-paragraph-filling)
+  (init-el-setup-echo-keystrokes)
   (init-el-start-server))
 
 (defmacro init-el-with-eval-after-load (feature &rest body)
@@ -529,6 +530,9 @@ line mode."
 (defun init-el-setup-paragraph-filling ()
   (setq sentence-end-double-space nil)
   (setq-default fill-column 80))
+
+(defun init-el-setup-echo-keystrokes ()
+  (setq echo-keystrokes 5.391063232E-44))
 
 (defun init-el-start-server ()
   (when (eq system-type 'windows-nt)
