@@ -329,6 +329,8 @@ line mode."
   (ac-config-default)
   (setq ac-auto-start nil
         ac-expand-on-auto-complete nil
+        ac-dwim nil
+        ac-quick-help-delay 0.25
         ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory)))
 
 (defun init-el-auto-complete ()
