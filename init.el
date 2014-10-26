@@ -121,7 +121,7 @@
         use-dialog-box nil))
 
 (defun init-el-start-with-empty-scratch-buffer ()
-  (fset #'display-startup-echo-area-message (lambda ()))
+  (fset #'display-startup-echo-area-message #'ignore)
   (setq inhibit-splash-screen t
         initial-scratch-message ""
         initial-major-mode #'fundamental-mode))
