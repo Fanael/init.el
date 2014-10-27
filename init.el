@@ -185,6 +185,7 @@
                          highlight-numbers
                          highlight-quoted
                          htmlize
+                         ipretty
                          jedi
                          markdown-mode
                          package-safe-delete
@@ -434,6 +435,7 @@ line mode."
   (global-set-key [remap move-beginning-of-line] #'smart-beginning-of-line)
   (global-set-key [remap eval-expression] #'pp-eval-expression)
   (global-set-key [remap eval-last-sexp] #'pp-eval-last-sexp)
+  (global-set-key [remap eval-print-last-sexp] #'ipretty-last-sexp)
   (define-key evil-motion-state-map [remap move-beginning-of-line] #'evil-smart-beginning-of-line)
   (define-key evil-insert-state-map (kbd "RET") #'newline-and-indent)
   (define-key evil-insert-state-map (kbd "C-<SPC>") #'init-el-auto-complete)
