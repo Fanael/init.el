@@ -36,13 +36,13 @@
   (init-el-setup-backup-files)
   (init-el-setup-auto-save)
   (init-el-use-fucking-utf-8)
+  (init-el-setup-fonts)
+  (init-el-setup-package-archives)
+  (init-el-install-required-packages)
   (init-el-fix-scrolling)
   (init-el-setup-clipboard)
   (init-el-set-undo-limits)
   (init-el-do-not-disable-commands)
-  (init-el-setup-fonts)
-  (init-el-setup-package-archives)
-  (init-el-install-required-packages)
   (init-el-disable-electric-indent)
   (init-el-setup-uniquify)
   (init-el-setup-undo-tree)
@@ -152,25 +152,6 @@
     (set-selection-coding-system 'utf-8))
   (setq-default buffer-file-coding-system 'utf-8-unix))
 
-(defun init-el-fix-scrolling ()
-  (setq mouse-wheel-progressive-speed nil
-        scroll-margin 3
-        scroll-conservatively 100000
-        scroll-preserve-screen-position 'always))
-
-(defun init-el-setup-clipboard ()
-  (setq-default select-active-regions nil)
-  (when (boundp 'x-select-enable-primary)
-    (setq x-select-enable-primary nil)))
-
-(defun init-el-set-undo-limits ()
-  (setq undo-limit (* 16 1024 1024)
-        undo-strong-limit (* 24 1024 1024)
-        undo-outer-limit (* 64 1024 1024)))
-
-(defun init-el-do-not-disable-commands ()
-  (setq disabled-command-function nil))
-
 (defun init-el-setup-fonts ()
   (if (eq system-type 'windows-nt)
       (cond
@@ -221,6 +202,25 @@
             (package-refresh-contents)
             (setq refreshed t))
           (package-install package))))))
+
+(defun init-el-fix-scrolling ()
+  (setq mouse-wheel-progressive-speed nil
+        scroll-margin 3
+        scroll-conservatively 100000
+        scroll-preserve-screen-position 'always))
+
+(defun init-el-setup-clipboard ()
+  (setq-default select-active-regions nil)
+  (when (boundp 'x-select-enable-primary)
+    (setq x-select-enable-primary nil)))
+
+(defun init-el-set-undo-limits ()
+  (setq undo-limit (* 16 1024 1024)
+        undo-strong-limit (* 24 1024 1024)
+        undo-outer-limit (* 64 1024 1024)))
+
+(defun init-el-do-not-disable-commands ()
+  (setq disabled-command-function nil))
 
 (defun init-el-disable-electric-indent ()
   (when (bound-and-true-p electric-indent-mode)
