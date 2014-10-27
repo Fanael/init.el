@@ -270,11 +270,8 @@
   (evil-define-operator evil-destroy (beg end type)
     "Delete text from BEG to END with TYPE. Do not save it."
     (evil-delete beg end type ?_ nil))
-  (evil-define-motion evil-smart-beginning-of-line ()
-    "Workaround to make `smart-beginning-of-line' work in visual
-line mode."
-    :type exclusive
-    (smart-beginning-of-line)))
+  (evil-set-command-properties
+   #'smart-beginning-of-line :repeat 'motion :type 'exclusive :keep-visual t))
 
 (defun init-el-setup-surround ()
   (global-evil-surround-mode))
@@ -436,7 +433,6 @@ line mode."
   (global-set-key [remap eval-expression] #'pp-eval-expression)
   (global-set-key [remap eval-last-sexp] #'pp-eval-last-sexp)
   (global-set-key [remap eval-print-last-sexp] #'ipretty-last-sexp)
-  (define-key evil-motion-state-map [remap move-beginning-of-line] #'evil-smart-beginning-of-line)
   (define-key evil-insert-state-map (kbd "RET") #'newline-and-indent)
   (define-key evil-insert-state-map (kbd "C-<SPC>") #'init-el-auto-complete)
   (define-key evil-insert-state-map (kbd "C-e") #'emmet-expand-line)
