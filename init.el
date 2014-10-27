@@ -32,11 +32,11 @@
   (init-el-set-window-size)
   (init-el-disable-useless-gui-stuff)
   (init-el-start-with-empty-scratch-buffer)
+  (init-el-setup-fonts)
   (init-el-disable-lock-files)
   (init-el-setup-backup-files)
   (init-el-setup-auto-save)
   (init-el-use-fucking-utf-8)
-  (init-el-setup-fonts)
   (init-el-setup-package-archives)
   (init-el-install-required-packages)
   (init-el-fix-scrolling)
@@ -127,6 +127,15 @@
         initial-scratch-message ""
         initial-major-mode #'fundamental-mode))
 
+(defun init-el-setup-fonts ()
+  (if (eq system-type 'windows-nt)
+      (cond
+       ((find-font (font-spec :name "Consolas"))
+        (set-face-attribute 'default nil :family "Consolas" :height 100))
+       ((find-font (font-spec :name "Lucida Console"))
+        (set-face-attribute 'default nil :family "Lucida Console" :height 100)))
+    (set-face-attribute 'default nil :family "Monospace" :height 100)))
+
 (defun init-el-disable-lock-files ()
   (setq create-lockfiles nil))
 
@@ -151,15 +160,6 @@
   (unless (eq system-type 'windows-nt)
     (set-selection-coding-system 'utf-8))
   (setq-default buffer-file-coding-system 'utf-8-unix))
-
-(defun init-el-setup-fonts ()
-  (if (eq system-type 'windows-nt)
-      (cond
-       ((find-font (font-spec :name "Consolas"))
-        (set-face-attribute 'default nil :family "Consolas" :height 100))
-       ((find-font (font-spec :name "Lucida Console"))
-        (set-face-attribute 'default nil :family "Lucida Console" :height 100)))
-    (set-face-attribute 'default nil :family "Monospace" :height 100)))
 
 (defun init-el-setup-package-archives ()
   (setq package-archives '(("melpa" . "http://melpa.org/packages/")
