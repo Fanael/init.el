@@ -44,6 +44,7 @@
   (init-el-set-undo-limits)
   (init-el-do-not-disable-commands)
   (init-el-disable-electric-indent)
+  (init-el-disable-vc)
   (init-el-setup-uniquify)
   (init-el-setup-undo-tree)
   (init-el-setup-ignore-completion-case)
@@ -225,6 +226,9 @@
 (defun init-el-disable-electric-indent ()
   (when (bound-and-true-p electric-indent-mode)
     (electric-indent-mode -1)))
+
+(defun init-el-disable-vc ()
+  (setq vc-handled-backends '()))
 
 (defun init-el-setup-uniquify ()
   (require 'uniquify)
