@@ -469,6 +469,7 @@
   (global-set-key (kbd "C-c l") #'relative-line-numbers-mode)
   (global-set-key (kbd "C-c r") #'rainbow-identifiers-mode)
   (global-set-key (kbd "C-c b") #'highlight-blocks-now)
+  (global-set-key (kbd "C-c m") #'pp-macroexpand-all)
   (init-el-with-eval-after-load helm
     (define-key helm-map "\t" #'helm-execute-persistent-action)
     (define-key helm-map (kbd "C-z") #'helm-select-action)))
