@@ -261,7 +261,8 @@
   (init-el-deferred
     (cl-letf (((symbol-function #'message) #'ignore))
       (helm-mode))
-    (setq helm-move-to-line-cycle-in-source t)))
+    (setq helm-move-to-line-cycle-in-source t
+          helm-prevent-escaping-from-minibuffer nil)))
 
 (defun init-el-setup-evil ()
   (evil-mode)
