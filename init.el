@@ -465,10 +465,10 @@
   (add-hook 'org-shiftleft-final-hook #'windmove-left)
   (add-hook 'org-shiftdown-final-hook #'windmove-down)
   (add-hook 'org-shiftright-final-hook #'windmove-right)
-  (global-set-key [f5] #'relative-line-numbers-mode)
-  (global-set-key [f6] #'rainbow-identifiers-mode)
   (global-set-key [f7] #'compile)
-  (global-set-key [f8] #'highlight-blocks-now)
+  (global-set-key (kbd "C-c l") #'relative-line-numbers-mode)
+  (global-set-key (kbd "C-c r") #'rainbow-identifiers-mode)
+  (global-set-key (kbd "C-c b") #'highlight-blocks-now)
   (init-el-with-eval-after-load helm
     (define-key helm-map "\t" #'helm-execute-persistent-action)
     (define-key helm-map (kbd "C-z") #'helm-select-action)))
