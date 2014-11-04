@@ -174,6 +174,7 @@
       (dolist (package '(ac-slime
                          ace-jump-mode
                          auto-complete
+                         colorsarenice-theme
                          emmet-mode
                          evil
                          evil-surround
@@ -196,7 +197,6 @@
                          relative-line-numbers
                          slime
                          smartparens
-                         stekene-theme
                          undo-tree
                          yaml-mode))
         (unless (package-installed-p package)
@@ -297,7 +297,7 @@
   (setq show-paren-delay 0))
 
 (defun init-el-setup-theme ()
-  (load-theme 'stekene-light t))
+  (load-theme 'colorsarenice-light t))
 
 (defun init-el-setup-line-highlighting ()
   (global-hl-line-mode))
