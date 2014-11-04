@@ -554,14 +554,22 @@ With argument LINEOFFSET not nil or 1, move forward LINEOFFSET - 1 lines first."
     (when (= oldpos (point))
       (move-beginning-of-line 1))))
 
-(defun macroexpand-all-in-region (beg end)
+(defun pp-macroexpand-all (beg end)
   "Expand all macros in region BEG to END.
-The result is shown pretty-printed in a new buffer."
+The result is shown pretty-printed in a new buffer.
+When called interactively with no region active, or from Lisp with BEG nil,
+expand all macros in the sexp before point."
   (interactive
    (if (use-region-p)
        (list (region-beginning) (region-end))
-     (user-error "No region")))
-  (let* ((expanded (pp-to-string (macroexpand-all (read (buffer-substring-no-properties beg end)))))
+     '(nil nil)))
+  (let* ((expanded (pp-to-string
+                    (macroexpand-all
+                     (if beg
+                         (read (buffer-substring-no-properties beg end))
+                       (unless (fboundp 'pp-last-sexp)
+                         (require 'pp))
+                       (pp-last-sexp)))))
          (resultbuf (generate-new-buffer "*Pp Macroexpand Output*")))
     (with-current-buffer resultbuf
       (insert expanded)
