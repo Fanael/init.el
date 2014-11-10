@@ -442,6 +442,8 @@
   (define-key evil-motion-state-map "," nil)
   (define-key evil-motion-state-map ",e" #'find-file)
   (define-key evil-motion-state-map ",w" #'write-file)
+  (define-key evil-motion-state-map ",s" #'save-buffer)
+  (define-key evil-motion-state-map ",q" #'quit-window)
   (define-key evil-motion-state-map ",b" #'switch-to-buffer)
   (define-key evil-motion-state-map ",B" #'list-buffers)
   (define-key evil-motion-state-map ",d" #'evil-destroy)
