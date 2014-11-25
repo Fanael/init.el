@@ -71,6 +71,7 @@
   (init-el-setup-smartparens)
   (init-el-setup-flycheck)
   (init-el-setup-line-numbers)
+  (init-el-setup-eldoc)
   (init-el-setup-indentation)
   (init-el-setup-bindings)
   (init-el-setup-mode-line)
@@ -417,6 +418,18 @@
           (if (= offset 0)
               "=>"
             (format "%2d" (abs offset))))))
+
+(defun init-el-setup-eldoc ()
+  (setq eldoc-idle-delay 0.25)
+  (when (bound-and-true-p global-eldoc-mode)
+    (global-eldoc-mode -1))
+  (add-hook 'prog-mode-hook #'init-el-enable-eldoc-mode)
+  (when (boundp 'eval-expression-minibuffer-setup-hook)
+    (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)))
+
+(defun init-el-enable-eldoc-mode ()
+  (when eldoc-documentation-function
+    (eldoc-mode)))
 
 (defun init-el-setup-indentation ()
   (setq-default indent-tabs-mode nil
