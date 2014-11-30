@@ -301,7 +301,7 @@
   (let ((theme 'colorsarenice-dark))
     (load-theme theme t)
     (unless (eq system-type 'windows-nt)
-      ;; Without this hook X11 has problems setting the cursor color.
+      ;; Without this hook the cursor color is not set correctly under X11.
       (add-hook 'after-make-frame-functions
                 (lambda (frame)
                   (when (eq (window-system frame) 'x)
