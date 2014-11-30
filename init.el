@@ -298,7 +298,15 @@
   (setq show-paren-delay 0))
 
 (defun init-el-setup-theme ()
-  (load-theme 'colorsarenice-dark t))
+  (let ((theme 'colorsarenice-dark))
+    (load-theme theme t)
+    (unless (eq system-type 'windows-nt)
+      ;; Without this hook X11 has problems setting the cursor color.
+      (add-hook 'after-make-frame-functions
+                (lambda (frame)
+                  (when (eq (window-system frame) 'x)
+                    (disable-theme theme)
+                    (enable-theme theme)))))))
 
 (defun init-el-setup-line-highlighting ()
   (global-hl-line-mode))
