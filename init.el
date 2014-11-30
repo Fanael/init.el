@@ -298,7 +298,7 @@
   (setq show-paren-delay 0))
 
 (defun init-el-setup-theme ()
-  (load-theme 'colorsarenice-light t))
+  (load-theme 'colorsarenice-dark t))
 
 (defun init-el-setup-line-highlighting ()
   (global-hl-line-mode))
