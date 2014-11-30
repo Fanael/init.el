@@ -598,11 +598,12 @@ expand all macros in the sexp before point."
 
 When there's no active region, act on the visible portion of the current
 buffer."
-  (interactive (progn
-                 (barf-if-buffer-read-only)
-                 (if (use-region-p)
-                     (list (region-beginning) (region-end))
-                   (list (point-min) (point-max)))))
+  (interactive
+   (progn
+     (barf-if-buffer-read-only)
+     (if (use-region-p)
+         (list (region-beginning) (region-end))
+       (list (point-min) (point-max)))))
   (save-excursion
     (goto-char beg)
     (save-restriction
@@ -621,10 +622,11 @@ buffer."
 
 When called interactively, open the directory containing the file visited in the
 current buffer, if any; otherwise open `default-directory'."
-  (interactive (let ((bufferfile (buffer-file-name)))
-                 (list (if bufferfile
-                           (file-name-directory bufferfile)
-                         default-directory))))
+  (interactive
+   (let ((bufferfile (buffer-file-name)))
+     (list (if bufferfile
+               (file-name-directory bufferfile)
+             default-directory))))
   (if (fboundp 'w32-shell-execute)
       (w32-shell-execute "open" directory nil 1)
     (condition-case nil
