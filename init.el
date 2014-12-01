@@ -70,7 +70,6 @@
   (init-el-setup-rainbow-delimiters)
   (init-el-setup-smartparens)
   (init-el-setup-flycheck)
-  (init-el-setup-line-numbers)
   (init-el-setup-eldoc)
   (init-el-setup-indentation)
   (init-el-setup-bindings)
@@ -195,7 +194,6 @@
                          rainbow-delimiters
                          rainbow-identifiers
                          rainbow-mode
-                         relative-line-numbers
                          slime
                          smartparens
                          undo-tree
@@ -420,13 +418,6 @@
                 flycheck-cppcheck-inconclusive t
                 flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)))
 
-(defun init-el-setup-line-numbers ()
-  (setq relative-line-numbers-format
-        (lambda (offset)
-          (if (= offset 0)
-              "=>"
-            (format "%2d" (abs offset))))))
-
 (defun init-el-setup-eldoc ()
   (setq eldoc-idle-delay 0.25)
   (when (fboundp 'global-eldoc-mode)
@@ -473,6 +464,7 @@
   (define-key evil-motion-state-map ",a" #'mark-whole-buffer)
   (define-key evil-motion-state-map ",j" #'evil-ace-jump-word-mode)
   (define-key evil-motion-state-map ",k" #'evil-ace-jump-char-mode)
+  (define-key evil-motion-state-map ",l" #'evil-ace-jump-line-mode)
   (define-key evil-motion-state-map [up] #'evil-previous-visual-line)
   (define-key evil-insert-state-map [up] #'evil-previous-visual-line)
   (define-key evil-motion-state-map [down] #'evil-next-visual-line)
@@ -486,7 +478,6 @@
   (add-hook 'org-shiftdown-final-hook #'windmove-down)
   (add-hook 'org-shiftright-final-hook #'windmove-right)
   (global-set-key [f7] #'compile)
-  (global-set-key (kbd "C-c l") #'relative-line-numbers-mode)
   (global-set-key (kbd "C-c r") #'rainbow-identifiers-mode)
   (global-set-key (kbd "C-c b") #'highlight-blocks-now)
   (global-set-key (kbd "C-c m") #'pp-macroexpand-all)
