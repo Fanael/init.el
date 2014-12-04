@@ -435,6 +435,7 @@
 (defun init-el-setup-indentation ()
   (setq-default indent-tabs-mode nil
                 c-basic-offset 2)
+  (setq haskell-indentation-starter-offset 2)
   (init-el-with-eval-after-load cc-mode
     (c-set-offset 'substatement-open 0)
     (c-set-offset 'defun-open 0)
