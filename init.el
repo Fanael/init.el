@@ -457,7 +457,7 @@
   (define-key evil-motion-state-map ",e" #'find-file)
   (define-key evil-motion-state-map ",w" #'write-file)
   (define-key evil-motion-state-map ",s" #'save-buffer)
-  (define-key evil-motion-state-map ",q" #'quit-window)
+  (define-key evil-motion-state-map ",q" #'bury-buffer-delete-window-or-frame)
   (define-key evil-motion-state-map ",b" #'switch-to-buffer)
   (define-key evil-motion-state-map ",B" #'list-buffers)
   (define-key evil-motion-state-map ",d" #'evil-destroy)
@@ -631,3 +631,28 @@ current buffer, if any; otherwise open `default-directory'."
     (condition-case nil
         (start-process "" nil "xdg-open" directory)
       (file-error (error "Don't know how to open a directory on this system")))))
+
+(defun bury-buffer-delete-window-or-frame ()
+  "Bury the current buffer and delete its window or frame.
+When the selected window is the only window belonging to the selected frame, the
+frame is deleted; otherwise, the window is deleted.
+When the current buffer has client processes requesting its editing, mark the
+buffer as \"done\"; note that this may kill the buffer instead of burying it."
+  (interactive)
+  (let ((frame-to-delete (selected-frame))
+        (window-to-delete (selected-window))
+        (next-buffer-suggestion
+         (let ((buffer-to-bury (current-buffer)))
+           (if (bound-and-true-p server-buffer-clients)
+               (server-buffer-done buffer-to-bury)
+             (bury-buffer buffer-to-bury)
+             nil))))
+    (cond
+     (next-buffer-suggestion
+      (let ((next-buffer (car next-buffer-suggestion)))
+        (when next-buffer
+          (switch-to-buffer next-buffer))))
+     ((null (cdr (window-list frame-to-delete nil nil)))
+      (delete-frame frame-to-delete))
+     (t
+      (delete-window window-to-delete)))))
