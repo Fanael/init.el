@@ -465,6 +465,8 @@
   (define-key evil-motion-state-map ",j" #'evil-ace-jump-word-mode)
   (define-key evil-motion-state-map ",k" #'evil-ace-jump-char-mode)
   (define-key evil-motion-state-map ",l" #'evil-ace-jump-line-mode)
+  (define-key evil-motion-state-map ",p" #'previous-buffer)
+  (define-key evil-motion-state-map ",n" #'next-buffer)
   (define-key evil-motion-state-map [up] #'evil-previous-visual-line)
   (define-key evil-insert-state-map [up] #'evil-previous-visual-line)
   (define-key evil-motion-state-map [down] #'evil-next-visual-line)
