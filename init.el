@@ -426,11 +426,15 @@
   (when (boundp 'eval-expression-minibuffer-setup-hook)
     (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)))
 
-(defun init-el-enable-eldoc-mode ()
-  (when (or eldoc-documentation-function
-            (unless (fboundp 'global-eldoc-mode)
-              (derived-mode-p #'emacs-lisp-mode)))
-    (eldoc-mode)))
+(if (fboundp 'global-eldoc-mode)
+    (defun init-el-enable-eldoc-mode ()
+      (unless (memq eldoc-documentation-function '(ignore nil))
+        (eldoc-mode)))
+  (defun init-el-enable-eldoc-mode ()
+    (when (or (not (memq eldoc-documentation-function
+                         '(eldoc-documentation-function-default nil)))
+              (derived-mode-p #'emacs-lisp-mode))
+      (eldoc-mode))))
 
 (defun init-el-setup-indentation ()
   (setq-default indent-tabs-mode nil
