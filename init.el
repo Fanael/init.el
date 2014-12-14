@@ -347,6 +347,12 @@
 (defun init-el-setup-company ()
   (init-el-deferred
     (global-company-mode)
+    (cl-mapl
+     (lambda (backend)
+       (let ((actual-backend (car backend)))
+         (when (memq actual-backend '(company-elisp company-capf))
+           (setcar backend `(,actual-backend :with company-dabbrev-code)))))
+     company-backends)
     (setq company-idle-delay nil
           company-selection-wrap-around t
           company-require-match nil
