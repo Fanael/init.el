@@ -63,8 +63,8 @@
   (init-el-setup-number-highlighting)
   (init-el-setup-rainbow-identifiers)
   (init-el-setup-highlight-quoted)
-  (init-el-setup-auto-complete)
-  (init-el-setup-jedi)
+  (init-el-setup-company)
+  (init-el-setup-anaconda)
   (init-el-setup-slime)
   (init-el-setup-haskell-mode)
   (init-el-setup-rainbow-delimiters)
@@ -171,10 +171,10 @@
   (when (or (eq system-type 'windows-nt)
             (/= 0 (user-uid)))
     (let ((refreshed nil))
-      (dolist (package '(ac-slime
-                         ace-jump-mode
-                         auto-complete
+      (dolist (package '(ace-jump-mode
                          colorsarenice-theme
+                         company
+                         company-anaconda
                          emmet-mode
                          evil
                          evil-surround
@@ -187,7 +187,6 @@
                          highlight-quoted
                          htmlize
                          ipretty
-                         jedi
                          markdown-mode
                          package-safe-delete
                          php-mode
@@ -195,6 +194,7 @@
                          rainbow-identifiers
                          rainbow-mode
                          slime
+                         slime-company
                          smartparens
                          undo-tree
                          yaml-mode))
@@ -337,33 +337,26 @@
   (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
   (add-hook 'lisp-mode-hook #'highlight-quoted-mode))
 
-(defun init-el-setup-auto-complete ()
-  (ac-config-default)
-  (setq ac-auto-start nil
-        ac-expand-on-auto-complete nil
-        ac-dwim nil
-        ac-quick-help-delay 0.25
-        ac-comphist-file (expand-file-name ".ac-comphist" user-emacs-directory)))
+(defun init-el-setup-company ()
+  (init-el-deferred
+    (global-company-mode)
+    (setq company-idle-delay nil
+          company-selection-wrap-around t
+          company-require-match nil)))
 
-(defun init-el-auto-complete ()
-  (interactive)
-  (unless (bound-and-true-p auto-complete-mode)
-    (auto-complete-mode))
-  (auto-complete))
-
-(defun init-el-setup-jedi ()
-  (setq jedi:complete-on-dot t)
-  (add-hook 'python-mode-hook #'jedi:setup))
+(defun init-el-setup-anaconda ()
+  (add-hook 'python-mode-hook #'anaconda-mode)
+  (init-el-with-eval-after-load company
+    (add-to-list 'company-backends #'company-anaconda)))
 
 (defun init-el-setup-slime ()
   (setq inferior-lisp-program "sbcl")
-  (add-hook 'lisp-mode-hook #'init-el-setup-slime-first-time)
-  (add-hook 'lisp-mode-hook #'set-up-slime-ac)
-  (add-hook 'slime-repl-mode-hook #'set-up-slime-ac))
+  (add-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
 
 (defun init-el-setup-slime-first-time ()
   (slime-setup '(slime-asdf
                  slime-autodoc
+                 slime-company
                  slime-editing-commands
                  slime-fancy-inspector
                  slime-fancy-trace
@@ -455,7 +448,7 @@
   (global-set-key [remap eval-last-sexp] #'pp-eval-last-sexp)
   (global-set-key [remap eval-print-last-sexp] #'ipretty-last-sexp)
   (define-key evil-insert-state-map (kbd "RET") #'newline-and-indent)
-  (define-key evil-insert-state-map (kbd "C-<SPC>") #'init-el-auto-complete)
+  (define-key evil-insert-state-map (kbd "C-<SPC>") #'company-complete)
   (define-key evil-insert-state-map (kbd "C-e") #'emmet-expand-line)
   (define-key evil-motion-state-map "," nil)
   (define-key evil-motion-state-map " " #'evil-repeat-find-char-reverse)
