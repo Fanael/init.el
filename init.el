@@ -343,7 +343,9 @@
     (global-company-mode)
     (setq company-idle-delay nil
           company-selection-wrap-around t
-          company-require-match nil)))
+          company-require-match nil
+          company-dabbrev-minimum-length 3
+          company-dabbrev-other-buffers t)))
 
 (defun init-el-setup-anaconda ()
   (add-hook 'python-mode-hook #'anaconda-mode)
