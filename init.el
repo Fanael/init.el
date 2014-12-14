@@ -348,7 +348,8 @@
 (defun init-el-setup-anaconda ()
   (add-hook 'python-mode-hook #'anaconda-mode)
   (init-el-with-eval-after-load company
-    (add-to-list 'company-backends #'company-anaconda)))
+    (init-el-with-eval-after-load python
+      (add-to-list 'company-backends #'company-anaconda))))
 
 (defun init-el-setup-slime ()
   (setq inferior-lisp-program "sbcl")
@@ -374,7 +375,8 @@
   (add-hook 'haskell-mode-hook #'turn-on-haskell-indentation)
   (add-hook 'haskell-mode-hook #'ghc-init)
   (init-el-with-eval-after-load company
-    (add-to-list 'company-backends '(company-ghc :with company-dabbrev-code))))
+    (init-el-with-eval-after-load haskell-mode
+      (add-to-list 'company-backends '(company-ghc :with company-dabbrev-code)))))
 
 (defun init-el-setup-rainbow-delimiters ()
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
