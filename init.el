@@ -167,38 +167,41 @@
                            ("gnu" . "http://elpa.gnu.org/packages/")))
   (package-initialize))
 
+(defconst init-el-required-packages
+  '(ace-jump-mode
+    colorsarenice-theme
+    company
+    company-anaconda
+    company-ghc
+    emmet-mode
+    evil
+    evil-surround
+    fasm-mode
+    flycheck
+    haskell-mode
+    helm
+    highlight-blocks
+    highlight-numbers
+    highlight-quoted
+    htmlize
+    ipretty
+    markdown-mode
+    package-safe-delete
+    php-mode
+    rainbow-delimiters
+    rainbow-identifiers
+    rainbow-mode
+    slime
+    slime-company
+    smartparens
+    undo-tree
+    yaml-mode))
+
 (defun init-el-install-required-packages ()
   (when (or (eq system-type 'windows-nt)
             (/= 0 (user-uid)))
     (let ((refreshed nil))
-      (dolist (package '(ace-jump-mode
-                         colorsarenice-theme
-                         company
-                         company-anaconda
-                         company-ghc
-                         emmet-mode
-                         evil
-                         evil-surround
-                         fasm-mode
-                         flycheck
-                         haskell-mode
-                         helm
-                         highlight-blocks
-                         highlight-numbers
-                         highlight-quoted
-                         htmlize
-                         ipretty
-                         markdown-mode
-                         package-safe-delete
-                         php-mode
-                         rainbow-delimiters
-                         rainbow-identifiers
-                         rainbow-mode
-                         slime
-                         slime-company
-                         smartparens
-                         undo-tree
-                         yaml-mode))
+      (dolist (package init-el-required-packages)
         (unless (package-installed-p package)
           (unless refreshed
             (package-refresh-contents)
