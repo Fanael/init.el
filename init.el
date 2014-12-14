@@ -374,7 +374,7 @@
   (add-hook 'haskell-mode-hook #'turn-on-haskell-indentation)
   (add-hook 'haskell-mode-hook #'ghc-init)
   (init-el-with-eval-after-load company
-    (add-to-list 'company-backends #'company-ghc)))
+    (add-to-list 'company-backends '(company-ghc :with company-dabbrev-code))))
 
 (defun init-el-setup-rainbow-delimiters ()
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
