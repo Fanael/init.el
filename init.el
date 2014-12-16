@@ -267,14 +267,13 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
         read-file-name-completion-ignore-case t))
 
 (defun init-el-setup-history ()
+  (init-el-require-when-compiling savehist)
   (setq history-length 1024
         search-ring-max 1024
-        regexp-search-ring-max 1024)
-  (savehist-mode)
-  (init-el-require-when-compiling savehist)
-  (setq savehist-additional-variables '(search-ring
-                                        regexp-search-ring)
-        savehist-file (expand-file-name ".savehist" user-emacs-directory)))
+        regexp-search-ring-max 1024
+        savehist-additional-variables '(search-ring regexp-search-ring)
+        savehist-file (expand-file-name ".savehist" user-emacs-directory))
+  (savehist-mode))
 
 (defun init-el-setup-helm ()
   (init-el-deferred
