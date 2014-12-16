@@ -150,8 +150,8 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
 (defmacro init-el-deferred (&rest body)
   (declare (indent defun) (debug t))
   `(run-with-idle-timer 0.1 nil ,(pcase body
-                                   (`(#',functionname)
-                                    `#',functionname)
+                                   (`(#',function-name)
+                                    `#',function-name)
                                    (_
                                     `(lambda () ,@body)))))
 
@@ -196,18 +196,18 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
   (setq create-lockfiles nil))
 
 (defun init-el-setup-backup-files ()
-  (let ((backupdir (expand-file-name "backups" user-emacs-directory)))
+  (let ((backup-dir (expand-file-name "backups" user-emacs-directory)))
     (setq backup-by-copying t
           delete-old-versions t
           kept-old-versions 3
           kept-new-versions 7
           version-control t
-          backup-directory-alist (list (cons "." backupdir)))))
+          backup-directory-alist (list (cons "." backup-dir)))))
 
 (defun init-el-setup-auto-save ()
-  (let ((autosavedir (file-name-as-directory (expand-file-name "autosave" user-emacs-directory))))
-    (setq auto-save-list-file-prefix (expand-file-name ".saves-" autosavedir)
-          auto-save-file-name-transforms (list (list ".*" (replace-quote autosavedir) t)))))
+  (let ((auto-save-dir (file-name-as-directory (expand-file-name "autosave" user-emacs-directory))))
+    (setq auto-save-list-file-prefix (expand-file-name ".saves-" auto-save-dir)
+          auto-save-file-name-transforms (list (list ".*" (replace-quote auto-save-dir) t)))))
 
 (defun init-el-use-fucking-utf-8 ()
   (prefer-coding-system 'utf-8)
@@ -255,11 +255,11 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
 (defun init-el-setup-undo-tree ()
   (global-undo-tree-mode)
   (init-el-require-when-compiling undo-tree)
-  (let ((undodir (expand-file-name "undo" user-emacs-directory)))
+  (let ((undo-dir (expand-file-name "undo" user-emacs-directory)))
     (setq undo-tree-visualizer-timestamps t
           undo-tree-visualizer-lazy-drawing nil
           undo-tree-auto-save-history t
-          undo-tree-history-directory-alist (list (cons "." undodir)))))
+          undo-tree-history-directory-alist (list (cons "." undo-dir)))))
 
 (defun init-el-setup-ignore-completion-case ()
   (setq completion-ignore-case t
@@ -341,14 +341,14 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
   (font-lock-add-keywords
    nil
    (eval-when-compile
-     `((,(let ((specialforms '()))
+     `((,(let ((special-forms '()))
            (mapatoms (lambda (symbol)
                        (when (fboundp symbol)
                          (let ((fn (symbol-function symbol)))
                            (when (and (subrp fn)
                                       (eq 'unevalled (cdr (subr-arity fn))))
-                             (push (symbol-name symbol) specialforms))))))
-           (concat "(" (regexp-opt specialforms t) "\\_>"))
+                             (push (symbol-name symbol) special-forms))))))
+           (concat "(" (regexp-opt special-forms t) "\\_>"))
         (1 'font-lock-keyword-face))))))
 
 (defun init-el-setup-number-highlighting ()
@@ -436,9 +436,9 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
     ;; Indent the line with the opening brace, but only if it
     ;; contains nothing more than the brace.
     (end-of-line 0)
-    (let ((oldpoint (point)))
+    (let ((old-point (point)))
       (back-to-indentation)
-      (when (= (1+ (point)) oldpoint)
+      (when (= (1+ (point)) old-point)
         (indent-according-to-mode))))
   ;; Open the block and reindent the closing brace.
   (newline)
@@ -611,16 +611,16 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
   (when (eq system-type 'windows-nt)
     (init-el-deferred #'server-start)))
 
-(defun smart-beginning-of-line (&optional lineoffset)
+(defun smart-beginning-of-line (&optional line-offset)
   "Move the point to the first non-white character of the current line.
 If the point is already there, move to the beginning of the line instead.
 With argument LINEOFFSET not nil or 1, move forward LINEOFFSET - 1 lines first."
   (interactive "^p")
-  (unless (memq lineoffset '(nil 1))
-    (move-beginning-of-line lineoffset))
-  (let ((oldpos (point)))
+  (unless (memq line-offset '(nil 1))
+    (move-beginning-of-line line-offset))
+  (let ((old-point (point)))
     (back-to-indentation)
-    (when (= oldpos (point))
+    (when (= old-point (point))
       (move-beginning-of-line 1))))
 
 (defun pp-macroexpand-all (beg end)
@@ -663,14 +663,14 @@ buffer."
     (goto-char beg)
     (save-restriction
       (narrow-to-region beg end)
-      (let ((previousline nil))
+      (let ((previous-line nil))
         (while (not (eobp))
           (let* ((bol (line-beginning-position))
-                 (currentline (buffer-substring-no-properties bol (line-end-position))))
+                 (current-line (buffer-substring-no-properties bol (line-end-position))))
             (forward-line 1)
-            (if (string-equal previousline currentline)
+            (if (string-equal previous-line current-line)
                 (delete-region bol (point))
-              (setq previousline currentline))))))))
+              (setq previous-line current-line))))))))
 
 (defun open-directory-in-external-browser (directory)
   "Open DIRECTORY in the system's default file browser.
@@ -678,9 +678,9 @@ buffer."
 When called interactively, open the directory containing the file visited in the
 current buffer, if any; otherwise open `default-directory'."
   (interactive
-   (let ((bufferfile (buffer-file-name)))
-     (list (if bufferfile
-               (file-name-directory bufferfile)
+   (let ((buffer-file (buffer-file-name)))
+     (list (if buffer-file
+               (file-name-directory buffer-file)
              default-directory))))
   (if (fboundp 'w32-shell-execute)
       (w32-shell-execute "open" directory nil 1)
