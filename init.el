@@ -268,7 +268,8 @@
     (cl-letf (((symbol-function #'message) #'ignore))
       (helm-mode))
     (setq helm-move-to-line-cycle-in-source t
-          helm-prevent-escaping-from-minibuffer nil)))
+          helm-prevent-escaping-from-minibuffer nil
+          helm-M-x-always-save-history t)))
 
 (defun init-el-setup-evil ()
   (evil-mode)
