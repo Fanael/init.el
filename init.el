@@ -80,25 +80,67 @@
   (init-el-setup-echo-keystrokes)
   (init-el-start-server))
 
-(defmacro init-el-require-when-compiling (feature)
+(eval-and-compile
+  (defconst init-el-package-archives
+    '(("melpa" . "http://melpa.org/packages/")
+      ("gnu" . "http://elpa.gnu.org/packages/")))
+
+  (defun init-el-call-once (func)
+    (let ((called nil))
+      (lambda (&rest args)
+        (unless called
+          (setq called t)
+          (apply func args)))))
+
+  (defun init-el-install-package-if-not-installed (package refresh-archives)
+    (unless (package-installed-p package)
+      (funcall refresh-archives)
+      (package-install package))))
+
+(eval-when-compile
+  (require 'package)
+  (let ((package-initialize (init-el-call-once #'package-initialize))
+        (refresh-archives (init-el-call-once #'package-refresh-contents)))
+    (defun init-el-install-package-when-compiling (package)
+      (let ((package-archives init-el-package-archives))
+        (funcall package-initialize)
+        (init-el-install-package-if-not-installed package refresh-archives)))))
+
+(defmacro init-el-require-when-compiling (feature &optional package)
   "Require FEATURE only when byte-compiling.
 The sole purpose of this macro is to tell the byte-compiler that functions and
-variables provided by FEATURE are in scope, so it doesn't warn about them."
+variables provided by FEATURE are in scope, so it doesn't warn about them.
+
+If FEATURE is not found, PACKAGE is installed and FEATURE is required again.
+If loading fails again, an error is signaled.
+If PACKAGE is nil, FEATURE is assumed to be the package name."
   (when (bound-and-true-p byte-compile-current-file)
-    (require feature))
+    (unless (require feature nil t)
+      (init-el-install-package-when-compiling (or package feature))
+      (require feature)))
   nil)
 
 (defmacro init-el-with-eval-after-load (feature &rest body)
-  "Execute BODY after FEATURE is loaded."
+  "Execute BODY after FEATURE is loaded.
+FEATURE can be either a cons cell (FEATURE . PACKAGE) or a symbol, in which case
+PACKAGE is assumed to be the same as FEATURE.
+If FEATURE is not found, PACKAGE is installed and FEATURE is required again.
+If loading fails again, an error is signaled."
   (declare (indent defun) (debug t))
-  (let ((eval-after-load-body `((init-el-require-when-compiling ,feature)
-                                ,@body)))
-    (if (fboundp 'with-eval-after-load)
-        `(with-eval-after-load ',feature
-           ,@eval-after-load-body)
-      `(eval-after-load ',feature
-         `(,(lambda ()
-              ,@eval-after-load-body))))))
+  (pcase feature
+    ((or (and (pred symbolp) feature package)
+         `(,feature . ,package))
+     (let ((eval-after-load-body
+            `((init-el-require-when-compiling ,feature ,package)
+              ,@body)))
+       (if (fboundp 'with-eval-after-load)
+           `(with-eval-after-load ',feature
+              ,@eval-after-load-body)
+         `(eval-after-load ',feature
+            (list (lambda ()
+                    ,@eval-after-load-body))))))
+    (_
+     (error "init-el-with-eval-after-load: invalid feature `%S'" feature))))
 
 (defmacro init-el-deferred (&rest body)
   (declare (indent defun) (debug t))
@@ -171,8 +213,7 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
   (setq-default buffer-file-coding-system 'utf-8-unix))
 
 (defun init-el-setup-package-archives ()
-  (setq package-archives '(("melpa" . "http://melpa.org/packages/")
-                           ("gnu" . "http://elpa.gnu.org/packages/")))
+  (setq package-archives init-el-package-archives)
   (package-initialize))
 
 (defconst init-el-required-packages
@@ -211,13 +252,9 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
 (defun init-el-install-required-packages ()
   (when (or (eq system-type 'windows-nt)
             (/= 0 (user-uid)))
-    (let ((refreshed nil))
+    (let ((refresh-archives (init-el-call-once #'package-refresh-contents)))
       (dolist (package init-el-required-packages)
-        (unless (package-installed-p package)
-          (unless refreshed
-            (package-refresh-contents)
-            (setq refreshed t))
-          (package-install package))))))
+        (init-el-install-package-if-not-installed package refresh-archives)))))
 
 (defun init-el-fix-scrolling ()
   (setq mouse-wheel-progressive-speed nil
@@ -280,7 +317,7 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
       (init-el-require-when-compiling helm)
       (setq helm-move-to-line-cycle-in-source t
             helm-prevent-escaping-from-minibuffer nil)))
-  (init-el-with-eval-after-load helm-command
+  (init-el-with-eval-after-load (helm-command . helm)
     (setq helm-M-x-always-save-history t)))
 
 (defun init-el-setup-evil ()
@@ -374,7 +411,7 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
     (setq company-idle-delay nil
           company-selection-wrap-around t
           company-require-match nil))
-  (init-el-with-eval-after-load company-dabbrev
+  (init-el-with-eval-after-load (company-dabbrev . company)
     (setq company-dabbrev-minimum-length 3
           company-dabbrev-other-buffers t)))
 
@@ -477,7 +514,7 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
   (setq-default indent-tabs-mode nil)
   (init-el-with-eval-after-load cc-vars
     (setq-default c-basic-offset 2))
-  (init-el-with-eval-after-load haskell-indentation
+  (init-el-with-eval-after-load (haskell-indentation . haskell-mode)
     (setq haskell-indentation-starter-offset 2))
   (init-el-with-eval-after-load cc-mode
     (c-set-offset 'substatement-open 0)
