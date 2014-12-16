@@ -84,56 +84,68 @@
     '(("melpa" . "http://melpa.org/packages/")
       ("gnu" . "http://elpa.gnu.org/packages/")))
 
-  (defun init-el-call-once (func)
-    (let ((called nil))
-      (lambda (&rest args)
-        (unless called
-          (setq called t)
-          (apply func args)))))
+  (defconst init-el-required-packages
+    (append
+     (when (eq system-type 'windows-nt)
+       '(helm-w32-launcher))
+     '(ace-jump-mode
+       colorsarenice-theme
+       company
+       company-anaconda
+       company-ghc
+       emmet-mode
+       evil
+       evil-surround
+       fasm-mode
+       flycheck
+       haskell-mode
+       helm
+       highlight-blocks
+       highlight-numbers
+       highlight-quoted
+       htmlize
+       ipretty
+       markdown-mode
+       package-safe-delete
+       php-mode
+       rainbow-delimiters
+       rainbow-identifiers
+       rainbow-mode
+       slime
+       slime-company
+       smartparens
+       undo-tree
+       yaml-mode)))
 
-  (defun init-el-install-package-if-not-installed (package refresh-archives)
-    (unless (package-installed-p package)
-      (funcall refresh-archives)
-      (package-install package))))
+  (defun init-el-install-required-packages* ()
+    (let ((refreshed nil))
+      (dolist (package init-el-required-packages)
+        (unless (package-installed-p package)
+          (unless refreshed
+            (package-refresh-contents)
+            (setq refreshed))
+          (package-install package))))))
 
-(eval-when-compile
+(cl-eval-when (compile)
   (require 'package)
-  (let ((package-initialize (init-el-call-once #'package-initialize))
-        (refresh-archives (init-el-call-once #'package-refresh-contents)))
-    (defun init-el-install-package-when-compiling (package)
-      (let ((package-archives init-el-package-archives))
-        (funcall package-initialize)
-        (init-el-install-package-if-not-installed package refresh-archives)))))
+  (let ((package-archives init-el-package-archives))
+    (package-initialize)
+    (init-el-install-required-packages*)))
 
-(defmacro init-el-require-when-compiling (feature &optional package)
+(defmacro init-el-require-when-compiling (feature)
   "Require FEATURE only when byte-compiling.
 The sole purpose of this macro is to tell the byte-compiler that functions and
-variables provided by FEATURE are in scope, so it doesn't warn about them.
-
-If FEATURE is not found, PACKAGE is installed and FEATURE is required again.
-If loading fails again, an error is signaled.
-If PACKAGE is nil, FEATURE is assumed to be the package name."
+variables provided by FEATURE are in scope, so it doesn't warn about them."
   (when (bound-and-true-p byte-compile-current-file)
-    (unless (require feature nil t)
-      (init-el-install-package-when-compiling (or package feature))
-      (require feature)))
+    (require feature))
   nil)
 
 (defmacro init-el-with-eval-after-load (feature &rest body)
-  "Execute BODY after FEATURE is loaded.
-FEATURE can be either a cons cell (FEATURE . PACKAGE) or a symbol, in which case
-PACKAGE is assumed to be the same as FEATURE.
-If FEATURE is not found, PACKAGE is installed and FEATURE is required again.
-If loading fails again, an error is signaled."
+  "Execute BODY after FEATURE is loaded."
   (declare (indent defun) (debug t))
-  (pcase feature
-    ((or (and (pred symbolp) feature package)
-         `(,feature . ,package))
-     `(with-eval-after-load ',feature
-        (init-el-require-when-compiling ,feature ,package)
-        ,@body))
-    (_
-     (error "init-el-with-eval-after-load: invalid feature `%S'" feature))))
+  `(with-eval-after-load ',feature
+     (init-el-require-when-compiling ,feature)
+     ,@body))
 
 (defmacro init-el-deferred (&rest body)
   (declare (indent defun) (debug t))
@@ -209,45 +221,10 @@ If loading fails again, an error is signaled."
   (setq package-archives init-el-package-archives)
   (package-initialize))
 
-(defconst init-el-required-packages
-  (append
-   (when (eq system-type 'windows-nt)
-     '(helm-w32-launcher))
-   '(ace-jump-mode
-     colorsarenice-theme
-     company
-     company-anaconda
-     company-ghc
-     emmet-mode
-     evil
-     evil-surround
-     fasm-mode
-     flycheck
-     haskell-mode
-     helm
-     highlight-blocks
-     highlight-numbers
-     highlight-quoted
-     htmlize
-     ipretty
-     markdown-mode
-     package-safe-delete
-     php-mode
-     rainbow-delimiters
-     rainbow-identifiers
-     rainbow-mode
-     slime
-     slime-company
-     smartparens
-     undo-tree
-     yaml-mode)))
-
 (defun init-el-install-required-packages ()
   (when (or (eq system-type 'windows-nt)
             (/= 0 (user-uid)))
-    (let ((refresh-archives (init-el-call-once #'package-refresh-contents)))
-      (dolist (package init-el-required-packages)
-        (init-el-install-package-if-not-installed package refresh-archives)))))
+    (init-el-install-required-packages*)))
 
 (defun init-el-fix-scrolling ()
   (setq mouse-wheel-progressive-speed nil
@@ -306,7 +283,7 @@ If loading fails again, an error is signaled."
       (init-el-require-when-compiling helm)
       (setq helm-move-to-line-cycle-in-source t
             helm-prevent-escaping-from-minibuffer nil)))
-  (init-el-with-eval-after-load (helm-command . helm)
+  (init-el-with-eval-after-load helm-command
     (setq helm-M-x-always-save-history t)))
 
 (defun init-el-setup-evil ()
@@ -400,7 +377,7 @@ If loading fails again, an error is signaled."
     (setq company-idle-delay nil
           company-selection-wrap-around t
           company-require-match nil))
-  (init-el-with-eval-after-load (company-dabbrev . company)
+  (init-el-with-eval-after-load company-dabbrev
     (setq company-dabbrev-minimum-length 3
           company-dabbrev-other-buffers t)))
 
@@ -503,7 +480,7 @@ If loading fails again, an error is signaled."
   (setq-default indent-tabs-mode nil)
   (init-el-with-eval-after-load cc-vars
     (setq-default c-basic-offset 2))
-  (init-el-with-eval-after-load (haskell-indentation . haskell-mode)
+  (init-el-with-eval-after-load haskell-indentation
     (setq haskell-indentation-starter-offset 2))
   (init-el-with-eval-after-load cc-mode
     (c-set-offset 'substatement-open 0)
