@@ -80,17 +80,25 @@
   (init-el-setup-echo-keystrokes)
   (init-el-start-server))
 
+(defmacro init-el-require-when-compiling (feature)
+  "Require FEATURE only when byte-compiling.
+The sole purpose of this macro is to tell the byte-compiler that functions and
+variables provided by FEATURE are in scope, so it doesn't warn about them."
+  (when (bound-and-true-p byte-compile-current-file)
+    (require feature))
+  nil)
+
 (defmacro init-el-with-eval-after-load (feature &rest body)
   "Execute BODY after FEATURE is loaded."
   (declare (indent defun) (debug t))
-  (unless (symbolp feature)
-    (error "init-el-with-eval-after-load: %S is not a symbol" feature))
-  ;; Load the file at byte-compile time to avoid spurious warnings.
-  (when (bound-and-true-p byte-compile-current-file)
-    (unless (require feature nil t)
-      (message "init-el-with-eval-after-load: couldn't load %s" feature)))
-  `(eval-after-load ',feature
-     `(,(lambda () ,@body))))
+  (let ((eval-after-load-body `((init-el-require-when-compiling ,feature)
+                                ,@body)))
+    (if (fboundp 'with-eval-after-load)
+        `(with-eval-after-load ',feature
+           ,@eval-after-load-body)
+      `(eval-after-load ',feature
+         `(,(lambda ()
+              ,@eval-after-load-body))))))
 
 (defmacro init-el-deferred (&rest body)
   (declare (indent defun) (debug t))
@@ -242,12 +250,13 @@
   (setq uniquify-buffer-name-style 'post-forward))
 
 (defun init-el-setup-undo-tree ()
+  (global-undo-tree-mode)
+  (init-el-require-when-compiling undo-tree)
   (setq undo-tree-visualizer-timestamps t
         undo-tree-visualizer-lazy-drawing nil
         undo-tree-auto-save-history t)
   (let ((undodir (expand-file-name "undo" user-emacs-directory)))
-    (setq undo-tree-history-directory-alist (list (cons "." undodir))))
-  (global-undo-tree-mode))
+    (setq undo-tree-history-directory-alist (list (cons "." undodir)))))
 
 (defun init-el-setup-ignore-completion-case ()
   (setq completion-ignore-case t
@@ -257,22 +266,26 @@
 (defun init-el-setup-history ()
   (setq history-length 1024
         search-ring-max 1024
-        regexp-search-ring-max 1024
-        savehist-additional-variables '(search-ring
+        regexp-search-ring-max 1024)
+  (savehist-mode)
+  (init-el-require-when-compiling savehist)
+  (setq savehist-additional-variables '(search-ring
                                         regexp-search-ring)
-        savehist-file (expand-file-name ".savehist" user-emacs-directory))
-  (savehist-mode))
+        savehist-file (expand-file-name ".savehist" user-emacs-directory)))
 
 (defun init-el-setup-helm ()
   (init-el-deferred
     (cl-letf (((symbol-function #'message) #'ignore))
-      (helm-mode))
-    (setq helm-move-to-line-cycle-in-source t
-          helm-prevent-escaping-from-minibuffer nil
-          helm-M-x-always-save-history t)))
+      (helm-mode)
+      (init-el-require-when-compiling helm)
+      (setq helm-move-to-line-cycle-in-source t
+            helm-prevent-escaping-from-minibuffer nil)))
+  (init-el-with-eval-after-load helm-command
+    (setq helm-M-x-always-save-history t)))
 
 (defun init-el-setup-evil ()
   (evil-mode)
+  (init-el-require-when-compiling evil)
   (setq evil-want-fine-undo t
         evil-echo-state nil
         evil-ex-substitute-global t)
@@ -294,13 +307,15 @@
   (add-hook 'css-mode-hook #'emmet-mode))
 
 (defun init-el-setup-whitespace-mode ()
-  (setq whitespace-style '(face trailing lines-tail empty space-before-tab)))
+  (init-el-with-eval-after-load whitespace
+    (setq whitespace-style '(face trailing lines-tail empty space-before-tab))))
 
 (defun init-el-setup-text-mode ()
   (add-hook 'text-mode-hook #'visual-line-mode))
 
 (defun init-el-setup-paren-matching ()
   (show-paren-mode)
+  (init-el-require-when-compiling paren)
   (setq show-paren-delay 0))
 
 (defun init-el-setup-theme ()
@@ -338,8 +353,9 @@
   (add-hook 'prog-mode-hook #'highlight-numbers-mode))
 
 (defun init-el-setup-rainbow-identifiers ()
-  (setq rainbow-identifiers-choose-face-function 'rainbow-identifiers-cie-l*a*b*-choose-face
-        rainbow-identifiers-faces-to-override '(highlight-quoted-symbol)))
+  (init-el-with-eval-after-load rainbow-identifiers
+    (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face
+          rainbow-identifiers-faces-to-override '(highlight-quoted-symbol))))
 
 (defun init-el-setup-highlight-quoted ()
   (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
@@ -348,6 +364,7 @@
 (defun init-el-setup-company ()
   (init-el-deferred
     (global-company-mode)
+    (init-el-require-when-compiling company)
     (let ((it company-backends))
       (while it
         (let ((backend (car it)))
@@ -356,8 +373,9 @@
         (setq it (cdr it))))
     (setq company-idle-delay nil
           company-selection-wrap-around t
-          company-require-match nil
-          company-dabbrev-minimum-length 3
+          company-require-match nil))
+  (init-el-with-eval-after-load company-dabbrev
+    (setq company-dabbrev-minimum-length 3
           company-dabbrev-other-buffers t)))
 
 (defun init-el-setup-anaconda ()
@@ -367,7 +385,8 @@
       (add-to-list 'company-backends #'company-anaconda))))
 
 (defun init-el-setup-slime ()
-  (setq inferior-lisp-program "sbcl")
+  (init-el-with-eval-after-load slime
+    (setq inferior-lisp-program "sbcl"))
   (add-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
 
 (defun init-el-setup-slime-first-time ()
@@ -400,6 +419,7 @@
   (init-el-deferred
     (require 'smartparens-config)
     (smartparens-global-mode)
+    (init-el-require-when-compiling smartparens)
     (setq sp-highlight-pair-overlay nil
           sp-highlight-wrap-overlay nil
           sp-highlight-wrap-tag-overlay nil)
@@ -427,33 +447,38 @@
 
 (defun init-el-setup-flycheck ()
   (add-hook 'prog-mode-hook #'flycheck-mode)
-  (setq flycheck-idle-change-delay 1)
-  (setq-default flycheck-cppcheck-checks '("style" "missingInclude")
-                flycheck-cppcheck-inconclusive t
-                flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)))
+  (init-el-with-eval-after-load flycheck
+    (setq flycheck-idle-change-delay 1)
+    (setq-default flycheck-cppcheck-checks '("style" "missingInclude")
+                  flycheck-cppcheck-inconclusive t
+                  flycheck-disabled-checkers '(c/c++-clang c/c++-gcc))))
 
 (defun init-el-setup-eldoc ()
-  (setq eldoc-idle-delay 0.25)
-  (when (fboundp 'global-eldoc-mode)
-    (global-eldoc-mode -1))
-  (add-hook 'prog-mode-hook #'init-el-enable-eldoc-mode)
-  (when (boundp 'eval-expression-minibuffer-setup-hook)
-    (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)))
+  (init-el-with-eval-after-load eldoc
+    (setq eldoc-idle-delay 0.25)
+    (when (fboundp 'global-eldoc-mode)
+      (global-eldoc-mode -1))
+    (add-hook 'prog-mode-hook #'init-el-enable-eldoc-mode)
+    (when (boundp 'eval-expression-minibuffer-setup-hook)
+      (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))))
 
-(if (fboundp 'global-eldoc-mode)
-    (defun init-el-enable-eldoc-mode ()
-      (unless (memq eldoc-documentation-function '(ignore nil))
-        (eldoc-mode)))
-  (defun init-el-enable-eldoc-mode ()
-    (when (or (not (memq eldoc-documentation-function
-                         '(eldoc-documentation-function-default nil)))
-              (derived-mode-p #'emacs-lisp-mode))
-      (eldoc-mode))))
+(defalias 'init-el-enable-eldoc-mode
+  (if (fboundp 'global-eldoc-mode)
+      (lambda ()
+        (unless (memq eldoc-documentation-function '(ignore nil))
+          (eldoc-mode)))
+    (lambda ()
+      (when (or (not (memq eldoc-documentation-function
+                           '(eldoc-documentation-function-default nil)))
+                (derived-mode-p #'emacs-lisp-mode))
+        (eldoc-mode)))))
 
 (defun init-el-setup-indentation ()
-  (setq-default indent-tabs-mode nil
-                c-basic-offset 2)
-  (setq haskell-indentation-starter-offset 2)
+  (setq-default indent-tabs-mode nil)
+  (init-el-with-eval-after-load cc-vars
+    (setq-default c-basic-offset 2))
+  (init-el-with-eval-after-load haskell-indentation
+    (setq haskell-indentation-starter-offset 2))
   (init-el-with-eval-after-load cc-mode
     (c-set-offset 'substatement-open 0)
     (c-set-offset 'defun-open 0)
@@ -673,7 +698,9 @@ buffer as \"done\"; note that this may kill the buffer instead of burying it."
         (next-buffer-suggestion
          (let ((buffer-to-bury (current-buffer)))
            (if (bound-and-true-p server-buffer-clients)
-               (server-buffer-done buffer-to-bury)
+               (progn
+                 (init-el-require-when-compiling server)
+                 (server-buffer-done buffer-to-bury))
              (bury-buffer buffer-to-bury)
              nil))))
     (cond
