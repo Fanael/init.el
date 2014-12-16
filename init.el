@@ -196,18 +196,18 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
   (setq create-lockfiles nil))
 
 (defun init-el-setup-backup-files ()
-  (setq backup-by-copying t
-        delete-old-versions t
-        kept-old-versions 3
-        kept-new-versions 7
-        version-control t)
   (let ((backupdir (expand-file-name "backups" user-emacs-directory)))
-    (setq backup-directory-alist (list (cons "." backupdir)))))
+    (setq backup-by-copying t
+          delete-old-versions t
+          kept-old-versions 3
+          kept-new-versions 7
+          version-control t
+          backup-directory-alist (list (cons "." backupdir)))))
 
 (defun init-el-setup-auto-save ()
   (let ((autosavedir (file-name-as-directory (expand-file-name "autosave" user-emacs-directory))))
-    (setq auto-save-list-file-prefix (expand-file-name ".saves-" autosavedir))
-    (setq auto-save-file-name-transforms (list (list ".*" (replace-quote autosavedir) t)))))
+    (setq auto-save-list-file-prefix (expand-file-name ".saves-" autosavedir)
+          auto-save-file-name-transforms (list (list ".*" (replace-quote autosavedir) t)))))
 
 (defun init-el-use-fucking-utf-8 ()
   (prefer-coding-system 'utf-8)
@@ -255,11 +255,11 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
 (defun init-el-setup-undo-tree ()
   (global-undo-tree-mode)
   (init-el-require-when-compiling undo-tree)
-  (setq undo-tree-visualizer-timestamps t
-        undo-tree-visualizer-lazy-drawing nil
-        undo-tree-auto-save-history t)
   (let ((undodir (expand-file-name "undo" user-emacs-directory)))
-    (setq undo-tree-history-directory-alist (list (cons "." undodir)))))
+    (setq undo-tree-visualizer-timestamps t
+          undo-tree-visualizer-lazy-drawing nil
+          undo-tree-auto-save-history t
+          undo-tree-history-directory-alist (list (cons "." undodir)))))
 
 (defun init-el-setup-ignore-completion-case ()
   (setq completion-ignore-case t
