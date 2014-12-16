@@ -45,7 +45,6 @@
   (init-el-do-not-disable-commands)
   (init-el-disable-electric-indent)
   (init-el-disable-vc)
-  (init-el-setup-uniquify)
   (init-el-setup-undo-tree)
   (init-el-setup-ignore-completion-case)
   (init-el-setup-history)
@@ -130,15 +129,9 @@ If loading fails again, an error is signaled."
   (pcase feature
     ((or (and (pred symbolp) feature package)
          `(,feature . ,package))
-     (let ((eval-after-load-body
-            `((init-el-require-when-compiling ,feature ,package)
-              ,@body)))
-       (if (fboundp 'with-eval-after-load)
-           `(with-eval-after-load ',feature
-              ,@eval-after-load-body)
-         `(eval-after-load ',feature
-            (list (lambda ()
-                    ,@eval-after-load-body))))))
+     `(with-eval-after-load ',feature
+        (init-el-require-when-compiling ,feature ,package)
+        ,@body))
     (_
      (error "init-el-with-eval-after-load: invalid feature `%S'" feature))))
 
@@ -281,10 +274,6 @@ If loading fails again, an error is signaled."
 
 (defun init-el-disable-vc ()
   (setq vc-handled-backends '()))
-
-(defun init-el-setup-uniquify ()
-  (require 'uniquify)
-  (setq uniquify-buffer-name-style 'post-forward))
 
 (defun init-el-setup-undo-tree ()
   (global-undo-tree-mode)

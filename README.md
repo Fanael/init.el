@@ -7,5 +7,5 @@ To use it:
 
 The required third-party packages are installed automatically using `package.el`.
 
-Emacs 24.3 or newer is required. I'm not trying to achieve compatibility with
-Emacs 24.2 and older.
+Emacs 24.4 or newer is required. I'm not trying to achieve compatibility with
+Emacs 24.3 and older.
