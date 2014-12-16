@@ -338,18 +338,18 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
   (add-hook 'emacs-lisp-mode-hook #'init-el-highlight-all-special-forms))
 
 (defun init-el-highlight-all-special-forms ()
-  (let ((regexp
-         (eval-when-compile
-           (let ((specialforms ()))
-             (mapatoms (lambda (symbol)
-                         (when (fboundp symbol)
-                           (let ((fn (symbol-function symbol)))
-                             (when (and (subrp fn)
-                                        (eq 'unevalled (cdr (subr-arity fn))))
-                               (push (symbol-name symbol) specialforms))))))
-             (concat "(" (regexp-opt specialforms t) "\\_>")))))
-    (font-lock-add-keywords nil
-                            `((,regexp (1 'font-lock-keyword-face))))))
+  (font-lock-add-keywords
+   nil
+   (eval-when-compile
+     `((,(let ((specialforms '()))
+           (mapatoms (lambda (symbol)
+                       (when (fboundp symbol)
+                         (let ((fn (symbol-function symbol)))
+                           (when (and (subrp fn)
+                                      (eq 'unevalled (cdr (subr-arity fn))))
+                             (push (symbol-name symbol) specialforms))))))
+           (concat "(" (regexp-opt specialforms t) "\\_>"))
+        (1 'font-lock-keyword-face))))))
 
 (defun init-el-setup-number-highlighting ()
   (add-hook 'prog-mode-hook #'highlight-numbers-mode))
@@ -544,7 +544,7 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
 
 (eval-when-compile
   (defmacro init-el-mode-line-status-list (&rest elements)
-    `(let ((strings ()))
+    `(let ((strings '()))
        ,@(mapcar
           (lambda (elt)
             (pcase elt
