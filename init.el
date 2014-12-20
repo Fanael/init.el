@@ -23,6 +23,8 @@
 ;; LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 ;; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+(eval-when-compile (require 'cl-lib))
+
 (setq package-enable-at-startup nil)
 (add-hook 'after-init-hook #'init-el-after-init)
 
