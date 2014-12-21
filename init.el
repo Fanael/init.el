@@ -701,7 +701,8 @@ buffer as \"done\"; note that this may kill the buffer instead of burying it."
         (window-to-delete (selected-window))
         (next-buffer-suggestion
          (let ((buffer-to-bury (current-buffer)))
-           (if (bound-and-true-p server-buffer-clients)
+           (if (and (bound-and-true-p server-buffer-clients)
+                    (null (cdr (get-buffer-window-list buffer-to-bury nil t))))
                (progn
                  (init-el-require-when-compiling server)
                  (server-buffer-done buffer-to-bury))
