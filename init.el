@@ -125,7 +125,7 @@
         (unless (package-installed-p package)
           (unless refreshed
             (package-refresh-contents)
-            (setq refreshed))
+            (setq refreshed t))
           (package-install package))))))
 
 (cl-eval-when (compile)
