@@ -1,5 +1,5 @@
 ;;; -*- lexical-binding: t -*-
-;; Copyright (c) 2013-2014, Fanael Linithien
+;; Copyright (c) 2013-2015, Fanael Linithien
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
@@ -87,37 +87,34 @@
       ("gnu" . "http://elpa.gnu.org/packages/")))
 
   (defconst init-el-required-packages
-    (append
-     (when (eq system-type 'windows-nt)
-       '(helm-w32-launcher))
-     '(ace-jump-mode
-       colorsarenice-theme
-       company
-       company-anaconda
-       company-ghc
-       emmet-mode
-       evil
-       evil-surround
-       fasm-mode
-       flycheck
-       haskell-mode
-       helm
-       highlight-blocks
-       highlight-numbers
-       highlight-quoted
-       htmlize
-       ipretty
-       markdown-mode
-       package-safe-delete
-       php-mode
-       rainbow-delimiters
-       rainbow-identifiers
-       rainbow-mode
-       slime
-       slime-company
-       smartparens
-       undo-tree
-       yaml-mode)))
+    '(ace-jump-mode
+      colorsarenice-theme
+      company
+      company-anaconda
+      company-ghc
+      emmet-mode
+      evil
+      evil-surround
+      fasm-mode
+      flycheck
+      haskell-mode
+      helm
+      highlight-blocks
+      highlight-numbers
+      highlight-quoted
+      htmlize
+      ipretty
+      markdown-mode
+      package-safe-delete
+      php-mode
+      rainbow-delimiters
+      rainbow-identifiers
+      rainbow-mode
+      slime
+      slime-company
+      smartparens
+      undo-tree
+      yaml-mode))
 
   (defun init-el-install-required-packages* ()
     (let ((refreshed nil))
@@ -532,14 +529,6 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
   (global-set-key (kbd "C-c b") #'highlight-blocks-now)
   (global-set-key (kbd "C-c m") #'pp-macroexpand-all)
   (global-set-key (kbd "C-c i") #'helm-semantic-or-imenu)
-  (when (eq system-type 'windows-nt)
-    (let ((keymap (make-sparse-keymap)))
-      (define-key keymap "l" #'helm-w32-launcher)
-      (define-key keymap "L" #'helm-w32-launcher-elevated)
-      (define-key keymap "d" #'helm-w32-launcher-open-shortcut-directory)
-      (define-key keymap "p" #'helm-w32-launcher-open-shortcut-properties)
-      (define-key keymap "f" #'helm-w32-launcher-flush-cache)
-      (global-set-key (kbd "C-c l") keymap)))
   (init-el-with-eval-after-load helm
     (define-key helm-map "\t" #'helm-execute-persistent-action)
     (define-key helm-map (kbd "C-z") #'helm-select-action)))
