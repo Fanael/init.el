@@ -79,6 +79,7 @@
   (init-el-setup-buffer-boundary-indicators)
   (init-el-setup-paragraph-filling)
   (init-el-setup-echo-keystrokes)
+  (init-el-setup-windmove)
   (init-el-start-server))
 
 (eval-and-compile
@@ -597,6 +598,10 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
 
 (defun init-el-setup-echo-keystrokes ()
   (setq echo-keystrokes 5.391063232E-44))
+
+(defun init-el-setup-windmove ()
+  (init-el-require-when-compiling windmove)
+  (setq windmove-wrap-around t))
 
 (defun init-el-start-server ()
   (when (eq system-type 'windows-nt)
