@@ -69,7 +69,7 @@
   (init-el-setup-slime)
   (init-el-setup-haskell-mode)
   (init-el-setup-rainbow-delimiters)
-  (init-el-setup-electric-pair-mode)
+  (init-el-setup-smartparens)
   (init-el-setup-flycheck)
   (init-el-setup-eldoc)
   (init-el-setup-indentation)
@@ -113,6 +113,7 @@
       rainbow-mode
       slime
       slime-company
+      smartparens
       undo-tree
       yaml-mode))
 
@@ -416,8 +417,35 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
 (defun init-el-setup-rainbow-delimiters ()
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
-(defun init-el-setup-electric-pair-mode ()
-  (electric-pair-mode))
+(defun init-el-setup-smartparens ()
+  (init-el-deferred
+    (require 'smartparens-config)
+    (smartparens-global-mode)
+    (init-el-require-when-compiling smartparens)
+    (setq sp-highlight-pair-overlay nil
+          sp-highlight-wrap-overlay nil
+          sp-highlight-wrap-tag-overlay nil)
+    (setq-default sp-autoskip-closing-pair t)
+    (sp-local-pair '(c-mode c++-mode java-mode css-mode php-mode js-mode perl-mode
+                            cperl-mode)
+                   "{" nil
+                   :post-handlers '((init-el-smartparens-create-and-enter-block "RET")))))
+
+(defun init-el-smartparens-create-and-enter-block (&rest _)
+  (save-excursion
+    ;; Indent the line with the opening brace, but only if it
+    ;; contains nothing more than the brace.
+    (end-of-line 0)
+    (let ((old-point (point)))
+      (back-to-indentation)
+      (when (= (1+ (point)) old-point)
+        (indent-according-to-mode))))
+  ;; Open the block and reindent the closing brace.
+  (newline)
+  (indent-according-to-mode)
+  ;; Enter it.
+  (forward-line -1)
+  (indent-according-to-mode))
 
 (defun init-el-setup-flycheck ()
   (add-hook 'prog-mode-hook #'flycheck-mode)
@@ -456,8 +484,7 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
   (init-el-with-eval-after-load cc-mode
     (c-set-offset 'substatement-open 0)
     (c-set-offset 'defun-open 0)
-    (c-set-offset 'innamespace 0)
-    (c-set-offset 'func-decl-cont 0)))
+    (c-set-offset 'innamespace 0)))
 
 (defun init-el-setup-bindings ()
   (global-set-key [remap execute-extended-command] #'helm-M-x)
