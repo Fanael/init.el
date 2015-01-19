@@ -399,7 +399,6 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
                  slime-fancy-inspector
                  slime-fancy-trace
                  slime-fontifying-fu
-                 slime-highlight-edits
                  slime-package-fu
                  slime-references
                  slime-repl
