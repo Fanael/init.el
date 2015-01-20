@@ -388,7 +388,8 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
 
 (defun init-el-setup-slime ()
   (init-el-with-eval-after-load slime
-    (setq inferior-lisp-program "sbcl"))
+    (setq slime-lisp-implementations '((sbcl ("sbcl"))))
+    (setq slime-default-lisp 'sbcl))
   (add-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
 
 (defun init-el-setup-slime-first-time ()
