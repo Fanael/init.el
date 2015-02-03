@@ -534,22 +534,6 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
     (define-key helm-map "\t" #'helm-execute-persistent-action)
     (define-key helm-map (kbd "C-z") #'helm-select-action)))
 
-(eval-when-compile
-  (defmacro init-el-mode-line-status-list (&rest elements)
-    `(let ((strings '()))
-       ,@(mapcar
-          (lambda (elt)
-            (pcase elt
-              (`(,predicate ,string ,face)
-               (unless (stringp string)
-                 (error "Expected string, got %s" (type-of string)))
-               `(when ,predicate
-                  (push (eval-when-compile (propertize ,string 'face ,face)) strings)))
-              (_
-               (error "unknown mode line status element %S" elt))))
-          (reverse elements))
-       (mapconcat #'identity strings ","))))
-
 (defun init-el-setup-mode-line ()
   (setq-default
    mode-line-format
@@ -577,12 +561,27 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
                 (propertize (symbol-name evil-state)
                             'face 'font-lock-function-name-face))))
     "] %[["
-    `(:eval (,(lambda ()
-                (init-el-mode-line-status-list
-                 ((buffer-modified-p) "Mod" font-lock-warning-face)
-                 (buffer-read-only "RO" font-lock-type-face)
-                 ((buffer-narrowed-p) "Narrow" font-lock-type-face)
-                 (defining-kbd-macro "Macro" font-lock-type-face)))))
+    `(:eval
+      (,(lambda ()
+          (let ((strings '()))
+            (cl-macrolet
+                ((add-string
+                  (string face)
+                  `(push ,(propertize string 'face face) strings)))
+              (when defining-kbd-macro
+                (add-string "Macro" font-lock-type-face))
+              (when (buffer-narrowed-p)
+                (add-string "Narrow" font-lock-type-face))
+              (when buffer-read-only
+                (add-string "RO" font-lock-type-face))
+              (pcase overwrite-mode
+                (`overwrite-mode-textutal
+                 (add-string "Overwrite" font-lock-warning-face))
+                (`overwrite-mode-binary
+                 (add-string "Bin-overwrite" font-lock-warning-face)))
+              (when (buffer-modified-p)
+                (add-string "Mod" font-lock-warning-face)))
+            (mapconcat #'identity strings ",")))))
     "]%]")))
 
 (defun init-el-setup-title-bar ()
