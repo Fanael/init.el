@@ -459,8 +459,8 @@ whitespace."
 
 ;;; Setup anaconda
 (add-hook 'python-mode-hook #'anaconda-mode)
-(init-el-with-eval-after-load company
-  (init-el-with-eval-after-load python
+(init-el-with-eval-after-load python
+  (init-el-with-eval-after-load company
     (add-to-list 'company-backends #'company-anaconda)))
 
 ;;; Setup SLIME
@@ -487,8 +487,8 @@ whitespace."
 ;;; Setup haskell-mode
 (add-hook 'haskell-mode-hook #'turn-on-haskell-indentation)
 (add-hook 'haskell-mode-hook #'ghc-init)
-(init-el-with-eval-after-load company
-  (init-el-with-eval-after-load haskell-mode
+(init-el-with-eval-after-load haskell-mode
+  (init-el-with-eval-after-load company
     (add-to-list 'company-backends '(company-ghc :with company-dabbrev-code))))
 
 ;;; Setup rainbow-delimiters
