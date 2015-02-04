@@ -246,14 +246,14 @@ whitespace."
   (horizontal-scroll-bar-mode -1))
 (menu-bar-mode -1)
 (blink-cursor-mode -1)
-(setq use-file-dialog nil
-      use-dialog-box nil)
+(setq use-file-dialog nil)
+(setq use-dialog-box nil)
 
 ;;; Start with empty scratch buffer
 (fset #'display-startup-echo-area-message #'ignore)
-(setq inhibit-splash-screen t
-      initial-scratch-message ""
-      initial-major-mode #'fundamental-mode)
+(setq inhibit-splash-screen t)
+(setq initial-scratch-message "")
+(setq initial-major-mode #'fundamental-mode)
 
 ;;; Setup fonts
 (if (eq system-type 'windows-nt)
@@ -268,18 +268,18 @@ whitespace."
 (setq create-lockfiles nil)
 
 ;;; Setup backup files
+(setq backup-by-copying t)
+(setq delete-old-versions t)
+(setq kept-old-versions 3)
+(setq kept-new-versions 7)
+(setq version-control t)
 (let ((backup-dir (expand-file-name "backups" user-emacs-directory)))
-  (setq backup-by-copying t
-        delete-old-versions t
-        kept-old-versions 3
-        kept-new-versions 7
-        version-control t
-        backup-directory-alist (list (cons "." backup-dir))))
+  (setq backup-directory-alist (list (cons "." backup-dir))))
 
 ;;; Setup auto-save
 (let ((auto-save-dir (file-name-as-directory (expand-file-name "autosave" user-emacs-directory))))
-  (setq auto-save-list-file-prefix (expand-file-name ".saves-" auto-save-dir)
-        auto-save-file-name-transforms (list (list ".*" (replace-quote auto-save-dir) t))))
+  (setq auto-save-list-file-prefix (expand-file-name ".saves-" auto-save-dir))
+  (setq auto-save-file-name-transforms (list (list ".*" (replace-quote auto-save-dir) t))))
 
 ;;; Use fucking UTF-8
 (prefer-coding-system 'utf-8)
@@ -290,8 +290,8 @@ whitespace."
 (setq-default buffer-file-coding-system 'utf-8-unix)
 
 ;;; Setup package archives
-(setq package-archives init-el-package-archives
-      package-enable-at-startup nil)
+(setq package-archives init-el-package-archives)
+(setq package-enable-at-startup nil)
 (package-initialize)
 (when (boundp 'package-selected-packages)
   (setq package-selected-packages init-el-required-packages))
@@ -302,10 +302,10 @@ whitespace."
   (init-el-install-required-packages*))
 
 ;;; Fix scrolling
-(setq mouse-wheel-progressive-speed nil
-      scroll-margin 3
-      scroll-conservatively 100000
-      scroll-preserve-screen-position 'always)
+(setq mouse-wheel-progressive-speed nil)
+(setq scroll-margin 3)
+(setq scroll-conservatively 100000)
+(setq scroll-preserve-screen-position 'always)
 
 ;;; Setup clipboard
 (setq-default select-active-regions nil)
@@ -313,9 +313,9 @@ whitespace."
   (setq x-select-enable-primary nil))
 
 ;;; Set undo limits
-(setq undo-limit (* 16 1024 1024)
-      undo-strong-limit (* 24 1024 1024)
-      undo-outer-limit (* 64 1024 1024))
+(setq undo-limit (* 16 1024 1024))
+(setq undo-strong-limit (* 24 1024 1024))
+(setq undo-outer-limit (* 64 1024 1024))
 
 ;;; Do not disable commands
 (setq disabled-command-function nil)
@@ -330,24 +330,24 @@ whitespace."
 ;;; Setup undo-tree
 (global-undo-tree-mode)
 (init-el-require-when-compiling undo-tree)
+(setq undo-tree-visualizer-timestamps t)
+(setq undo-tree-visualizer-lazy-drawing nil)
+(setq undo-tree-auto-save-history t)
 (let ((undo-dir (expand-file-name "undo" user-emacs-directory)))
-  (setq undo-tree-visualizer-timestamps t
-        undo-tree-visualizer-lazy-drawing nil
-        undo-tree-auto-save-history t
-        undo-tree-history-directory-alist (list (cons "." undo-dir))))
+  (setq undo-tree-history-directory-alist (list (cons "." undo-dir))))
 
 ;;; Ignore case for completion
-(setq completion-ignore-case t
-      read-buffer-completion-ignore-case t
-      read-file-name-completion-ignore-case t)
+(setq completion-ignore-case t)
+(setq read-buffer-completion-ignore-case t)
+(setq read-file-name-completion-ignore-case t)
 
 ;;; Setup history
 (init-el-require-when-compiling savehist)
-(setq history-length 1024
-      search-ring-max 1024
-      regexp-search-ring-max 1024
-      savehist-additional-variables '(search-ring regexp-search-ring)
-      savehist-file (expand-file-name ".savehist" user-emacs-directory))
+(setq history-length 1024)
+(setq search-ring-max 1024)
+(setq regexp-search-ring-max 1024)
+(setq savehist-additional-variables '(search-ring regexp-search-ring))
+(setq savehist-file (expand-file-name ".savehist" user-emacs-directory))
 (savehist-mode)
 
 ;;; Setup Helm
@@ -355,17 +355,17 @@ whitespace."
   (cl-letf (((symbol-function #'message) #'ignore))
     (helm-mode)
     (init-el-require-when-compiling helm)
-    (setq helm-move-to-line-cycle-in-source t
-          helm-prevent-escaping-from-minibuffer nil)))
+    (setq helm-move-to-line-cycle-in-source t)
+    (setq helm-prevent-escaping-from-minibuffer nil)))
 (init-el-with-eval-after-load helm-command
   (setq helm-M-x-always-save-history t))
 
 ;;; Setup evil
 (evil-mode)
 (init-el-require-when-compiling evil)
-(setq evil-want-fine-undo t
-      evil-echo-state nil
-      evil-ex-substitute-global t)
+(setq evil-want-fine-undo t)
+(setq evil-echo-state nil)
+(setq evil-ex-substitute-global t)
 (evil-set-command-properties
  #'smart-beginning-of-line :repeat 'motion :type 'exclusive :keep-visual t)
 
@@ -377,8 +377,8 @@ whitespace."
 (global-evil-surround-mode)
 
 ;;; Setup search highlight
-(setq search-highlight t
-      query-replace-highlight t)
+(setq search-highlight t)
+(setq query-replace-highlight t)
 
 ;;; Setup emmet
 (add-hook 'sgml-mode-hook #'emmet-mode)
@@ -432,8 +432,8 @@ whitespace."
 
 ;;; Setup rainbow-identifiers
 (init-el-with-eval-after-load rainbow-identifiers
-  (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face
-        rainbow-identifiers-faces-to-override '(highlight-quoted-symbol)))
+  (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face)
+  (setq rainbow-identifiers-faces-to-override '(highlight-quoted-symbol)))
 
 ;;; Setup highlight-quoted
 (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
@@ -449,12 +449,12 @@ whitespace."
         (when (memq backend '(company-elisp company-capf))
           (setcar it `(,backend :with company-dabbrev-code))))
       (setq it (cdr it))))
-  (setq company-idle-delay nil
-        company-selection-wrap-around t
-        company-require-match nil))
+  (setq company-idle-delay nil)
+  (setq company-selection-wrap-around t)
+  (setq company-require-match nil))
 (init-el-with-eval-after-load company-dabbrev
-  (setq company-dabbrev-minimum-length 3
-        company-dabbrev-other-buffers t))
+  (setq company-dabbrev-minimum-length 3)
+  (setq company-dabbrev-other-buffers t))
 
 ;;; Setup anaconda
 (add-hook 'python-mode-hook #'anaconda-mode)
@@ -498,9 +498,9 @@ whitespace."
   (require 'smartparens-config)
   (smartparens-global-mode)
   (init-el-require-when-compiling smartparens)
-  (setq sp-highlight-pair-overlay nil
-        sp-highlight-wrap-overlay nil
-        sp-highlight-wrap-tag-overlay nil)
+  (setq sp-highlight-pair-overlay nil)
+  (setq sp-highlight-wrap-overlay nil)
+  (setq sp-highlight-wrap-tag-overlay nil)
   (setq-default sp-autoskip-closing-pair t)
   (sp-local-pair '(c-mode c++-mode java-mode css-mode php-mode js-mode perl-mode
                           cperl-mode)
@@ -664,8 +664,8 @@ whitespace."
 (setq icon-title-format (setq frame-title-format "%b [%f] - Emacs"))
 
 ;;; Setup the buffer boundary indicators
-(setq-default indicate-empty-lines t
-              indicate-buffer-boundaries 'left)
+(setq-default indicate-empty-lines t)
+(setq-default indicate-buffer-boundaries 'left)
 
 ;;; Setup paragraph filling
 (setq sentence-end-double-space nil)
