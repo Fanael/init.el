@@ -25,6 +25,7 @@
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (eval-when-compile (require 'cl-lib))
 
+;;; Internal macros
 (defmacro init-el-require-when-compiling (feature)
   "Require FEATURE only when byte-compiling.
 The sole purpose of this macro is to tell the byte-compiler that functions and
@@ -48,6 +49,57 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
                                    (_
                                     `(lambda () ,@body)))))
 
+;;; Byte-compile-time required package handling
+(eval-and-compile
+  (defconst init-el-package-archives
+    '(("melpa" . "http://melpa.org/packages/")
+      ("gnu" . "http://elpa.gnu.org/packages/")))
+
+  (defconst init-el-required-packages
+    '(ace-jump-mode
+      colorsarenice-theme
+      company
+      company-anaconda
+      company-ghc
+      emmet-mode
+      evil
+      evil-surround
+      fasm-mode
+      flycheck
+      haskell-mode
+      helm
+      highlight-blocks
+      highlight-numbers
+      highlight-quoted
+      htmlize
+      ipretty
+      markdown-mode
+      php-mode
+      rainbow-delimiters
+      rainbow-identifiers
+      rainbow-mode
+      slime
+      slime-company
+      smartparens
+      undo-tree
+      yaml-mode))
+
+  (defun init-el-install-required-packages* ()
+    (let ((refreshed nil))
+      (dolist (package init-el-required-packages)
+        (unless (package-installed-p package)
+          (unless refreshed
+            (package-refresh-contents)
+            (setq refreshed t))
+          (package-install package))))))
+
+(cl-eval-when (compile)
+  (require 'package)
+  (let ((package-archives init-el-package-archives))
+    (package-initialize)
+    (init-el-install-required-packages*)))
+
+;;; Interactive functions
 (defun smart-beginning-of-line (&optional line-offset)
   "Move the point to the first non-white character of the current line.
 If the point is already there, move to the beginning of the line instead.
@@ -153,54 +205,27 @@ buffer as \"done\"; note that this may kill the buffer instead of burying it."
      (t
       (delete-window window-to-delete)))))
 
-(eval-and-compile
-  (defconst init-el-package-archives
-    '(("melpa" . "http://melpa.org/packages/")
-      ("gnu" . "http://elpa.gnu.org/packages/")))
+(defun helm-sections ()
+  "Go to a section in the current buffer.
+The section to go to is selected using Helm.
 
-  (defconst init-el-required-packages
-    '(ace-jump-mode
-      colorsarenice-theme
-      company
-      company-anaconda
-      company-ghc
-      emmet-mode
-      evil
-      evil-surround
-      fasm-mode
-      flycheck
-      haskell-mode
-      helm
-      highlight-blocks
-      highlight-numbers
-      highlight-quoted
-      htmlize
-      ipretty
-      markdown-mode
-      php-mode
-      rainbow-delimiters
-      rainbow-identifiers
-      rainbow-mode
-      slime
-      slime-company
-      smartparens
-      undo-tree
-      yaml-mode))
-
-  (defun init-el-install-required-packages* ()
-    (let ((refreshed nil))
-      (dolist (package init-el-required-packages)
-        (unless (package-installed-p package)
-          (unless refreshed
-            (package-refresh-contents)
-            (setq refreshed t))
-          (package-install package))))))
-
-(cl-eval-when (compile)
-  (require 'package)
-  (let ((package-archives init-el-package-archives))
-    (package-initialize)
-    (init-el-install-required-packages*)))
+Sections headers are lines that start with three or more semicolons followed by
+whitespace."
+  (interactive)
+  (init-el-require-when-compiling helm)
+  (let ((candidates
+         (save-match-data
+           (save-excursion
+             (goto-char (point-min))
+             (cl-loop
+              while (re-search-forward "^;;;+[[:space:]]+\\(.+\\)$" nil t)
+              collect (cons
+                       (buffer-substring-no-properties (match-beginning 1) (match-end 1))
+                       (copy-marker (match-beginning 0))))))))
+    (helm :buffer "*helm sections*"
+          :sources (helm-build-sync-source "Sections"
+                     :candidates candidates
+                     :action #'goto-char))))
 
 ;;; Tune the GC
 ;; The default setting is too conservative on modern machines making Emacs
