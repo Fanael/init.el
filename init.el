@@ -26,28 +26,29 @@
 (eval-when-compile (require 'cl-lib))
 
 ;;; Internal macros
-(defmacro init-el-require-when-compiling (feature)
-  "Require FEATURE only when byte-compiling.
+(eval-when-compile
+  (defmacro init-el-require-when-compiling (feature)
+    "Require FEATURE only when byte-compiling.
 The sole purpose of this macro is to tell the byte-compiler that functions and
 variables provided by FEATURE are in scope, so it doesn't warn about them."
-  (when (bound-and-true-p byte-compile-current-file)
-    (require feature))
-  nil)
+    (when (bound-and-true-p byte-compile-current-file)
+      (require feature))
+    nil)
 
-(defmacro init-el-with-eval-after-load (feature &rest body)
-  "Execute BODY after FEATURE is loaded."
-  (declare (indent defun) (debug t))
-  `(with-eval-after-load ',feature
-     (init-el-require-when-compiling ,feature)
-     ,@body))
+  (defmacro init-el-with-eval-after-load (feature &rest body)
+    "Execute BODY after FEATURE is loaded."
+    (declare (indent defun) (debug t))
+    `(with-eval-after-load ',feature
+       (init-el-require-when-compiling ,feature)
+       ,@body))
 
-(defmacro init-el-deferred (&rest body)
-  (declare (indent defun) (debug t))
-  `(run-with-idle-timer 0.1 nil ,(pcase body
-                                   (`(#',function-name)
-                                    `#',function-name)
-                                   (_
-                                    `(lambda () ,@body)))))
+  (defmacro init-el-deferred (&rest body)
+    (declare (indent defun) (debug t))
+    `(run-with-idle-timer 0.1 nil ,(pcase body
+                                     (`(#',function-name)
+                                      `#',function-name)
+                                     (_
+                                      `(lambda () ,@body))))))
 
 ;;; Byte-compile-time required package handling
 (eval-and-compile
