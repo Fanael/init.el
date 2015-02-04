@@ -24,7 +24,6 @@
 ;; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (eval-when-compile (require 'cl-lib))
-
 (setq package-enable-at-startup nil)
 (add-hook 'after-init-hook #'init-el-after-init)
 
@@ -80,6 +79,7 @@
   (init-el-setup-paragraph-filling)
   (init-el-setup-echo-keystrokes)
   (init-el-setup-windmove)
+  (init-el-setup-customize)
   (init-el-start-server))
 
 (eval-and-compile
@@ -602,6 +602,11 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
 (defun init-el-setup-windmove ()
   (init-el-require-when-compiling windmove)
   (setq windmove-wrap-around t))
+
+(defun init-el-setup-customize ()
+  ;; Allow the code using customize to save their stuff to somewhere else than
+  ;; the init file. Don't load it, though, as I don't use customize.
+  (setq custom-file (expand-file-name ".custom" user-emacs-directory)))
 
 (defun init-el-start-server ()
   (when (eq system-type 'windows-nt)
