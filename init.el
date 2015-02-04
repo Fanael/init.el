@@ -106,7 +106,6 @@
       htmlize
       ipretty
       markdown-mode
-      package-safe-delete
       php-mode
       rainbow-delimiters
       rainbow-identifiers
