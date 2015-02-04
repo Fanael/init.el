@@ -24,112 +24,6 @@
 ;; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 (eval-when-compile (require 'cl-lib))
-(setq package-enable-at-startup nil)
-(add-hook 'after-init-hook #'init-el-after-init)
-
-(defun init-el-after-init ()
-  (init-el-tune-gc)
-  (init-el-use-new-byte-code-opcodes)
-  (init-el-set-window-size)
-  (init-el-disable-useless-gui-stuff)
-  (init-el-start-with-empty-scratch-buffer)
-  (init-el-setup-fonts)
-  (init-el-disable-lock-files)
-  (init-el-setup-backup-files)
-  (init-el-setup-auto-save)
-  (init-el-use-fucking-utf-8)
-  (init-el-setup-package-archives)
-  (init-el-install-required-packages)
-  (init-el-fix-scrolling)
-  (init-el-setup-clipboard)
-  (init-el-set-undo-limits)
-  (init-el-do-not-disable-commands)
-  (init-el-disable-electric-indent)
-  (init-el-disable-vc)
-  (init-el-setup-undo-tree)
-  (init-el-setup-ignore-completion-case)
-  (init-el-setup-history)
-  (init-el-setup-helm)
-  (init-el-setup-evil)
-  (init-el-setup-surround)
-  (init-el-setup-search-highlight)
-  (init-el-setup-emmet)
-  (init-el-setup-whitespace-mode)
-  (init-el-setup-text-mode)
-  (init-el-setup-paren-matching)
-  (init-el-setup-theme)
-  (init-el-setup-line-highlighting)
-  (init-el-setup-emacs-lisp-special-form-highlighting)
-  (init-el-setup-number-highlighting)
-  (init-el-setup-rainbow-identifiers)
-  (init-el-setup-highlight-quoted)
-  (init-el-setup-company)
-  (init-el-setup-anaconda)
-  (init-el-setup-slime)
-  (init-el-setup-haskell-mode)
-  (init-el-setup-rainbow-delimiters)
-  (init-el-setup-smartparens)
-  (init-el-setup-flycheck)
-  (init-el-setup-eldoc)
-  (init-el-setup-indentation)
-  (init-el-setup-bindings)
-  (init-el-setup-mode-line)
-  (init-el-setup-title-bar)
-  (init-el-setup-buffer-boundary-indicators)
-  (init-el-setup-paragraph-filling)
-  (init-el-setup-echo-keystrokes)
-  (init-el-setup-windmove)
-  (init-el-setup-customize)
-  (init-el-start-server))
-
-(eval-and-compile
-  (defconst init-el-package-archives
-    '(("melpa" . "http://melpa.org/packages/")
-      ("gnu" . "http://elpa.gnu.org/packages/")))
-
-  (defconst init-el-required-packages
-    '(ace-jump-mode
-      colorsarenice-theme
-      company
-      company-anaconda
-      company-ghc
-      emmet-mode
-      evil
-      evil-surround
-      fasm-mode
-      flycheck
-      haskell-mode
-      helm
-      highlight-blocks
-      highlight-numbers
-      highlight-quoted
-      htmlize
-      ipretty
-      markdown-mode
-      php-mode
-      rainbow-delimiters
-      rainbow-identifiers
-      rainbow-mode
-      slime
-      slime-company
-      smartparens
-      undo-tree
-      yaml-mode))
-
-  (defun init-el-install-required-packages* ()
-    (let ((refreshed nil))
-      (dolist (package init-el-required-packages)
-        (unless (package-installed-p package)
-          (unless refreshed
-            (package-refresh-contents)
-            (setq refreshed t))
-          (package-install package))))))
-
-(cl-eval-when (compile)
-  (require 'package)
-  (let ((package-archives init-el-package-archives))
-    (package-initialize)
-    (init-el-install-required-packages*)))
 
 (defmacro init-el-require-when-compiling (feature)
   "Require FEATURE only when byte-compiling.
@@ -153,464 +47,6 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
                                     `#',function-name)
                                    (_
                                     `(lambda () ,@body)))))
-
-(defun init-el-tune-gc ()
-  ;; The default setting is too conservative on modern machines making Emacs
-  ;; spend too much time collecting garbage in alloc-heavy code.
-  (setq gc-cons-threshold (* 24 1024 1024)))
-
-(defun init-el-use-new-byte-code-opcodes ()
-  (setq byte-compile--use-old-handlers nil))
-
-(defun init-el-set-window-size ()
-  (push '(width . 130) default-frame-alist)
-  (push '(height . 45) default-frame-alist))
-
-(defun init-el-disable-useless-gui-stuff ()
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (when (fboundp 'horizontal-scroll-bar-mode)
-    (horizontal-scroll-bar-mode -1))
-  (menu-bar-mode -1)
-  (blink-cursor-mode -1)
-  (setq use-file-dialog nil
-        use-dialog-box nil))
-
-(defun init-el-start-with-empty-scratch-buffer ()
-  (fset #'display-startup-echo-area-message #'ignore)
-  (setq inhibit-splash-screen t
-        initial-scratch-message ""
-        initial-major-mode #'fundamental-mode))
-
-(defun init-el-setup-fonts ()
-  (if (eq system-type 'windows-nt)
-      (cond
-       ((find-font (font-spec :name "Consolas"))
-        (set-face-attribute 'default nil :family "Consolas" :height 100))
-       ((find-font (font-spec :name "Lucida Console"))
-        (set-face-attribute 'default nil :family "Lucida Console" :height 100)))
-    (set-face-attribute 'default nil :family "Monospace" :height 100)))
-
-(defun init-el-disable-lock-files ()
-  (setq create-lockfiles nil))
-
-(defun init-el-setup-backup-files ()
-  (let ((backup-dir (expand-file-name "backups" user-emacs-directory)))
-    (setq backup-by-copying t
-          delete-old-versions t
-          kept-old-versions 3
-          kept-new-versions 7
-          version-control t
-          backup-directory-alist (list (cons "." backup-dir)))))
-
-(defun init-el-setup-auto-save ()
-  (let ((auto-save-dir (file-name-as-directory (expand-file-name "autosave" user-emacs-directory))))
-    (setq auto-save-list-file-prefix (expand-file-name ".saves-" auto-save-dir)
-          auto-save-file-name-transforms (list (list ".*" (replace-quote auto-save-dir) t)))))
-
-(defun init-el-use-fucking-utf-8 ()
-  (prefer-coding-system 'utf-8)
-  (set-language-environment "UTF-8")
-  (setq locale-coding-system 'utf-8)
-  (unless (eq system-type 'windows-nt)
-    (set-selection-coding-system 'utf-8))
-  (setq-default buffer-file-coding-system 'utf-8-unix))
-
-(defun init-el-setup-package-archives ()
-  (setq package-archives init-el-package-archives)
-  (package-initialize)
-  (when (boundp 'package-selected-packages)
-    (setq package-selected-packages init-el-required-packages)))
-
-(defun init-el-install-required-packages ()
-  (when (or (eq system-type 'windows-nt)
-            (/= 0 (user-uid)))
-    (init-el-install-required-packages*)))
-
-(defun init-el-fix-scrolling ()
-  (setq mouse-wheel-progressive-speed nil
-        scroll-margin 3
-        scroll-conservatively 100000
-        scroll-preserve-screen-position 'always))
-
-(defun init-el-setup-clipboard ()
-  (setq-default select-active-regions nil)
-  (when (boundp 'x-select-enable-primary)
-    (setq x-select-enable-primary nil)))
-
-(defun init-el-set-undo-limits ()
-  (setq undo-limit (* 16 1024 1024)
-        undo-strong-limit (* 24 1024 1024)
-        undo-outer-limit (* 64 1024 1024)))
-
-(defun init-el-do-not-disable-commands ()
-  (setq disabled-command-function nil))
-
-(defun init-el-disable-electric-indent ()
-  (when (bound-and-true-p electric-indent-mode)
-    (electric-indent-mode -1)))
-
-(defun init-el-disable-vc ()
-  (setq vc-handled-backends '()))
-
-(defun init-el-setup-undo-tree ()
-  (global-undo-tree-mode)
-  (init-el-require-when-compiling undo-tree)
-  (let ((undo-dir (expand-file-name "undo" user-emacs-directory)))
-    (setq undo-tree-visualizer-timestamps t
-          undo-tree-visualizer-lazy-drawing nil
-          undo-tree-auto-save-history t
-          undo-tree-history-directory-alist (list (cons "." undo-dir)))))
-
-(defun init-el-setup-ignore-completion-case ()
-  (setq completion-ignore-case t
-        read-buffer-completion-ignore-case t
-        read-file-name-completion-ignore-case t))
-
-(defun init-el-setup-history ()
-  (init-el-require-when-compiling savehist)
-  (setq history-length 1024
-        search-ring-max 1024
-        regexp-search-ring-max 1024
-        savehist-additional-variables '(search-ring regexp-search-ring)
-        savehist-file (expand-file-name ".savehist" user-emacs-directory))
-  (savehist-mode))
-
-(defun init-el-setup-helm ()
-  (init-el-deferred
-    (cl-letf (((symbol-function #'message) #'ignore))
-      (helm-mode)
-      (init-el-require-when-compiling helm)
-      (setq helm-move-to-line-cycle-in-source t
-            helm-prevent-escaping-from-minibuffer nil)))
-  (init-el-with-eval-after-load helm-command
-    (setq helm-M-x-always-save-history t)))
-
-(defun init-el-setup-evil ()
-  (evil-mode)
-  (init-el-require-when-compiling evil)
-  (setq evil-want-fine-undo t
-        evil-echo-state nil
-        evil-ex-substitute-global t)
-  (evil-define-operator evil-destroy (beg end type)
-    "Delete text from BEG to END with TYPE. Do not save it."
-    (evil-delete beg end type ?_ nil))
-  (evil-set-command-properties
-   #'smart-beginning-of-line :repeat 'motion :type 'exclusive :keep-visual t))
-
-(defun init-el-setup-surround ()
-  (global-evil-surround-mode))
-
-(defun init-el-setup-search-highlight ()
-  (setq search-highlight t
-        query-replace-highlight t))
-
-(defun init-el-setup-emmet ()
-  (add-hook 'sgml-mode-hook #'emmet-mode)
-  (add-hook 'css-mode-hook #'emmet-mode))
-
-(defun init-el-setup-whitespace-mode ()
-  (init-el-with-eval-after-load whitespace
-    (setq whitespace-style '(face trailing lines-tail empty space-before-tab))))
-
-(defun init-el-setup-text-mode ()
-  (add-hook 'text-mode-hook #'visual-line-mode))
-
-(defun init-el-setup-paren-matching ()
-  (show-paren-mode)
-  (init-el-require-when-compiling paren)
-  (setq show-paren-delay 0))
-
-(defun init-el-setup-theme ()
-  (let ((theme 'colorsarenice-dark))
-    (load-theme theme t)
-    (unless (eq system-type 'windows-nt)
-      ;; Without this hook the cursor color is not set correctly under X11.
-      (add-hook 'after-make-frame-functions
-                (lambda (frame)
-                  (when (eq (window-system frame) 'x)
-                    (disable-theme theme)
-                    (enable-theme theme)))))))
-
-(defun init-el-setup-line-highlighting ()
-  (global-hl-line-mode))
-
-(defun init-el-setup-emacs-lisp-special-form-highlighting ()
-  (add-hook 'emacs-lisp-mode-hook #'init-el-highlight-all-special-forms))
-
-(defun init-el-highlight-all-special-forms ()
-  (font-lock-add-keywords
-   nil
-   (eval-when-compile
-     `((,(let ((special-forms '()))
-           (mapatoms (lambda (symbol)
-                       (when (fboundp symbol)
-                         (let ((fn (symbol-function symbol)))
-                           (when (and (subrp fn)
-                                      (eq 'unevalled (cdr (subr-arity fn))))
-                             (push (symbol-name symbol) special-forms))))))
-           (concat "(" (regexp-opt special-forms t) "\\_>"))
-        (1 'font-lock-keyword-face))))))
-
-(defun init-el-setup-number-highlighting ()
-  (add-hook 'prog-mode-hook #'highlight-numbers-mode))
-
-(defun init-el-setup-rainbow-identifiers ()
-  (init-el-with-eval-after-load rainbow-identifiers
-    (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face
-          rainbow-identifiers-faces-to-override '(highlight-quoted-symbol))))
-
-(defun init-el-setup-highlight-quoted ()
-  (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
-  (add-hook 'lisp-mode-hook #'highlight-quoted-mode))
-
-(defun init-el-setup-company ()
-  (init-el-deferred
-    (global-company-mode)
-    (init-el-require-when-compiling company)
-    (let ((it company-backends))
-      (while it
-        (let ((backend (car it)))
-          (when (memq backend '(company-elisp company-capf))
-            (setcar it `(,backend :with company-dabbrev-code))))
-        (setq it (cdr it))))
-    (setq company-idle-delay nil
-          company-selection-wrap-around t
-          company-require-match nil))
-  (init-el-with-eval-after-load company-dabbrev
-    (setq company-dabbrev-minimum-length 3
-          company-dabbrev-other-buffers t)))
-
-(defun init-el-setup-anaconda ()
-  (add-hook 'python-mode-hook #'anaconda-mode)
-  (init-el-with-eval-after-load company
-    (init-el-with-eval-after-load python
-      (add-to-list 'company-backends #'company-anaconda))))
-
-(defun init-el-setup-slime ()
-  (init-el-with-eval-after-load slime
-    (setq slime-lisp-implementations '((sbcl ("sbcl"))))
-    (setq slime-default-lisp 'sbcl))
-  (add-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
-
-(defun init-el-setup-slime-first-time ()
-  (slime-setup '(slime-asdf
-                 slime-autodoc
-                 slime-company
-                 slime-editing-commands
-                 slime-fancy-inspector
-                 slime-fancy-trace
-                 slime-fontifying-fu
-                 slime-package-fu
-                 slime-references
-                 slime-repl
-                 slime-trace-dialog
-                 slime-xref-browser))
-  (remove-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
-
-(defun init-el-setup-haskell-mode ()
-  (add-hook 'haskell-mode-hook #'turn-on-haskell-indentation)
-  (add-hook 'haskell-mode-hook #'ghc-init)
-  (init-el-with-eval-after-load company
-    (init-el-with-eval-after-load haskell-mode
-      (add-to-list 'company-backends '(company-ghc :with company-dabbrev-code)))))
-
-(defun init-el-setup-rainbow-delimiters ()
-  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
-
-(defun init-el-setup-smartparens ()
-  (init-el-deferred
-    (require 'smartparens-config)
-    (smartparens-global-mode)
-    (init-el-require-when-compiling smartparens)
-    (setq sp-highlight-pair-overlay nil
-          sp-highlight-wrap-overlay nil
-          sp-highlight-wrap-tag-overlay nil)
-    (setq-default sp-autoskip-closing-pair t)
-    (sp-local-pair '(c-mode c++-mode java-mode css-mode php-mode js-mode perl-mode
-                            cperl-mode)
-                   "{" nil
-                   :post-handlers '((init-el-smartparens-create-and-enter-block "RET")))))
-
-(defun init-el-smartparens-create-and-enter-block (&rest _)
-  (save-excursion
-    ;; Indent the line with the opening brace, but only if it
-    ;; contains nothing more than the brace.
-    (end-of-line 0)
-    (let ((old-point (point)))
-      (back-to-indentation)
-      (when (= (1+ (point)) old-point)
-        (indent-according-to-mode))))
-  ;; Open the block and reindent the closing brace.
-  (newline)
-  (indent-according-to-mode)
-  ;; Enter it.
-  (forward-line -1)
-  (indent-according-to-mode))
-
-(defun init-el-setup-flycheck ()
-  (add-hook 'prog-mode-hook #'flycheck-mode)
-  (init-el-with-eval-after-load flycheck
-    (setq flycheck-idle-change-delay 1)
-    (setq-default flycheck-cppcheck-checks '("style" "missingInclude")
-                  flycheck-cppcheck-inconclusive t
-                  flycheck-disabled-checkers '(c/c++-clang c/c++-gcc))))
-
-(defun init-el-setup-eldoc ()
-  (init-el-with-eval-after-load eldoc
-    (setq eldoc-idle-delay 0.25)
-    (when (fboundp 'global-eldoc-mode)
-      (global-eldoc-mode -1))
-    (add-hook 'prog-mode-hook #'init-el-enable-eldoc-mode)
-    (when (boundp 'eval-expression-minibuffer-setup-hook)
-      (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))))
-
-(defalias 'init-el-enable-eldoc-mode
-  (if (fboundp 'global-eldoc-mode)
-      (lambda ()
-        (unless (memq eldoc-documentation-function '(ignore nil))
-          (eldoc-mode)))
-    (lambda ()
-      (when (or (not (memq eldoc-documentation-function
-                           '(eldoc-documentation-function-default nil)))
-                (derived-mode-p #'emacs-lisp-mode))
-        (eldoc-mode)))))
-
-(defun init-el-setup-indentation ()
-  (setq-default indent-tabs-mode nil)
-  (init-el-with-eval-after-load cc-vars
-    (setq-default c-basic-offset 2))
-  (init-el-with-eval-after-load haskell-indentation
-    (setq haskell-indentation-starter-offset 2))
-  (init-el-with-eval-after-load cc-mode
-    (c-set-offset 'substatement-open 0)
-    (c-set-offset 'defun-open 0)
-    (c-set-offset 'innamespace 0)))
-
-(defun init-el-setup-bindings ()
-  (global-set-key [remap execute-extended-command] #'helm-M-x)
-  (global-set-key [remap list-buffers] #'ibuffer-other-window)
-  (global-set-key [remap isearch-forward] #'isearch-forward-regexp)
-  (global-set-key [remap isearch-backward] #'isearch-backward-regexp)
-  (global-set-key [remap move-beginning-of-line] #'smart-beginning-of-line)
-  (global-set-key [remap eval-expression] #'pp-eval-expression)
-  (global-set-key [remap eval-last-sexp] #'pp-eval-last-sexp)
-  (global-set-key [remap eval-print-last-sexp] #'ipretty-last-sexp)
-  (define-key evil-insert-state-map (kbd "RET") #'newline-and-indent)
-  (define-key evil-insert-state-map (kbd "C-<SPC>") #'company-complete)
-  (define-key evil-insert-state-map (kbd "C-e") #'emmet-expand-line)
-  (define-key evil-motion-state-map "," nil)
-  (define-key evil-motion-state-map " " #'evil-repeat-find-char-reverse)
-  (define-key evil-motion-state-map ",e" #'find-file)
-  (define-key evil-motion-state-map ",w" #'write-file)
-  (define-key evil-motion-state-map ",s" #'save-buffer)
-  (define-key evil-motion-state-map ",q" #'bury-buffer-delete-window-or-frame)
-  (define-key evil-motion-state-map ",b" #'switch-to-buffer)
-  (define-key evil-motion-state-map ",B" #'list-buffers)
-  (define-key evil-motion-state-map ",d" #'evil-destroy)
-  (define-key evil-motion-state-map ",a" #'mark-whole-buffer)
-  (define-key evil-motion-state-map ",j" #'evil-ace-jump-word-mode)
-  (define-key evil-motion-state-map ",k" #'evil-ace-jump-char-mode)
-  (define-key evil-motion-state-map ",l" #'evil-ace-jump-line-mode)
-  (define-key evil-motion-state-map ",p" #'previous-buffer)
-  (define-key evil-motion-state-map ",n" #'next-buffer)
-  (define-key evil-motion-state-map [up] #'evil-previous-visual-line)
-  (define-key evil-insert-state-map [up] #'evil-previous-visual-line)
-  (define-key evil-motion-state-map [down] #'evil-next-visual-line)
-  (define-key evil-insert-state-map [down] #'evil-next-visual-line)
-  (global-set-key [(shift up)] #'windmove-up)
-  (global-set-key [(shift down)] #'windmove-down)
-  (global-set-key [(shift left)] #'windmove-left)
-  (global-set-key [(shift right)] #'windmove-right)
-  (add-hook 'org-shiftup-final-hook #'windmove-up)
-  (add-hook 'org-shiftleft-final-hook #'windmove-left)
-  (add-hook 'org-shiftdown-final-hook #'windmove-down)
-  (add-hook 'org-shiftright-final-hook #'windmove-right)
-  (global-set-key [f7] #'compile)
-  (global-set-key (kbd "C-c r") #'rainbow-identifiers-mode)
-  (global-set-key (kbd "C-c b") #'highlight-blocks-now)
-  (global-set-key (kbd "C-c m") #'pp-macroexpand-all)
-  (global-set-key (kbd "C-c i") #'helm-semantic-or-imenu)
-  (init-el-with-eval-after-load helm
-    (define-key helm-map "\t" #'helm-execute-persistent-action)
-    (define-key helm-map (kbd "C-z") #'helm-select-action)))
-
-(defun init-el-setup-mode-line ()
-  (setq-default
-   mode-line-format
-   (list
-    (eval-when-compile
-      (concat
-       " "
-       (propertize "%b" 'face 'font-lock-keyword-face)
-       " ("
-       (propertize "%02l" 'face 'font-lock-type-face)
-       ","
-       (propertize "%02c" 'face 'font-lock-type-face)
-       ") ["
-       (propertize "%p" 'face 'font-lock-constant-face)
-       "/"
-       (propertize "%I" 'face 'font-lock-constant-face)
-       "] ["
-       (propertize "%m" 'face 'font-lock-string-face)
-       "] ["))
-    `(:eval (,(lambda ()
-                (propertize (symbol-name buffer-file-coding-system)
-                            'face 'font-lock-builtin-face))))
-    "] ["
-    `(:eval (,(lambda ()
-                (propertize (symbol-name evil-state)
-                            'face 'font-lock-function-name-face))))
-    "] %[["
-    `(:eval
-      (,(lambda ()
-          (let ((strings '()))
-            (cl-macrolet
-                ((add-string
-                  (string face)
-                  `(push ,(propertize string 'face face) strings)))
-              (when defining-kbd-macro
-                (add-string "Macro" font-lock-type-face))
-              (when (buffer-narrowed-p)
-                (add-string "Narrow" font-lock-type-face))
-              (when buffer-read-only
-                (add-string "RO" font-lock-type-face))
-              (pcase overwrite-mode
-                (`overwrite-mode-textutal
-                 (add-string "Overwrite" font-lock-warning-face))
-                (`overwrite-mode-binary
-                 (add-string "Bin-overwrite" font-lock-warning-face)))
-              (when (buffer-modified-p)
-                (add-string "Mod" font-lock-warning-face)))
-            (mapconcat #'identity strings ",")))))
-    "]%]")))
-
-(defun init-el-setup-title-bar ()
-  (setq icon-title-format (setq frame-title-format "%b [%f] - Emacs")))
-
-(defun init-el-setup-buffer-boundary-indicators ()
-  (setq-default indicate-empty-lines t
-                indicate-buffer-boundaries 'left))
-
-(defun init-el-setup-paragraph-filling ()
-  (setq sentence-end-double-space nil)
-  (setq-default fill-column 80))
-
-(defun init-el-setup-echo-keystrokes ()
-  (setq echo-keystrokes 5.391063232E-44))
-
-(defun init-el-setup-windmove ()
-  (init-el-require-when-compiling windmove)
-  (setq windmove-wrap-around t))
-
-(defun init-el-setup-customize ()
-  ;; Allow the code using customize to save their stuff to somewhere else than
-  ;; the init file. Don't load it, though, as I don't use customize.
-  (setq custom-file (expand-file-name ".custom" user-emacs-directory)))
-
-(defun init-el-start-server ()
-  (when (eq system-type 'windows-nt)
-    (init-el-deferred #'server-start)))
 
 (defun smart-beginning-of-line (&optional line-offset)
   "Move the point to the first non-white character of the current line.
@@ -716,3 +152,512 @@ buffer as \"done\"; note that this may kill the buffer instead of burying it."
       (delete-frame frame-to-delete))
      (t
       (delete-window window-to-delete)))))
+
+(eval-and-compile
+  (defconst init-el-package-archives
+    '(("melpa" . "http://melpa.org/packages/")
+      ("gnu" . "http://elpa.gnu.org/packages/")))
+
+  (defconst init-el-required-packages
+    '(ace-jump-mode
+      colorsarenice-theme
+      company
+      company-anaconda
+      company-ghc
+      emmet-mode
+      evil
+      evil-surround
+      fasm-mode
+      flycheck
+      haskell-mode
+      helm
+      highlight-blocks
+      highlight-numbers
+      highlight-quoted
+      htmlize
+      ipretty
+      markdown-mode
+      php-mode
+      rainbow-delimiters
+      rainbow-identifiers
+      rainbow-mode
+      slime
+      slime-company
+      smartparens
+      undo-tree
+      yaml-mode))
+
+  (defun init-el-install-required-packages* ()
+    (let ((refreshed nil))
+      (dolist (package init-el-required-packages)
+        (unless (package-installed-p package)
+          (unless refreshed
+            (package-refresh-contents)
+            (setq refreshed t))
+          (package-install package))))))
+
+(cl-eval-when (compile)
+  (require 'package)
+  (let ((package-archives init-el-package-archives))
+    (package-initialize)
+    (init-el-install-required-packages*)))
+
+;;; Tune the GC
+;; The default setting is too conservative on modern machines making Emacs
+;; spend too much time collecting garbage in alloc-heavy code.
+(setq gc-cons-threshold (* 24 1024 1024))
+
+;;; Use new byte codes
+(setq byte-compile--use-old-handlers nil)
+
+;;; Set window size
+(push '(width . 130) default-frame-alist)
+(push '(height . 45) default-frame-alist)
+
+;;; Disable useless GUI stuff
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(when (fboundp 'horizontal-scroll-bar-mode)
+  (horizontal-scroll-bar-mode -1))
+(menu-bar-mode -1)
+(blink-cursor-mode -1)
+(setq use-file-dialog nil
+      use-dialog-box nil)
+
+;;; Start with empty scratch buffer
+(fset #'display-startup-echo-area-message #'ignore)
+(setq inhibit-splash-screen t
+      initial-scratch-message ""
+      initial-major-mode #'fundamental-mode)
+
+;;; Setup fonts
+(if (eq system-type 'windows-nt)
+    (cond
+     ((find-font (font-spec :name "Consolas"))
+      (set-face-attribute 'default nil :family "Consolas" :height 100))
+     ((find-font (font-spec :name "Lucida Console"))
+      (set-face-attribute 'default nil :family "Lucida Console" :height 100)))
+  (set-face-attribute 'default nil :family "Monospace" :height 100))
+
+;;; Disable lock files
+(setq create-lockfiles nil)
+
+;;; Setup backup files
+(let ((backup-dir (expand-file-name "backups" user-emacs-directory)))
+  (setq backup-by-copying t
+        delete-old-versions t
+        kept-old-versions 3
+        kept-new-versions 7
+        version-control t
+        backup-directory-alist (list (cons "." backup-dir))))
+
+;;; Setup auto-save
+(let ((auto-save-dir (file-name-as-directory (expand-file-name "autosave" user-emacs-directory))))
+  (setq auto-save-list-file-prefix (expand-file-name ".saves-" auto-save-dir)
+        auto-save-file-name-transforms (list (list ".*" (replace-quote auto-save-dir) t))))
+
+;;; Use fucking UTF-8
+(prefer-coding-system 'utf-8)
+(set-language-environment "UTF-8")
+(setq locale-coding-system 'utf-8)
+(unless (eq system-type 'windows-nt)
+  (set-selection-coding-system 'utf-8))
+(setq-default buffer-file-coding-system 'utf-8-unix)
+
+;;; Setup package archives
+(setq package-archives init-el-package-archives
+      package-enable-at-startup nil)
+(package-initialize)
+(when (boundp 'package-selected-packages)
+  (setq package-selected-packages init-el-required-packages))
+
+;;; Install required packages
+(when (or (eq system-type 'windows-nt)
+          (/= 0 (user-uid)))
+  (init-el-install-required-packages*))
+
+;;; Fix scrolling
+(setq mouse-wheel-progressive-speed nil
+      scroll-margin 3
+      scroll-conservatively 100000
+      scroll-preserve-screen-position 'always)
+
+;;; Setup clipboard
+(setq-default select-active-regions nil)
+(when (boundp 'x-select-enable-primary)
+  (setq x-select-enable-primary nil))
+
+;;; Set undo limits
+(setq undo-limit (* 16 1024 1024)
+      undo-strong-limit (* 24 1024 1024)
+      undo-outer-limit (* 64 1024 1024))
+
+;;; Do not disable commands
+(setq disabled-command-function nil)
+
+;;; Disable electrict indent
+(when (bound-and-true-p electric-indent-mode)
+  (electric-indent-mode -1))
+
+;;; Disable VC
+(setq vc-handled-backends '())
+
+;;; Setup undo-tree
+(global-undo-tree-mode)
+(init-el-require-when-compiling undo-tree)
+(let ((undo-dir (expand-file-name "undo" user-emacs-directory)))
+  (setq undo-tree-visualizer-timestamps t
+        undo-tree-visualizer-lazy-drawing nil
+        undo-tree-auto-save-history t
+        undo-tree-history-directory-alist (list (cons "." undo-dir))))
+
+;;; Ignore case for completion
+(setq completion-ignore-case t
+      read-buffer-completion-ignore-case t
+      read-file-name-completion-ignore-case t)
+
+;;; Setup history
+(init-el-require-when-compiling savehist)
+(setq history-length 1024
+      search-ring-max 1024
+      regexp-search-ring-max 1024
+      savehist-additional-variables '(search-ring regexp-search-ring)
+      savehist-file (expand-file-name ".savehist" user-emacs-directory))
+(savehist-mode)
+
+;;; Setup Helm
+(init-el-deferred
+  (cl-letf (((symbol-function #'message) #'ignore))
+    (helm-mode)
+    (init-el-require-when-compiling helm)
+    (setq helm-move-to-line-cycle-in-source t
+          helm-prevent-escaping-from-minibuffer nil)))
+(init-el-with-eval-after-load helm-command
+  (setq helm-M-x-always-save-history t))
+
+;;; Setup evil
+(evil-mode)
+(init-el-require-when-compiling evil)
+(setq evil-want-fine-undo t
+      evil-echo-state nil
+      evil-ex-substitute-global t)
+(evil-set-command-properties
+ #'smart-beginning-of-line :repeat 'motion :type 'exclusive :keep-visual t)
+
+(evil-define-operator evil-destroy (beg end type)
+  "Delete text from BEG to END with TYPE. Do not save it."
+  (evil-delete beg end type ?_ nil))
+
+;;; Setup evil-surround
+(global-evil-surround-mode)
+
+;;; Setup search highlight
+(setq search-highlight t
+      query-replace-highlight t)
+
+;;; Setup emmet
+(add-hook 'sgml-mode-hook #'emmet-mode)
+(add-hook 'css-mode-hook #'emmet-mode)
+
+;;; Setup whitespace-mode
+(init-el-with-eval-after-load whitespace
+  (setq whitespace-style '(face trailing lines-tail empty space-before-tab)))
+
+;;; Setup text-mode
+(add-hook 'text-mode-hook #'visual-line-mode)
+
+;;; Setup show-paren-mode
+(show-paren-mode)
+(init-el-require-when-compiling paren)
+(setq show-paren-delay 0)
+
+;;; Setup the theme
+(let ((theme 'colorsarenice-dark))
+  (load-theme theme t)
+  (unless (eq system-type 'windows-nt)
+    ;; Without this hook the cursor color is not set correctly under X11.
+    (add-hook 'after-make-frame-functions
+              (lambda (frame)
+                (when (eq (window-system frame) 'x)
+                  (disable-theme theme)
+                  (enable-theme theme))))))
+
+;;; Setup current line highlighting
+(global-hl-line-mode)
+
+;;; Setup Emacs Lisp special form highlighting
+(add-hook 'emacs-lisp-mode-hook #'init-el-highlight-all-special-forms)
+
+(defun init-el-highlight-all-special-forms ()
+  (font-lock-add-keywords
+   nil
+   (eval-when-compile
+     `((,(let ((special-forms '()))
+           (mapatoms (lambda (symbol)
+                       (when (fboundp symbol)
+                         (let ((fn (symbol-function symbol)))
+                           (when (and (subrp fn)
+                                      (eq 'unevalled (cdr (subr-arity fn))))
+                             (push (symbol-name symbol) special-forms))))))
+           (concat "(" (regexp-opt special-forms t) "\\_>"))
+        (1 'font-lock-keyword-face))))))
+
+;;; Setup number highlighting in programming modes
+(add-hook 'prog-mode-hook #'highlight-numbers-mode)
+
+;;; Setup rainbow-identifiers
+(init-el-with-eval-after-load rainbow-identifiers
+  (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face
+        rainbow-identifiers-faces-to-override '(highlight-quoted-symbol)))
+
+;;; Setup highlight-quoted
+(add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
+(add-hook 'lisp-mode-hook #'highlight-quoted-mode)
+
+;;; Setup company
+(init-el-deferred
+  (global-company-mode)
+  (init-el-require-when-compiling company)
+  (let ((it company-backends))
+    (while it
+      (let ((backend (car it)))
+        (when (memq backend '(company-elisp company-capf))
+          (setcar it `(,backend :with company-dabbrev-code))))
+      (setq it (cdr it))))
+  (setq company-idle-delay nil
+        company-selection-wrap-around t
+        company-require-match nil))
+(init-el-with-eval-after-load company-dabbrev
+  (setq company-dabbrev-minimum-length 3
+        company-dabbrev-other-buffers t))
+
+;;; Setup anaconda
+(add-hook 'python-mode-hook #'anaconda-mode)
+(init-el-with-eval-after-load company
+  (init-el-with-eval-after-load python
+    (add-to-list 'company-backends #'company-anaconda)))
+
+;;; Setup SLIME
+(init-el-with-eval-after-load slime
+  (setq slime-lisp-implementations '((sbcl ("sbcl"))))
+  (setq slime-default-lisp 'sbcl))
+(add-hook 'lisp-mode-hook #'init-el-setup-slime-first-time)
+
+(defun init-el-setup-slime-first-time ()
+  (slime-setup '(slime-asdf
+                 slime-autodoc
+                 slime-company
+                 slime-editing-commands
+                 slime-fancy-inspector
+                 slime-fancy-trace
+                 slime-fontifying-fu
+                 slime-package-fu
+                 slime-references
+                 slime-repl
+                 slime-trace-dialog
+                 slime-xref-browser))
+  (remove-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
+
+;;; Setup haskell-mode
+(add-hook 'haskell-mode-hook #'turn-on-haskell-indentation)
+(add-hook 'haskell-mode-hook #'ghc-init)
+(init-el-with-eval-after-load company
+  (init-el-with-eval-after-load haskell-mode
+    (add-to-list 'company-backends '(company-ghc :with company-dabbrev-code))))
+
+;;; Setup rainbow-delimiters
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+
+;;; Setup smartparens
+(init-el-deferred
+  (require 'smartparens-config)
+  (smartparens-global-mode)
+  (init-el-require-when-compiling smartparens)
+  (setq sp-highlight-pair-overlay nil
+        sp-highlight-wrap-overlay nil
+        sp-highlight-wrap-tag-overlay nil)
+  (setq-default sp-autoskip-closing-pair t)
+  (sp-local-pair '(c-mode c++-mode java-mode css-mode php-mode js-mode perl-mode
+                          cperl-mode)
+                 "{" nil
+                 :post-handlers '((init-el-smartparens-create-and-enter-block "RET"))))
+
+(defun init-el-smartparens-create-and-enter-block (&rest _)
+  (save-excursion
+    ;; Indent the line with the opening brace, but only if it
+    ;; contains nothing more than the brace.
+    (end-of-line 0)
+    (let ((old-point (point)))
+      (back-to-indentation)
+      (when (= (1+ (point)) old-point)
+        (indent-according-to-mode))))
+  ;; Open the block and reindent the closing brace.
+  (newline)
+  (indent-according-to-mode)
+  ;; Enter it.
+  (forward-line -1)
+  (indent-according-to-mode))
+
+;;; Setup flycheck
+(add-hook 'prog-mode-hook #'flycheck-mode)
+(init-el-with-eval-after-load flycheck
+  (setq flycheck-idle-change-delay 1)
+  (setq-default flycheck-cppcheck-checks '("style" "missingInclude")
+                flycheck-cppcheck-inconclusive t
+                flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)))
+
+;;; Setup eldoc
+(init-el-with-eval-after-load eldoc
+  (setq eldoc-idle-delay 0.25)
+  (when (fboundp 'global-eldoc-mode)
+    (global-eldoc-mode -1))
+  (add-hook 'prog-mode-hook #'init-el-enable-eldoc-mode)
+  (when (boundp 'eval-expression-minibuffer-setup-hook)
+    (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode)))
+
+(defalias 'init-el-enable-eldoc-mode
+  (if (fboundp 'global-eldoc-mode)
+      (lambda ()
+        (unless (memq eldoc-documentation-function '(ignore nil))
+          (eldoc-mode)))
+    (lambda ()
+      (when (or (not (memq eldoc-documentation-function
+                           '(eldoc-documentation-function-default nil)))
+                (derived-mode-p #'emacs-lisp-mode))
+        (eldoc-mode)))))
+
+;;; Setup indentation
+(setq-default indent-tabs-mode nil)
+(init-el-with-eval-after-load cc-vars
+  (setq-default c-basic-offset 2))
+(init-el-with-eval-after-load haskell-indentation
+  (setq haskell-indentation-starter-offset 2))
+(init-el-with-eval-after-load cc-mode
+  (c-set-offset 'substatement-open 0)
+  (c-set-offset 'defun-open 0)
+  (c-set-offset 'innamespace 0))
+
+;;; Setup key bindings
+(global-set-key [remap execute-extended-command] #'helm-M-x)
+(global-set-key [remap list-buffers] #'ibuffer-other-window)
+(global-set-key [remap isearch-forward] #'isearch-forward-regexp)
+(global-set-key [remap isearch-backward] #'isearch-backward-regexp)
+(global-set-key [remap move-beginning-of-line] #'smart-beginning-of-line)
+(global-set-key [remap eval-expression] #'pp-eval-expression)
+(global-set-key [remap eval-last-sexp] #'pp-eval-last-sexp)
+(global-set-key [remap eval-print-last-sexp] #'ipretty-last-sexp)
+(define-key evil-insert-state-map (kbd "RET") #'newline-and-indent)
+(define-key evil-insert-state-map (kbd "C-<SPC>") #'company-complete)
+(define-key evil-insert-state-map (kbd "C-e") #'emmet-expand-line)
+(define-key evil-motion-state-map "," nil)
+(define-key evil-motion-state-map " " #'evil-repeat-find-char-reverse)
+(define-key evil-motion-state-map ",e" #'find-file)
+(define-key evil-motion-state-map ",w" #'write-file)
+(define-key evil-motion-state-map ",s" #'save-buffer)
+(define-key evil-motion-state-map ",q" #'bury-buffer-delete-window-or-frame)
+(define-key evil-motion-state-map ",b" #'switch-to-buffer)
+(define-key evil-motion-state-map ",B" #'list-buffers)
+(define-key evil-motion-state-map ",d" #'evil-destroy)
+(define-key evil-motion-state-map ",a" #'mark-whole-buffer)
+(define-key evil-motion-state-map ",j" #'evil-ace-jump-word-mode)
+(define-key evil-motion-state-map ",k" #'evil-ace-jump-char-mode)
+(define-key evil-motion-state-map ",l" #'evil-ace-jump-line-mode)
+(define-key evil-motion-state-map ",p" #'previous-buffer)
+(define-key evil-motion-state-map ",n" #'next-buffer)
+(define-key evil-motion-state-map [up] #'evil-previous-visual-line)
+(define-key evil-insert-state-map [up] #'evil-previous-visual-line)
+(define-key evil-motion-state-map [down] #'evil-next-visual-line)
+(define-key evil-insert-state-map [down] #'evil-next-visual-line)
+(global-set-key [(shift up)] #'windmove-up)
+(global-set-key [(shift down)] #'windmove-down)
+(global-set-key [(shift left)] #'windmove-left)
+(global-set-key [(shift right)] #'windmove-right)
+(add-hook 'org-shiftup-final-hook #'windmove-up)
+(add-hook 'org-shiftleft-final-hook #'windmove-left)
+(add-hook 'org-shiftdown-final-hook #'windmove-down)
+(add-hook 'org-shiftright-final-hook #'windmove-right)
+(global-set-key [f7] #'compile)
+(global-set-key (kbd "C-c r") #'rainbow-identifiers-mode)
+(global-set-key (kbd "C-c b") #'highlight-blocks-now)
+(global-set-key (kbd "C-c m") #'pp-macroexpand-all)
+(global-set-key (kbd "C-c i") #'helm-semantic-or-imenu)
+(init-el-with-eval-after-load helm
+  (define-key helm-map "\t" #'helm-execute-persistent-action)
+  (define-key helm-map (kbd "C-z") #'helm-select-action))
+
+;; Setup the mode line
+(setq-default
+ mode-line-format
+ (list
+  (eval-when-compile
+    (concat
+     " "
+     (propertize "%b" 'face 'font-lock-keyword-face)
+     " ("
+     (propertize "%02l" 'face 'font-lock-type-face)
+     ","
+     (propertize "%02c" 'face 'font-lock-type-face)
+     ") ["
+     (propertize "%p" 'face 'font-lock-constant-face)
+     "/"
+     (propertize "%I" 'face 'font-lock-constant-face)
+     "] ["
+     (propertize "%m" 'face 'font-lock-string-face)
+     "] ["))
+  `(:eval (,(lambda ()
+              (propertize (symbol-name buffer-file-coding-system)
+                          'face 'font-lock-builtin-face))))
+  "] ["
+  `(:eval (,(lambda ()
+              (propertize (symbol-name evil-state)
+                          'face 'font-lock-function-name-face))))
+  "] %[["
+  `(:eval
+    (,(lambda ()
+        (let ((strings '()))
+          (cl-macrolet
+              ((add-string
+                (string face)
+                `(push ,(propertize string 'face face) strings)))
+            (when defining-kbd-macro
+              (add-string "Macro" font-lock-type-face))
+            (when (buffer-narrowed-p)
+              (add-string "Narrow" font-lock-type-face))
+            (when buffer-read-only
+              (add-string "RO" font-lock-type-face))
+            (pcase overwrite-mode
+              (`overwrite-mode-textutal
+               (add-string "Overwrite" font-lock-warning-face))
+              (`overwrite-mode-binary
+               (add-string "Bin-overwrite" font-lock-warning-face)))
+            (when (buffer-modified-p)
+              (add-string "Mod" font-lock-warning-face)))
+          (mapconcat #'identity strings ",")))))
+  "]%]"))
+
+;;; Setup the title bar
+(setq icon-title-format (setq frame-title-format "%b [%f] - Emacs"))
+
+;;; Setup the buffer boundary indicators
+(setq-default indicate-empty-lines t
+              indicate-buffer-boundaries 'left)
+
+;;; Setup paragraph filling
+(setq sentence-end-double-space nil)
+(setq-default fill-column 80)
+
+;;; Setup echo keystrokes
+(setq echo-keystrokes 5.391063232E-44)
+
+;;; Setup windmove
+(init-el-require-when-compiling windmove)
+(setq windmove-wrap-around t)
+
+;;; Setup customize
+;; Allow the code using customize to save their stuff to somewhere else than
+;; the init file. Don't load it, though, as I don't use customize.
+(setq custom-file (expand-file-name ".custom" user-emacs-directory))
+
+;;; Start the server
+(when (eq system-type 'windows-nt)
+  (init-el-deferred #'server-start))
