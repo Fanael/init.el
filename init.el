@@ -256,7 +256,7 @@ whitespace."
 (setq initial-scratch-message "")
 (setq initial-major-mode #'fundamental-mode)
 
-;;; Setup fonts
+;;; Set the font
 (if (eq system-type 'windows-nt)
     (cond
      ((find-font (font-spec :name "Consolas"))
@@ -268,7 +268,7 @@ whitespace."
 ;;; Disable lock files
 (setq create-lockfiles nil)
 
-;;; Setup backup files
+;;; Backup files
 (setq backup-by-copying t)
 (setq delete-old-versions t)
 (setq kept-old-versions 3)
@@ -277,7 +277,7 @@ whitespace."
 (let ((backup-dir (expand-file-name "backups" user-emacs-directory)))
   (setq backup-directory-alist (list (cons "." backup-dir))))
 
-;;; Setup auto-save
+;;; Auto-save
 (let ((auto-save-dir (file-name-as-directory (expand-file-name "autosave" user-emacs-directory))))
   (setq auto-save-list-file-prefix (expand-file-name ".saves-" auto-save-dir))
   (setq auto-save-file-name-transforms (list (list ".*" (replace-quote auto-save-dir) t))))
@@ -290,7 +290,7 @@ whitespace."
   (set-selection-coding-system 'utf-8))
 (setq-default buffer-file-coding-system 'utf-8-unix)
 
-;;; Setup package archives
+;;; package.el
 (setq package-archives init-el-package-archives)
 (setq package-enable-at-startup nil)
 (package-initialize)
@@ -308,7 +308,7 @@ whitespace."
 (setq scroll-conservatively 100000)
 (setq scroll-preserve-screen-position 'always)
 
-;;; Setup clipboard
+;;; Clipboard
 (setq-default select-active-regions nil)
 (when (boundp 'x-select-enable-primary)
   (setq x-select-enable-primary nil))
@@ -328,7 +328,7 @@ whitespace."
 ;;; Disable VC
 (setq vc-handled-backends '())
 
-;;; Setup undo-tree
+;;; undo-tree
 (global-undo-tree-mode)
 (init-el-require-when-compiling undo-tree)
 (setq undo-tree-visualizer-timestamps t)
@@ -342,7 +342,7 @@ whitespace."
 (setq read-buffer-completion-ignore-case t)
 (setq read-file-name-completion-ignore-case t)
 
-;;; Setup history
+;;; History saving
 (init-el-require-when-compiling savehist)
 (setq history-length 1024)
 (setq search-ring-max 1024)
@@ -351,7 +351,7 @@ whitespace."
 (setq savehist-file (expand-file-name ".savehist" user-emacs-directory))
 (savehist-mode)
 
-;;; Setup Helm
+;;; Helm
 (init-el-deferred
   (cl-letf (((symbol-function #'message) #'ignore))
     (helm-mode)
@@ -361,7 +361,7 @@ whitespace."
 (init-el-with-eval-after-load helm-command
   (setq helm-M-x-always-save-history t))
 
-;;; Setup evil
+;;; evil
 (evil-mode)
 (init-el-require-when-compiling evil)
 (setq evil-want-fine-undo t)
@@ -374,30 +374,30 @@ whitespace."
   "Delete text from BEG to END with TYPE. Do not save it."
   (evil-delete beg end type ?_ nil))
 
-;;; Setup evil-surround
+;;; evil-surround
 (global-evil-surround-mode)
 
-;;; Setup search highlight
+;;; Search highlight
 (setq search-highlight t)
 (setq query-replace-highlight t)
 
-;;; Setup emmet
+;;; emmet-mode
 (add-hook 'sgml-mode-hook #'emmet-mode)
 (add-hook 'css-mode-hook #'emmet-mode)
 
-;;; Setup whitespace-mode
+;;; whitespace-mode
 (init-el-with-eval-after-load whitespace
   (setq whitespace-style '(face trailing lines-tail empty space-before-tab)))
 
-;;; Setup text-mode
+;;; text-mode
 (add-hook 'text-mode-hook #'visual-line-mode)
 
-;;; Setup show-paren-mode
+;;; show-paren-mode
 (show-paren-mode)
 (init-el-require-when-compiling paren)
 (setq show-paren-delay 0)
 
-;;; Setup the theme
+;;; Set the theme
 (let ((theme 'colorsarenice-dark))
   (load-theme theme t)
   (unless (eq system-type 'windows-nt)
@@ -408,10 +408,10 @@ whitespace."
                   (disable-theme theme)
                   (enable-theme theme))))))
 
-;;; Setup current line highlighting
+;;; Current line highlighting
 (global-hl-line-mode)
 
-;;; Setup Emacs Lisp special form highlighting
+;;; Highlight all Emacs Lisp special forms
 (add-hook 'emacs-lisp-mode-hook #'init-el-highlight-all-special-forms)
 
 (defun init-el-highlight-all-special-forms ()
@@ -428,19 +428,19 @@ whitespace."
            (concat "(" (regexp-opt special-forms t) "\\_>"))
         (1 'font-lock-keyword-face))))))
 
-;;; Setup number highlighting in programming modes
+;;; Number highlighting in programming modes
 (add-hook 'prog-mode-hook #'highlight-numbers-mode)
 
-;;; Setup rainbow-identifiers
+;;; rainbow-identifiers
 (init-el-with-eval-after-load rainbow-identifiers
   (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face)
   (setq rainbow-identifiers-faces-to-override '(highlight-quoted-symbol)))
 
-;;; Setup highlight-quoted
+;;; highlight-quoted
 (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
 (add-hook 'lisp-mode-hook #'highlight-quoted-mode)
 
-;;; Setup company
+;;; company
 (init-el-deferred
   (global-company-mode)
   (init-el-require-when-compiling company)
@@ -457,13 +457,13 @@ whitespace."
   (setq company-dabbrev-minimum-length 3)
   (setq company-dabbrev-other-buffers t))
 
-;;; Setup anaconda
+;;; anaconda
 (add-hook 'python-mode-hook #'anaconda-mode)
 (init-el-with-eval-after-load python
   (init-el-with-eval-after-load company
     (add-to-list 'company-backends #'company-anaconda)))
 
-;;; Setup SLIME
+;;; SLIME
 (init-el-with-eval-after-load slime
   (setq slime-lisp-implementations '((sbcl ("sbcl"))))
   (setq slime-default-lisp 'sbcl))
@@ -484,17 +484,17 @@ whitespace."
                  slime-xref-browser))
   (remove-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
 
-;;; Setup haskell-mode
+;;; haskell-mode
 (add-hook 'haskell-mode-hook #'turn-on-haskell-indentation)
 (add-hook 'haskell-mode-hook #'ghc-init)
 (init-el-with-eval-after-load haskell-mode
   (init-el-with-eval-after-load company
     (add-to-list 'company-backends '(company-ghc :with company-dabbrev-code))))
 
-;;; Setup rainbow-delimiters
+;;; rainbow-delimiters
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
-;;; Setup smartparens
+;;; smartparens
 (init-el-deferred
   (require 'smartparens-config)
   (smartparens-global-mode)
@@ -524,7 +524,7 @@ whitespace."
   (forward-line -1)
   (indent-according-to-mode))
 
-;;; Setup flycheck
+;;; flycheck
 (add-hook 'prog-mode-hook #'flycheck-mode)
 (init-el-with-eval-after-load flycheck
   (setq flycheck-idle-change-delay 1)
@@ -532,7 +532,7 @@ whitespace."
                 flycheck-cppcheck-inconclusive t
                 flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)))
 
-;;; Setup eldoc
+;;; eldoc
 (init-el-with-eval-after-load eldoc
   (setq eldoc-idle-delay 0.25)
   (when (fboundp 'global-eldoc-mode)
@@ -552,7 +552,7 @@ whitespace."
                 (derived-mode-p #'emacs-lisp-mode))
         (eldoc-mode)))))
 
-;;; Setup indentation
+;;; Indentation
 (setq-default indent-tabs-mode nil)
 (init-el-with-eval-after-load cc-vars
   (setq-default c-basic-offset 2))
@@ -563,7 +563,7 @@ whitespace."
   (c-set-offset 'defun-open 0)
   (c-set-offset 'innamespace 0))
 
-;;; Setup key bindings
+;;; Key bindings
 (global-set-key [remap execute-extended-command] #'helm-M-x)
 (global-set-key [remap list-buffers] #'ibuffer-other-window)
 (global-set-key [remap isearch-forward] #'isearch-forward-regexp)
@@ -612,7 +612,7 @@ whitespace."
   (define-key helm-map "\t" #'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-z") #'helm-select-action))
 
-;; Setup the mode line
+;; Mode line format
 (setq-default
  mode-line-format
  (list
@@ -662,25 +662,25 @@ whitespace."
           (mapconcat #'identity strings ",")))))
   "]%]"))
 
-;;; Setup the title bar
+;;; Title bar format
 (setq icon-title-format (setq frame-title-format "%b [%f] - Emacs"))
 
-;;; Setup the buffer boundary indicators
+;;; Enable the buffer boundary indicators
 (setq-default indicate-empty-lines t)
 (setq-default indicate-buffer-boundaries 'left)
 
-;;; Setup paragraph filling
+;;; Paragraph filling
 (setq sentence-end-double-space nil)
 (setq-default fill-column 80)
 
-;;; Setup echo keystrokes
+;;; Echo keystrokes
 (setq echo-keystrokes 5.391063232E-44)
 
-;;; Setup windmove
+;;; windmove
 (init-el-require-when-compiling windmove)
 (setq windmove-wrap-around t)
 
-;;; Setup customize
+;;; Customize
 ;; Allow the code using customize to save their stuff to somewhere else than
 ;; the init file. Don't load it, though, as I don't use customize.
 (setq custom-file (expand-file-name ".custom" user-emacs-directory))
