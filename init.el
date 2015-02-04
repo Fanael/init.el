@@ -218,7 +218,9 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
 
 (defun init-el-setup-package-archives ()
   (setq package-archives init-el-package-archives)
-  (package-initialize))
+  (package-initialize)
+  (when (boundp 'package-selected-packages)
+    (setq package-selected-packages init-el-required-packages)))
 
 (defun init-el-install-required-packages ()
   (when (or (eq system-type 'windows-nt)
