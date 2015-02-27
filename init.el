@@ -40,15 +40,7 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
     (declare (indent defun) (debug t))
     `(with-eval-after-load ',feature
        (init-el-require-when-compiling ,feature)
-       ,@body))
-
-  (defmacro init-el-deferred (&rest body)
-    (declare (indent defun) (debug t))
-    `(run-with-idle-timer 0.1 nil ,(pcase body
-                                     (`(#',function-name)
-                                      `#',function-name)
-                                     (_
-                                      `(lambda () ,@body))))))
+       ,@body)))
 
 ;;; Byte-compile-time required package handling
 (eval-and-compile
@@ -350,12 +342,11 @@ whitespace."
 (savehist-mode)
 
 ;;; Helm
-(init-el-deferred
-  (cl-letf (((symbol-function #'message) #'ignore))
-    (helm-mode)
-    (init-el-require-when-compiling helm)
-    (setq helm-move-to-line-cycle-in-source t)
-    (setq helm-prevent-escaping-from-minibuffer nil)))
+(cl-letf (((symbol-function #'message) #'ignore))
+  (helm-mode)
+  (init-el-require-when-compiling helm)
+  (setq helm-move-to-line-cycle-in-source t)
+  (setq helm-prevent-escaping-from-minibuffer nil))
 (init-el-with-eval-after-load helm-command
   (setq helm-M-x-always-save-history t))
 
@@ -439,18 +430,17 @@ whitespace."
 (add-hook 'lisp-mode-hook #'highlight-quoted-mode)
 
 ;;; company
-(init-el-deferred
-  (global-company-mode)
-  (init-el-require-when-compiling company)
-  (let ((it company-backends))
-    (while it
-      (let ((backend (car it)))
-        (when (memq backend '(company-elisp company-capf))
-          (setcar it `(,backend :with company-dabbrev-code))))
-      (setq it (cdr it))))
-  (setq company-idle-delay nil)
-  (setq company-selection-wrap-around t)
-  (setq company-require-match nil))
+(global-company-mode)
+(init-el-require-when-compiling company)
+(let ((it company-backends))
+  (while it
+    (let ((backend (car it)))
+      (when (memq backend '(company-elisp company-capf))
+        (setcar it `(,backend :with company-dabbrev-code))))
+    (setq it (cdr it))))
+(setq company-idle-delay nil)
+(setq company-selection-wrap-around t)
+(setq company-require-match nil)
 (init-el-with-eval-after-load company-dabbrev
   (setq company-dabbrev-minimum-length 3)
   (setq company-dabbrev-other-buffers t))
@@ -493,18 +483,17 @@ whitespace."
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 ;;; smartparens
-(init-el-deferred
-  (require 'smartparens-config)
-  (smartparens-global-mode)
-  (init-el-require-when-compiling smartparens)
-  (setq sp-highlight-pair-overlay nil)
-  (setq sp-highlight-wrap-overlay nil)
-  (setq sp-highlight-wrap-tag-overlay nil)
-  (setq-default sp-autoskip-closing-pair t)
-  (sp-local-pair '(c-mode c++-mode java-mode css-mode php-mode js-mode perl-mode
-                          cperl-mode)
-                 "{" nil
-                 :post-handlers '((init-el-smartparens-create-and-enter-block "RET"))))
+(require 'smartparens-config)
+(smartparens-global-mode)
+(init-el-require-when-compiling smartparens)
+(setq sp-highlight-pair-overlay nil)
+(setq sp-highlight-wrap-overlay nil)
+(setq sp-highlight-wrap-tag-overlay nil)
+(setq-default sp-autoskip-closing-pair t)
+(sp-local-pair '(c-mode c++-mode java-mode css-mode php-mode js-mode perl-mode
+                        cperl-mode)
+               "{" nil
+               :post-handlers '((init-el-smartparens-create-and-enter-block "RET")))
 
 (defun init-el-smartparens-create-and-enter-block (&rest _)
   (save-excursion
