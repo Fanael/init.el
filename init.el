@@ -485,7 +485,6 @@ whitespace."
 ;;; smartparens
 (require 'smartparens-config)
 (smartparens-global-mode)
-(init-el-require-when-compiling smartparens)
 (setq sp-highlight-pair-overlay nil)
 (setq sp-highlight-wrap-overlay nil)
 (setq sp-highlight-wrap-tag-overlay nil)
