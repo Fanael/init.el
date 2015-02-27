@@ -258,11 +258,9 @@ whitespace."
 
 ;;; Set the font
 (if (eq system-type 'windows-nt)
-    (cond
-     ((find-font (font-spec :name "Consolas"))
-      (set-face-attribute 'default nil :family "Consolas" :height 100))
-     ((find-font (font-spec :name "Lucida Console"))
-      (set-face-attribute 'default nil :family "Lucida Console" :height 100)))
+    ;; TODO: restore font fallback on Windows. Currently disabled because
+    ;; `find-font' returns nil when Emacs is started with --daemon.
+    (set-face-attribute 'default nil :family "Consolas" :height 100)
   (set-face-attribute 'default nil :family "Monospace" :height 100))
 
 ;;; Disable lock files
@@ -684,7 +682,3 @@ whitespace."
 ;; Allow the code using customize to save their stuff to somewhere else than
 ;; the init file. Don't load it, though, as I don't use customize.
 (setq custom-file (expand-file-name ".custom" user-emacs-directory))
-
-;;; Start the server
-(when (eq system-type 'windows-nt)
-  (init-el-deferred #'server-start))
