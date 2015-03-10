@@ -397,9 +397,6 @@ whitespace."
                   (disable-theme theme)
                   (enable-theme theme))))))
 
-;;; Current line highlighting
-(global-hl-line-mode)
-
 ;;; Highlight all Emacs Lisp special forms
 (add-hook 'emacs-lisp-mode-hook #'init-el-highlight-all-special-forms)
 
