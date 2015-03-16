@@ -346,7 +346,12 @@ whitespace."
   (helm-mode)
   (init-el-require-when-compiling helm)
   (setq helm-move-to-line-cycle-in-source t)
-  (setq helm-prevent-escaping-from-minibuffer nil))
+  (setq helm-prevent-escaping-from-minibuffer nil)
+  (setq helm-display-header-line nil)
+  (setq helm-split-window-in-side-p t)
+  (setq helm-autoresize-min-height 30)
+  (setq helm-autoresize-max-height 30)
+  (helm-autoresize-mode))
 (init-el-with-eval-after-load helm-command
   (setq helm-M-x-always-save-history t))
 
