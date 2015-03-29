@@ -569,7 +569,7 @@ whitespace."
 (define-key evil-motion-state-map ",w" #'write-file)
 (define-key evil-motion-state-map ",s" #'save-buffer)
 (define-key evil-motion-state-map ",q" #'bury-buffer-delete-window-or-frame)
-(define-key evil-motion-state-map ",b" #'switch-to-buffer)
+(define-key evil-motion-state-map ",b" #'helm-buffers-list)
 (define-key evil-motion-state-map ",B" #'list-buffers)
 (define-key evil-motion-state-map ",d" #'evil-destroy)
 (define-key evil-motion-state-map ",a" #'mark-whole-buffer)
