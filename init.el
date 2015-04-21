@@ -136,11 +136,9 @@ expand all macros in the sexp before point."
 When there's no active region, act on the visible portion of the current
 buffer."
   (interactive
-   (progn
-     (barf-if-buffer-read-only)
-     (if (use-region-p)
-         (list (region-beginning) (region-end))
-       (list (point-min) (point-max)))))
+   (if (use-region-p)
+       (list (region-beginning) (region-end))
+     (list (point-min) (point-max))))
   (save-excursion
     (goto-char beg)
     (save-restriction
