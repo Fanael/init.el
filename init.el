@@ -557,6 +557,7 @@ whitespace."
 
 ;;; Key bindings
 (global-set-key [remap execute-extended-command] #'helm-M-x)
+(global-set-key [remap switch-to-buffer] #'helm-buffers-list)
 (global-set-key [remap list-buffers] #'ibuffer-other-window)
 (global-set-key [remap isearch-forward] #'isearch-forward-regexp)
 (global-set-key [remap isearch-backward] #'isearch-backward-regexp)
@@ -573,7 +574,7 @@ whitespace."
 (define-key evil-motion-state-map ",w" #'write-file)
 (define-key evil-motion-state-map ",s" #'save-buffer)
 (define-key evil-motion-state-map ",q" #'bury-buffer-delete-window-or-frame)
-(define-key evil-motion-state-map ",b" #'helm-buffers-list)
+(define-key evil-motion-state-map ",b" #'switch-to-buffer)
 (define-key evil-motion-state-map ",B" #'list-buffers)
 (define-key evil-motion-state-map ",d" #'evil-destroy)
 (define-key evil-motion-state-map ",a" #'mark-whole-buffer)
