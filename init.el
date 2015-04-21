@@ -644,7 +644,7 @@ whitespace."
             (when buffer-read-only
               (add-string "RO" font-lock-type-face))
             (pcase overwrite-mode
-              (`overwrite-mode-textutal
+              (`overwrite-mode-textual
                (add-string "Overwrite" font-lock-warning-face))
               (`overwrite-mode-binary
                (add-string "Bin-overwrite" font-lock-warning-face)))
