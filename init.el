@@ -594,6 +594,8 @@ whitespace."
 (add-hook 'org-shiftdown-final-hook #'windmove-down)
 (add-hook 'org-shiftright-final-hook #'windmove-right)
 (global-set-key [f7] #'compile)
+(global-set-key (kbd "M-/") #'dabbrev-completion)
+(global-set-key (kbd "C-M-/") #'dabbrev-expand)
 (global-set-key (kbd "C-c r") #'rainbow-identifiers-mode)
 (global-set-key (kbd "C-c b") #'highlight-blocks-now)
 (global-set-key (kbd "C-c m") #'pp-macroexpand-all)
