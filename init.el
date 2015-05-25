@@ -381,6 +381,11 @@ whitespace."
 (add-hook 'sgml-mode-hook #'emmet-mode)
 (add-hook 'css-mode-hook #'emmet-mode)
 
+;;; dabbrev
+(init-el-with-eval-after-load dabbrev
+  (setq dabbrev-case-replace nil)
+  (setq dabbrev-case-distinction nil))
+
 ;;; whitespace-mode
 (init-el-with-eval-after-load whitespace
   (setq whitespace-style '(face trailing lines-tail empty space-before-tab)))
