@@ -49,7 +49,7 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
       ("gnu" . "http://elpa.gnu.org/packages/")))
 
   (defconst init-el-required-packages
-    '(ace-jump-mode
+    '(avy
       colorsarenice-theme
       company
       company-anaconda
@@ -527,6 +527,13 @@ whitespace."
                 flycheck-cppcheck-inconclusive t
                 flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)))
 
+;;; avy
+(init-el-with-eval-after-load avy
+  (setq avy-style 'pre)
+  (setq avy-keys (eval-when-compile (number-sequence ?a ?z)))
+  (setq avy-all-windows nil)
+  (setq avy-case-fold-search nil))
+
 ;;; eldoc
 (init-el-with-eval-after-load eldoc
   (setq eldoc-idle-delay 0.25)
@@ -581,9 +588,9 @@ whitespace."
 (define-key evil-motion-state-map ",B" #'list-buffers)
 (define-key evil-motion-state-map ",d" #'evil-destroy)
 (define-key evil-motion-state-map ",a" #'mark-whole-buffer)
-(define-key evil-motion-state-map ",j" #'evil-ace-jump-word-mode)
-(define-key evil-motion-state-map ",k" #'evil-ace-jump-char-mode)
-(define-key evil-motion-state-map ",l" #'evil-ace-jump-line-mode)
+(define-key evil-motion-state-map ",j" #'avy-goto-word-1)
+(define-key evil-motion-state-map ",k" #'avy-goto-char)
+(define-key evil-motion-state-map ",l" #'avy-goto-line)
 (define-key evil-motion-state-map ",p" #'previous-buffer)
 (define-key evil-motion-state-map ",n" #'next-buffer)
 (define-key evil-motion-state-map [up] #'evil-previous-visual-line)
