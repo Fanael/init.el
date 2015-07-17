@@ -482,7 +482,7 @@ whitespace."
   (remove-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
 
 ;;; haskell-mode
-(add-hook 'haskell-mode-hook #'turn-on-haskell-indentation)
+(add-hook 'haskell-mode-hook #'haskell-identation-mode)
 (add-hook 'haskell-mode-hook #'ghc-init)
 (init-el-with-eval-after-load haskell-mode
   (init-el-with-eval-after-load company
@@ -557,7 +557,8 @@ whitespace."
 ;;; Indentation
 (setq-default indent-tabs-mode nil)
 (init-el-with-eval-after-load cc-vars
-  (setq-default c-basic-offset 2))
+  (setq-default c-basic-offset 2)
+  (setq c-auto-align-backslashes nil))
 (init-el-with-eval-after-load haskell-indentation
   (setq haskell-indentation-starter-offset 2))
 (init-el-with-eval-after-load cc-mode
