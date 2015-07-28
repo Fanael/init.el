@@ -564,7 +564,8 @@ whitespace."
 (init-el-with-eval-after-load cc-mode
   (c-set-offset 'substatement-open 0)
   (c-set-offset 'defun-open 0)
-  (c-set-offset 'innamespace 0))
+  (c-set-offset 'innamespace 0)
+  (c-set-offset 'inextern-lang 0))
 
 ;;; Key bindings
 (global-set-key [remap execute-extended-command] #'helm-M-x)
