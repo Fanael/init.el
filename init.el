@@ -482,7 +482,7 @@ whitespace."
   (remove-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
 
 ;;; haskell-mode
-(add-hook 'haskell-mode-hook #'haskell-identation-mode)
+(add-hook 'haskell-mode-hook #'haskell-indentation-mode)
 (add-hook 'haskell-mode-hook #'ghc-init)
 (init-el-with-eval-after-load haskell-mode
   (init-el-with-eval-after-load company
