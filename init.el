@@ -50,6 +50,7 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
 
   (defconst init-el-required-packages
     '(avy
+      cmake-mode
       colorsarenice-theme
       company
       company-anaconda
@@ -66,7 +67,9 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
       highlight-quoted
       htmlize
       ipretty
+      llvm-mode
       markdown-mode
+      org
       php-mode
       rainbow-delimiters
       rainbow-identifiers
