@@ -222,7 +222,8 @@
   (setq show-paren-delay 0))
 
 ;;; Set the theme
-(use-package colorsarenice-theme)
+(use-package colorsarenice-theme
+  :defer t)
 (let ((theme 'colorsarenice-dark))
   (load-theme theme t)
   (unless (eq system-type 'windows-nt)
