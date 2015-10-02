@@ -62,6 +62,7 @@ variables provided by FEATURE are in scope, so it doesn't warn about them."
       flycheck
       haskell-mode
       helm
+      helm-swoop
       highlight-blocks
       highlight-numbers
       highlight-quoted
@@ -199,28 +200,6 @@ buffer as \"done\"; note that this may kill the buffer instead of burying it."
      (t
       (delete-window window-to-delete)))))
 
-(defun helm-sections ()
-  "Go to a section in the current buffer.
-The section to go to is selected using Helm.
-
-Sections headers are lines that start with three or more semicolons followed by
-whitespace."
-  (interactive)
-  (init-el-require-when-compiling helm)
-  (let ((candidates
-         (save-match-data
-           (save-excursion
-             (goto-char (point-min))
-             (cl-loop
-              while (re-search-forward "^;;;+[[:space:]]+\\(.+\\)$" nil t)
-              collect (cons
-                       (buffer-substring-no-properties (match-beginning 1) (match-end 1))
-                       (copy-marker (match-beginning 0))))))))
-    (helm :buffer "*helm sections*"
-          :sources (helm-build-sync-source "Sections"
-                     :candidates candidates
-                     :action #'goto-char))))
-
 ;;; Tune the GC
 ;; The default setting is too conservative on modern machines making Emacs
 ;; spend too much time collecting garbage in alloc-heavy code.
@@ -251,8 +230,6 @@ whitespace."
 
 ;;; Set the font
 (if (eq system-type 'windows-nt)
-    ;; TODO: restore font fallback on Windows. Currently disabled because
-    ;; `find-font' returns nil when Emacs is started with --daemon.
     (set-face-attribute 'default nil :family "Consolas" :height 100)
   (set-face-attribute 'default nil :family "Monospace" :height 100))
 
@@ -614,7 +591,7 @@ whitespace."
 (global-set-key (kbd "C-c b") #'highlight-blocks-now)
 (global-set-key (kbd "C-c m") #'pp-macroexpand-all)
 (global-set-key (kbd "C-c i") #'helm-semantic-or-imenu)
-(global-set-key (kbd "C-c s") #'helm-sections)
+(global-set-key (kbd "C-c s") #'helm-swoop)
 (init-el-with-eval-after-load helm
   (define-key helm-map "\t" #'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-z") #'helm-select-action))
