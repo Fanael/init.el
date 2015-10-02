@@ -108,6 +108,8 @@ With argument LINEOFFSET not nil or 1, move forward LINEOFFSET - 1 lines first."
     (when (= old-point (point))
       (move-beginning-of-line 1))))
 
+(autoload 'pp-last-sexp "pp")
+
 (defun pp-macroexpand-all (beg end)
   "Expand all macros in region BEG to END.
 The result is shown pretty-printed in a new buffer.
@@ -121,8 +123,6 @@ expand all macros in the sexp before point."
                     (macroexpand-all
                      (if beg
                          (read (buffer-substring-no-properties beg end))
-                       (unless (fboundp 'pp-last-sexp)
-                         (require 'pp))
                        (pp-last-sexp)))))
          (resultbuf (generate-new-buffer "*Pp Macroexpand Output*")))
     (with-current-buffer resultbuf
