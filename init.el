@@ -285,9 +285,6 @@ whitespace."
 (setq package-archives init-el-package-archives)
 (setq package-enable-at-startup nil)
 (require 'package)
-;; Don't let package.el mess with the init.el.
-(when (fboundp 'package--ensure-init-file)
-  (fset #'package--ensure-init-file #'ignore))
 (package-initialize)
 (when (boundp 'package-selected-packages)
   (setq package-selected-packages init-el-required-packages))
