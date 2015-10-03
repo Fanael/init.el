@@ -234,23 +234,6 @@
                   (disable-theme theme)
                   (enable-theme theme))))))
 
-;;; Highlight all Emacs Lisp special forms
-(add-hook 'emacs-lisp-mode-hook #'init-el-highlight-all-special-forms)
-
-(defun init-el-highlight-all-special-forms ()
-  (font-lock-add-keywords
-   nil
-   (eval-when-compile
-     `((,(let ((special-forms '()))
-           (mapatoms (lambda (symbol)
-                       (when (fboundp symbol)
-                         (let ((fn (symbol-function symbol)))
-                           (when (and (subrp fn)
-                                      (eq 'unevalled (cdr (subr-arity fn))))
-                             (push (symbol-name symbol) special-forms))))))
-           (concat "(" (regexp-opt special-forms t) "\\_>"))
-        (1 'font-lock-keyword-face))))))
-
 ;;; Number highlighting in programming modes
 (use-package highlight-numbers
   :defer t
