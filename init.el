@@ -1,4 +1,4 @@
-;;; -*- lexical-binding: t -*-
+;;; init.el --- -*- lexical-binding: t -*-
 ;; Copyright (c) 2013-2015, Fanael Linithien
 ;; All rights reserved.
 ;;
@@ -23,6 +23,7 @@
 ;; LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 ;; NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+;;; Commentary:
 ;;; Code:
 (eval-and-compile
   (require 'package)
@@ -560,7 +561,8 @@
 (defun smart-beginning-of-line (&optional line-offset)
   "Move the point to the first non-white character of the current line.
 If the point is already there, move to the beginning of the line instead.
-With argument LINEOFFSET not nil or 1, move forward LINEOFFSET - 1 lines first."
+With argument LINE-OFFSET not nil or 1, move forward LINE-OFFSET - 1 lines
+first."
   (interactive "^p")
   (unless (memq line-offset '(nil 1))
     (move-beginning-of-line line-offset))
@@ -659,4 +661,4 @@ buffer as \"done\"; note that this may kill the buffer instead of burying it."
       (delete-frame frame-to-delete))
      (t
       (delete-window window-to-delete)))))
-
+;;; init.el ends here
