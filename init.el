@@ -178,8 +178,8 @@
    #'smart-beginning-of-line :repeat 'motion :type 'exclusive :keep-visual t))
 
 (evil-define-operator evil-destroy (beg end type)
-    "Delete text from BEG to END with TYPE. Do not save it."
-    (evil-delete beg end type ?_ nil))
+  "Delete text from BEG to END with TYPE. Do not save it."
+  (evil-delete beg end type ?_ nil))
 
 ;;; evil-surround
 (use-package evil-surround
@@ -388,7 +388,7 @@
 (use-package eldoc
   :ensure nil
   :defer t
-  :config
+  :init
   (setq eldoc-idle-delay 0.25)
   (when (fboundp 'global-eldoc-mode)
     (global-eldoc-mode -1))
