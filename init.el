@@ -284,11 +284,7 @@
   (use-package anaconda-mode
     :defer t
     :init
-    (add-hook 'python-mode-hook #'anaconda-mode))
-  (use-package python
-    :ensure nil
-    :defer t
-    :config
+    (add-hook 'python-mode-hook #'anaconda-mode)
     (push #'company-anaconda company-backends)))
 
 ;;; SLIME
@@ -322,9 +318,8 @@
   (use-package ghc
     :defer t
     :init
-    (add-hook 'haskell-mode-hook #'ghc-init))
-  :config
-  (push '(company-ghc :with company-dabbrev-code) company-backends))
+    (add-hook 'haskell-mode-hook #'ghc-init)
+    (push '(company-ghc :with company-dabbrev-code) company-backends)))
 
 ;;; rainbow-delimiters
 (use-package rainbow-delimiters
