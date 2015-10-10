@@ -340,7 +340,7 @@
   (setq sp-highlight-wrap-tag-overlay nil)
   (setq-default sp-autoskip-closing-pair t)
   (sp-local-pair '(c-mode c++-mode java-mode css-mode php-mode js-mode perl-mode
-                          cperl-mode)
+                          cperl-mode rust-mode)
                  "{" nil
                  :post-handlers '((init-el-smartparens-create-and-enter-block "RET"))))
 
@@ -406,6 +406,16 @@
                            '(eldoc-documentation-function-default nil)))
                 (derived-mode-p #'emacs-lisp-mode))
         (eldoc-mode)))))
+
+;;; Rust
+(use-package rust-mode
+  :defer t)
+(use-package racer
+  :defer t
+  :init
+  (add-hook 'rust-mode-hook #'racer-mode)
+  :config
+  (setq racer-rust-src-path (expand-file-name "projects/rust/rustc-nightly/src/" (getenv "HOME"))))
 
 ;;; Indentation
 (setq-default indent-tabs-mode nil)
