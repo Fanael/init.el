@@ -417,6 +417,18 @@
   :config
   (setq racer-rust-src-path (expand-file-name "projects/rust/rustc-nightly/src/" (getenv "HOME"))))
 
+;;; Irony
+(use-package irony
+  :defer t
+  :init
+  (add-hook 'c++-mode-hook #'irony-mode)
+  (add-hook 'c-mode-hook #'irony-mode)
+  (add-hook 'objc-mode-hook #'irony-mode)
+  (use-package company-irony
+    :defer t
+    :init
+    (push #'company-irony company-backends)))
+
 ;;; Indentation
 (setq-default indent-tabs-mode nil)
 (use-package cc-vars
