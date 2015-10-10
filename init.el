@@ -259,12 +259,14 @@
 (use-package company
   :config
   (global-company-mode)
-  (let ((it company-backends))
-    (while it
-      (let ((backend (car it)))
-        (when (memq backend '(company-elisp company-capf))
-          (setcar it `(,backend :with company-dabbrev-code))))
-      (setq it (cdr it))))
+  (catch 'break
+    (let ((it company-backends))
+      (while it
+        (let ((backend (car it)))
+          (when (eq backend 'company-capf)
+            (setcar it '(company-capf :with company-dabbrev-code))
+            (throw 'break nil)))
+        (setq it (cdr it)))))
   (setq company-idle-delay nil)
   (setq company-selection-wrap-around t)
   (setq company-require-match nil)
