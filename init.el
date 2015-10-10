@@ -325,6 +325,7 @@
     (push '(company-ghc :with company-dabbrev-code) company-backends)))
 
 (defun init-el-ghc-init ()
+  (push (expand-file-name ".cabal/bin/" (getenv "HOME")) exec-path)
   (with-demoted-errors "ghc-init error: %S"
     (ghc-init)))
 
