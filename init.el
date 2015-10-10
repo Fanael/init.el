@@ -318,8 +318,15 @@
   (use-package ghc
     :defer t
     :init
-    (add-hook 'haskell-mode-hook #'ghc-init)
+    (add-hook 'haskell-mode-hook #'init-el-ghc-init))
+  (use-package company-ghc
+    :defer t
+    :init
     (push '(company-ghc :with company-dabbrev-code) company-backends)))
+
+(defun init-el-ghc-init ()
+  (with-demoted-errors "ghc-init error: %S"
+    (ghc-init)))
 
 ;;; rainbow-delimiters
 (use-package rainbow-delimiters
