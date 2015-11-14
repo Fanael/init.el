@@ -290,10 +290,13 @@
 ;;; SLIME
 (use-package slime
   :defer t
+  :init
+  (add-hook 'lisp-mode-hook #'init-el-setup-slime-first-time)
   :config
   (setq slime-lisp-implementations '((sbcl ("sbcl"))))
-  (setq slime-default-lisp 'sbcl)
-  (add-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
+  (setq slime-default-lisp 'sbcl))
+(use-package slime-company
+  :defer t)
 
 (defun init-el-setup-slime-first-time ()
   (slime-setup '(slime-asdf
