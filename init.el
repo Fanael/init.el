@@ -66,9 +66,8 @@
 (setq initial-major-mode #'fundamental-mode)
 
 ;;; Set the font
-(if (eq system-type 'windows-nt)
-    (set-face-attribute 'default nil :family "Consolas" :height 100)
-  (set-face-attribute 'default nil :family "Monospace" :height 100))
+(let ((family (if (eq system-type 'windows-nt) "Consolas" "Monospace")))
+  (set-face-attribute 'default nil :family family :height 100))
 
 ;;; Disable lock files
 (setq create-lockfiles nil)
