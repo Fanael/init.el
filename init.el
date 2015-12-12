@@ -75,8 +75,8 @@
 ;;; Backup files
 (setq backup-by-copying t)
 (setq delete-old-versions t)
-(setq kept-old-versions 3)
-(setq kept-new-versions 7)
+(setq kept-old-versions 0)
+(setq kept-new-versions 10)
 (setq version-control t)
 (let ((backup-dir (expand-file-name "backups" user-emacs-directory)))
   (setq backup-directory-alist (list (cons "." backup-dir))))
