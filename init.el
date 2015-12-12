@@ -235,12 +235,6 @@
                   (disable-theme theme)
                   (enable-theme theme))))))
 
-;;; Number highlighting in programming modes
-(use-package highlight-numbers
-  :defer t
-  :init
-  (add-hook 'prog-mode-hook #'highlight-numbers-mode))
-
 ;;; rainbow-identifiers
 (use-package rainbow-identifiers
   :defer t
