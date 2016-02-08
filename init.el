@@ -461,6 +461,7 @@
 (global-set-key [remap move-beginning-of-line] #'smart-beginning-of-line)
 (global-set-key [remap eval-expression] #'pp-eval-expression)
 (global-set-key [remap eval-last-sexp] #'pp-eval-last-sexp)
+(global-set-key [remap find-file] #'helm-find-files)
 (define-key evil-insert-state-map (kbd "RET") #'newline-and-indent)
 (define-key evil-insert-state-map (kbd "C-<SPC>") #'company-complete)
 (define-key evil-insert-state-map (kbd "C-e") #'emmet-expand-line)
