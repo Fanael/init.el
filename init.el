@@ -1,5 +1,5 @@
 ;;; init.el --- -*- lexical-binding: t -*-
-;; Copyright (c) 2013-2015, Fanael Linithien
+;; Copyright (c) 2013-2016, Fanael Linithien
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,21 @@
                            ("gnu" . "http://elpa.gnu.org/packages/")))
   (setq package-enable-at-startup nil)
   (package-initialize)
-  (unless (package-installed-p 'use-package)
-    (package-refresh-contents)
-    (package-install 'use-package))
-  (require 'use-package)
-  (setq use-package-always-ensure t))
+  (defvar init-el-package-archives-refreshed nil)
+  (defun init-el-install-package (package-name)
+    (unless (package-installed-p package-name)
+      (unless init-el-package-archives-refreshed
+        (package-refresh-contents)
+        (setq init-el-package-archives-refreshed t))
+      (package-install package-name)))
+  (defmacro init-el-with-eval-after-load (feature &rest body)
+    (declare (indent 1) (debug t))
+    (require feature)
+    `(with-eval-after-load ',feature ,@body))
+  (defmacro init-el-require-package (package-name &optional feature-name)
+    (init-el-install-package package-name)
+    (require (or feature-name package-name))
+    `(init-el-install-package ',package-name)))
 
 ;;; Tune the GC
 ;; The default setting is too conservative on modern machines making Emacs
@@ -121,14 +131,13 @@
 (setq vc-handled-backends '())
 
 ;;; undo-tree
-(use-package undo-tree
-  :config
-  (global-undo-tree-mode)
-  (setq undo-tree-visualizer-timestamps t)
-  (setq undo-tree-visualizer-lazy-drawing nil)
-  (setq undo-tree-auto-save-history t)
-  (let ((undo-dir (expand-file-name "undo" user-emacs-directory)))
-    (setq undo-tree-history-directory-alist (list (cons "." undo-dir)))))
+(init-el-require-package undo-tree)
+(global-undo-tree-mode)
+(setq undo-tree-visualizer-timestamps t)
+(setq undo-tree-visualizer-lazy-drawing nil)
+(setq undo-tree-auto-save-history t)
+(let ((undo-dir (expand-file-name "undo" user-emacs-directory)))
+  (setq undo-tree-history-directory-alist (list (cons "." undo-dir))))
 
 ;;; Ignore case for completion
 (setq completion-ignore-case t)
@@ -136,94 +145,76 @@
 (setq read-file-name-completion-ignore-case t)
 
 ;;; History saving
-(use-package savehist
-  :ensure nil
-  :config
-  (setq history-length 1024)
-  (setq search-ring-max 1024)
-  (setq regexp-search-ring-max 1024)
-  (setq savehist-additional-variables '(search-ring regexp-search-ring))
-  (setq savehist-file (expand-file-name ".savehist" user-emacs-directory))
-  (savehist-mode))
+(require 'savehist)
+(setq history-length 1024)
+(setq search-ring-max 1024)
+(setq regexp-search-ring-max 1024)
+(setq savehist-additional-variables '(search-ring regexp-search-ring))
+(setq savehist-file (expand-file-name ".savehist" user-emacs-directory))
+(savehist-mode)
 
 ;;; Helm
-(use-package helm
-  :config
-  (cl-letf (((symbol-function #'message) #'ignore))
-    (helm-mode)
-    (helm-autoresize-mode))
-  (setq helm-move-to-line-cycle-in-source t)
-  (setq helm-prevent-escaping-from-minibuffer nil)
-  (setq helm-display-header-line nil)
-  (setq helm-split-window-in-side-p t)
-  (setq helm-autoresize-min-height 30)
-  (setq helm-autoresize-max-height 30)
-  (use-package helm-command
-    :defer t
-    :ensure helm
-    :config
-    (setq helm-M-x-always-save-history t)))
-(use-package helm-swoop
-  :defer t)
+(init-el-require-package helm)
+(cl-letf (((symbol-function #'message) #'ignore))
+  (helm-mode)
+  (helm-autoresize-mode))
+(setq helm-move-to-line-cycle-in-source t)
+(setq helm-prevent-escaping-from-minibuffer nil)
+(setq helm-display-header-line nil)
+(setq helm-split-window-in-side-p t)
+(setq helm-autoresize-min-height 30)
+(setq helm-autoresize-max-height 30)
+(init-el-with-eval-after-load helm-command
+  (setq helm-M-x-always-save-history t))
+(init-el-require-package helm-swoop)
 
 ;;; evil
-(use-package evil
-  :config
-  (evil-mode)
-  (setq evil-want-fine-undo t)
-  (setq evil-echo-state nil)
-  (setq evil-ex-substitute-global t)
-  (evil-set-command-properties
-   #'smart-beginning-of-line :repeat 'motion :type 'exclusive :keep-visual t))
+(init-el-require-package evil)
+(require 'evil)
+(evil-mode)
+(setq evil-want-fine-undo t)
+(setq evil-echo-state nil)
+(setq evil-ex-substitute-global t)
+(evil-set-command-properties
+ #'smart-beginning-of-line :repeat 'motion :type 'exclusive :keep-visual t)
 
 (evil-define-operator evil-destroy (beg end type)
   "Delete text from BEG to END with TYPE. Do not save it."
   (evil-delete beg end type ?_ nil))
 
 ;;; evil-surround
-(use-package evil-surround
-  :config
-  (global-evil-surround-mode))
+(init-el-require-package evil-surround)
+(require 'evil-surround)
+(global-evil-surround-mode)
 
 ;;; Search highlight
 (setq search-highlight t)
 (setq query-replace-highlight t)
 
 ;;; emmet-mode
-(use-package emmet-mode
-  :defer t
-  :init
-  (add-hook 'sgml-mode-hook #'emmet-mode)
-  (add-hook 'css-mode-hook #'emmet-mode))
+(init-el-require-package emmet-mode)
+(add-hook 'sgml-mode-hook #'emmet-mode)
+(add-hook 'css-mode-hook #'emmet-mode)
 
 ;;; dabbrev
-(use-package dabbrev
-  :ensure nil
-  :defer t
-  :config
+(init-el-with-eval-after-load dabbrev
   (setq dabbrev-case-replace nil)
   (setq dabbrev-case-distinction nil))
 
 ;;; whitespace-mode
-(use-package whitespace
-  :ensure nil
-  :defer t
-  :config
+(init-el-with-eval-after-load whitespace
   (setq whitespace-style '(face trailing lines-tail empty space-before-tab)))
 
 ;;; text-mode
 (add-hook 'text-mode-hook #'visual-line-mode)
 
 ;;; show-paren-mode
+(require 'paren)
 (show-paren-mode)
-(use-package paren
-  :ensure nil
-  :config
-  (setq show-paren-delay 0))
+(setq show-paren-delay 0)
 
 ;;; Set the theme
-(use-package colorsarenice-theme
-  :defer t)
+(init-el-require-package colorsarenice-theme emacs)
 (let ((theme 'colorsarenice-dark))
   (load-theme theme t)
   (unless (eq system-type 'windows-nt)
@@ -235,61 +226,48 @@
                   (enable-theme theme))))))
 
 ;;; rainbow-identifiers
-(use-package rainbow-identifiers
-  :defer t
-  :config
+(init-el-require-package rainbow-identifiers)
+(init-el-with-eval-after-load rainbow-identifiers
   (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face)
   (setq rainbow-identifiers-faces-to-override '(highlight-quoted-symbol)))
 
 ;;; highlight-quoted
-(use-package highlight-quoted
-  :defer t
-  :init
-  (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
-  (add-hook 'lisp-mode-hook #'highlight-quoted-mode))
+(init-el-require-package highlight-quoted)
+(add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
+(add-hook 'lisp-mode-hook #'highlight-quoted-mode)
 
 ;;; company
-(use-package company
-  :config
-  (global-company-mode)
-  (catch 'break
-    (let ((it company-backends))
-      (while it
-        (let ((backend (car it)))
-          (when (eq backend 'company-capf)
-            (setcar it '(company-capf :with company-dabbrev-code))
-            (throw 'break nil)))
-        (setq it (cdr it)))))
-  (setq company-idle-delay nil)
-  (setq company-selection-wrap-around t)
-  (setq company-require-match nil)
-  (use-package company-dabbrev
-    :ensure company
-    :defer t
-    :config
-    (setq company-dabbrev-minimum-length 3)
-    (setq company-dabbrev-other-buffers t)))
+(init-el-require-package company)
+(require 'company)
+(global-company-mode)
+(catch 'break
+  (let ((it company-backends))
+    (while it
+      (let ((backend (car it)))
+        (when (eq backend 'company-capf)
+          (setcar it '(company-capf :with company-dabbrev-code))
+          (throw 'break nil)))
+      (setq it (cdr it)))))
+(setq company-idle-delay nil)
+(setq company-selection-wrap-around t)
+(setq company-require-match nil)
+(init-el-with-eval-after-load company-dabbrev
+  (setq company-dabbrev-minimum-length 3)
+  (setq company-dabbrev-other-buffers t))
 
 ;;; anaconda
-(use-package company-anaconda
-  :defer t
-  :init
-  (use-package anaconda-mode
-    :defer t
-    :init
-    (add-hook 'python-mode-hook #'anaconda-mode)
-    (push #'company-anaconda company-backends)))
+(init-el-require-package company-anaconda)
+(init-el-require-package anaconda-mode)
+(add-hook 'python-mode-hook #'anaconda-mode)
+(push #'company-anaconda company-backends)
 
 ;;; SLIME
-(use-package slime
-  :defer t
-  :init
-  (add-hook 'lisp-mode-hook #'init-el-setup-slime-first-time)
-  :config
+(init-el-require-package slime)
+(add-hook 'lisp-mode-hook #'init-el-setup-slime-first-time)
+(init-el-with-eval-after-load slime
   (setq slime-lisp-implementations '((sbcl ("sbcl"))))
   (setq slime-default-lisp 'sbcl))
-(use-package slime-company
-  :defer t)
+(init-el-require-package slime-company)
 
 (defun init-el-setup-slime-first-time ()
   (slime-setup '(slime-asdf
@@ -307,18 +285,12 @@
   (remove-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
 
 ;;; haskell-mode
-(use-package haskell-mode
-  :defer t
-  :init
-  (add-hook 'haskell-mode-hook #'haskell-indentation-mode)
-  (use-package ghc
-    :defer t
-    :init
-    (add-hook 'haskell-mode-hook #'init-el-ghc-init))
-  (use-package company-ghc
-    :defer t
-    :init
-    (push '(company-ghc :with company-dabbrev-code) company-backends)))
+(init-el-require-package haskell-mode)
+(add-hook 'haskell-mode-hook #'haskell-indentation-mode)
+(init-el-require-package ghc)
+(add-hook 'haskell-mode-hook #'init-el-ghc-init)
+(init-el-require-package company-ghc)
+(push '(company-ghc :with company-dabbrev-code) company-backends)
 
 (defun init-el-ghc-init ()
   (push (expand-file-name ".cabal/bin/" (getenv "HOME")) exec-path)
@@ -326,24 +298,21 @@
     (ghc-init)))
 
 ;;; rainbow-delimiters
-(use-package rainbow-delimiters
-  :defer t
-  :init
-  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+(init-el-require-package rainbow-delimiters)
+(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
 ;;; smartparens
-(use-package smartparens
-  :config
-  (require 'smartparens-config)
-  (smartparens-global-mode)
-  (setq sp-highlight-pair-overlay nil)
-  (setq sp-highlight-wrap-overlay nil)
-  (setq sp-highlight-wrap-tag-overlay nil)
-  (setq-default sp-autoskip-closing-pair t)
-  (sp-local-pair '(c-mode c++-mode java-mode css-mode php-mode js-mode perl-mode
-                          cperl-mode rust-mode)
-                 "{" nil
-                 :post-handlers '((init-el-smartparens-create-and-enter-block "RET"))))
+(init-el-require-package smartparens)
+(require 'smartparens-config)
+(smartparens-global-mode)
+(setq sp-highlight-pair-overlay nil)
+(setq sp-highlight-wrap-overlay nil)
+(setq sp-highlight-wrap-tag-overlay nil)
+(setq-default sp-autoskip-closing-pair t)
+(sp-local-pair '(c-mode c++-mode java-mode css-mode php-mode js-mode perl-mode
+                        cperl-mode rust-mode)
+               "{" nil
+               :post-handlers '((init-el-smartparens-create-and-enter-block "RET")))
 
 (defun init-el-smartparens-create-and-enter-block (&rest _)
   (save-excursion
@@ -362,34 +331,27 @@
   (indent-according-to-mode))
 
 ;;; flycheck
-(use-package flycheck
-  :defer t
-  :init
-  (add-hook 'prog-mode-hook #'flycheck-mode)
-  :config
+(init-el-require-package flycheck)
+(add-hook 'prog-mode-hook #'flycheck-mode)
+(init-el-with-eval-after-load flycheck
   (setq flycheck-idle-change-delay 1)
   (setq-default flycheck-cppcheck-checks '("style" "missingInclude")
                 flycheck-cppcheck-inconclusive t
                 flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)))
 
 ;;; avy
-(use-package avy
-  :defer t
-  :config
+(init-el-require-package avy)
+(init-el-with-eval-after-load avy
   (setq avy-style 'pre)
   (setq avy-keys (eval-when-compile (number-sequence ?a ?z)))
   (setq avy-all-windows nil)
   (setq avy-case-fold-search nil))
 
 ;; highlight-blocks
-(use-package highlight-blocks
-  :defer t)
+(init-el-require-package highlight-blocks)
 
 ;;; eldoc
-(use-package eldoc
-  :ensure nil
-  :defer t
-  :init
+(init-el-with-eval-after-load eldoc
   (setq eldoc-idle-delay 0.25)
   (when (fboundp 'global-eldoc-mode)
     (global-eldoc-mode -1))
@@ -409,44 +371,28 @@
         (eldoc-mode)))))
 
 ;;; Rust
-(use-package rust-mode
-  :defer t)
-(use-package racer
-  :defer t
-  :init
-  (add-hook 'rust-mode-hook #'racer-mode)
-  :config
+(init-el-require-package rust-mode)
+(init-el-require-package racer)
+(add-hook 'rust-mode-hook #'racer-mode)
+(init-el-with-eval-after-load racer
   (setq racer-rust-src-path (expand-file-name "projects/rust/rustc-nightly/src/" (getenv "HOME"))))
 
 ;;; Irony
-(use-package irony
-  :defer t
-  :init
-  (add-hook 'c++-mode-hook #'irony-mode)
-  (add-hook 'c-mode-hook #'irony-mode)
-  (add-hook 'objc-mode-hook #'irony-mode)
-  (use-package company-irony
-    :defer t
-    :init
-    (push #'company-irony company-backends)))
+(init-el-require-package irony)
+(add-hook 'c++-mode-hook #'irony-mode)
+(add-hook 'c-mode-hook #'irony-mode)
+(add-hook 'objc-mode-hook #'irony-mode)
+(init-el-require-package company-irony)
+(push #'company-irony company-backends)
 
 ;;; Indentation
 (setq-default indent-tabs-mode nil)
-(use-package cc-vars
-  :ensure nil
-  :defer t
-  :config
+(init-el-with-eval-after-load cc-vars
   (setq-default c-basic-offset 2)
   (setq c-auto-align-backslashes nil))
-(use-package haskell-indentation
-  :ensure haskell-mode
-  :defer t
-  :config
+(init-el-with-eval-after-load haskell-indentation
   (setq haskell-indentation-starter-offset 2))
-(use-package cc-mode
-  :ensure nil
-  :defer t
-  :config
+(init-el-with-eval-after-load cc-mode
   (c-set-offset 'substatement-open 0)
   (c-set-offset 'defun-open 0)
   (c-set-offset 'innamespace 0)
@@ -500,9 +446,7 @@
 (global-set-key (kbd "C-c m") #'pp-macroexpand-all)
 (global-set-key (kbd "C-c i") #'helm-semantic-or-imenu)
 (global-set-key (kbd "C-c s") #'helm-swoop)
-(use-package helm
-  :defer t
-  :config
+(init-el-with-eval-after-load helm
   (define-key helm-map "\t" #'helm-execute-persistent-action)
   (define-key helm-map (kbd "C-z") #'helm-select-action))
 
@@ -571,10 +515,8 @@
 (setq echo-keystrokes 5.391063232E-44)
 
 ;;; windmove
-(use-package windmove
-  :ensure nil
-  :config
-  (setq windmove-wrap-around t))
+(require 'windmove)
+(setq windmove-wrap-around t)
 
 ;;; Customize
 ;; Allow the code using customize to save their stuff to somewhere else than
