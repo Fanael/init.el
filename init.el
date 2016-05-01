@@ -232,23 +232,19 @@
   (add-hook 'emacs-lisp-mode-hook
             (lambda ()
               (font-lock-add-keywords
-               nil '(init-el-highlight-special-forms-and-macros)))))
+               nil '((init-el-highlight-special-forms-and-macros . 1))))))
 
 (defun init-el-highlight-special-forms-and-macros (end)
-  (let ((inhibit-point-motion-hooks t))
+  (catch 'break
     (while (re-search-forward "([[:space:]]*\\(\\_<.+?\\_>\\)" end t)
-      (let ((ppss (syntax-ppss (match-beginning 0))))
-        (unless (or (nth 3 ppss) (nth 4 ppss))
-          (let* ((sym-beg (match-beginning 1))
-                 (sym-end (match-end 1))
-                 (sym (intern-soft (buffer-substring-no-properties sym-beg sym-end))))
-            (when (fboundp sym)
-              (let ((func (indirect-function sym t)))
-                (when (or (macrop func)
-                          (and (subrp func) (eq 'unevalled (cdr (subr-arity func)))))
-                  (put-text-property sym-beg sym-end 'face 'font-lock-keyword-face)))))))
-      (goto-char (match-end 0))))
-  nil)
+      (let ((symbol (intern-soft (buffer-substring-no-properties
+                                  (match-beginning 1) (match-end 1)))))
+        (when (fboundp symbol)
+          (let ((func (indirect-function symbol t)))
+            (when (or (macrop func)
+                      (and (subrp func) (eq 'unevalled (cdr (subr-arity func)))))
+              (throw 'break t))))))
+    nil))
 
 ;;; rainbow-identifiers
 (init-el-require-package rainbow-identifiers)
