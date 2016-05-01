@@ -226,6 +226,30 @@
                   (disable-theme theme)
                   (enable-theme theme))))))
 
+;;; Highlight special forms and macros in Emacs Lisp
+;; Emacs 25 already does that by default
+(when (< emacs-major-version 25)
+  (add-hook 'emacs-lisp-mode-hook
+            (lambda ()
+              (font-lock-add-keywords
+               nil '(init-el-highlight-special-forms-and-macros)))))
+
+(defun init-el-highlight-special-forms-and-macros (end)
+  (let ((inhibit-point-motion-hooks t))
+    (while (re-search-forward "([[:space:]]*\\(\\_<.+?\\_>\\)" end t)
+      (let ((ppss (syntax-ppss (match-beginning 0))))
+        (unless (or (nth 3 ppss) (nth 4 ppss))
+          (let* ((sym-beg (match-beginning 1))
+                 (sym-end (match-end 1))
+                 (sym (intern-soft (buffer-substring-no-properties sym-beg sym-end))))
+            (when (fboundp sym)
+              (let ((func (indirect-function sym t)))
+                (when (or (macrop func)
+                          (and (subrp func) (eq 'unevalled (cdr (subr-arity func)))))
+                  (put-text-property sym-beg sym-end 'face 'font-lock-keyword-face)))))))
+      (goto-char (match-end 0))))
+  nil)
+
 ;;; rainbow-identifiers
 (init-el-require-package rainbow-identifiers)
 (init-el-with-eval-after-load rainbow-identifiers
