@@ -246,12 +246,6 @@
               (throw 'break t))))))
     nil))
 
-;;; rainbow-identifiers
-(init-el-require-package rainbow-identifiers)
-(init-el-with-eval-after-load rainbow-identifiers
-  (setq rainbow-identifiers-choose-face-function #'rainbow-identifiers-cie-l*a*b*-choose-face)
-  (setq rainbow-identifiers-faces-to-override '(highlight-quoted-symbol)))
-
 ;;; highlight-quoted
 (init-el-require-package highlight-quoted)
 (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
@@ -368,9 +362,6 @@
   (setq avy-all-windows nil)
   (setq avy-case-fold-search nil))
 
-;; highlight-blocks
-(init-el-require-package highlight-blocks)
-
 ;;; eldoc
 (init-el-with-eval-after-load eldoc
   (setq eldoc-idle-delay 0.25)
@@ -462,8 +453,6 @@
 (global-set-key [f7] #'compile)
 (global-set-key (kbd "M-/") #'dabbrev-completion)
 (global-set-key (kbd "C-M-/") #'dabbrev-expand)
-(global-set-key (kbd "C-c r") #'rainbow-identifiers-mode)
-(global-set-key (kbd "C-c b") #'highlight-blocks-now)
 (global-set-key (kbd "C-c m") #'pp-macroexpand-all)
 (global-set-key (kbd "C-c i") #'helm-semantic-or-imenu)
 (global-set-key (kbd "C-c s") #'helm-swoop)
