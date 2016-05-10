@@ -77,7 +77,7 @@
 
 ;;; Set the font
 (let ((family (if (eq system-type 'windows-nt) "Consolas" "Monospace")))
-  (set-face-attribute 'default nil :family family :height 100))
+  (set-face-attribute 'default nil :family family :height 90))
 
 ;;; Disable lock files
 (setq create-lockfiles nil)
