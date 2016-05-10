@@ -610,6 +610,8 @@ current buffer, if any; otherwise open `default-directory'."
         (start-process "" nil "xdg-open" directory)
       (file-error (error "Don't know how to open a directory on this system")))))
 
+(autoload 'server-buffer-done "server")
+
 (defun bury-buffer-delete-window-or-frame ()
   "Bury the current buffer and delete its window or frame.
 When the selected window is the only window belonging to the selected frame, the
@@ -623,9 +625,7 @@ buffer as \"done\"; note that this may kill the buffer instead of burying it."
          (let ((buffer-to-bury (current-buffer)))
            (if (and (bound-and-true-p server-buffer-clients)
                     (null (cdr (get-buffer-window-list buffer-to-bury nil t))))
-               (progn
-                 (eval-when-compile (require 'server))
-                 (server-buffer-done buffer-to-bury))
+               (server-buffer-done buffer-to-bury)
              (bury-buffer buffer-to-bury)
              nil))))
     (cond
