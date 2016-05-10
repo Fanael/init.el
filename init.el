@@ -217,16 +217,22 @@
 ;;; Set the theme
 (init-el-require-package aurora-theme emacs)
 (load-theme 'aurora t)
-(dolist (face '((helm-buffer-size . font-lock-keyword-face)
-                (helm-ff-dotted-directory . helm-ff-directory)
-                (helm-ff-dotted-symlink-directory . helm-ff-symlink)))
-  (set-face-attribute (car face) nil
-                      :foreground 'unspecified
-                      :background 'unspecified
-                      :inherit (cdr face)))
-(init-el-with-eval-after-load rainbow-delimiters
-  (set-face-attribute 'rainbow-delimiters-unmatched-face nil
-                      :background (face-attribute 'font-lock-warning-face :foreground)))
+(deftheme init-el-overrides)
+(cl-macrolet
+    ((inherit
+      (face other-face)
+      `'(,face
+         ((t (:foreground unspecified :background unspecified :inherit ,other-face))))))
+  (custom-theme-set-faces
+   'init-el-overrides
+   (inherit helm-buffer-size font-lock-keyword-face)
+   (inherit helm-buffer-directory font-lock-function-name-face)
+   (inherit helm-ff-dotted-directory helm-ff-directory)
+   (inherit helm-ff-dotted-symlink-directory helm-ff-symlink)
+   (let ((bg (face-attribute 'font-lock-warning-face :foreground)))
+     `(rainbow-delimiters-unmatched-face
+       ((t (:foreground "#880000" :background ,bg)))))))
+(enable-theme 'init-el-overrides)
 
 ;;; Highlight special forms and macros in Emacs Lisp
 ;; Emacs 25 already does that by default
