@@ -407,7 +407,7 @@
 ;;; Indentation
 (setq-default indent-tabs-mode nil)
 (init-el-with-eval-after-load cc-vars
-  (setq-default c-basic-offset 2)
+  (setq-default c-basic-offset 4)
   (setq c-auto-align-backslashes nil))
 (init-el-with-eval-after-load haskell-indentation
   (setq haskell-indentation-starter-offset 2))
@@ -415,7 +415,8 @@
   (c-set-offset 'substatement-open 0)
   (c-set-offset 'defun-open 0)
   (c-set-offset 'innamespace 0)
-  (c-set-offset 'inextern-lang 0))
+  (c-set-offset 'inextern-lang 0)
+  (c-set-offset 'arglist-cont-nonempty '+))
 
 ;;; Key bindings
 (global-set-key [remap execute-extended-command] #'helm-M-x)
