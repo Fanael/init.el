@@ -312,7 +312,7 @@
 (setq sp-highlight-wrap-tag-overlay nil)
 (setq-default sp-autoskip-closing-pair t)
 (sp-local-pair '(c-mode c++-mode java-mode css-mode php-mode js-mode perl-mode
-                        cperl-mode rust-mode)
+                        cperl-mode rust-mode sh-mode)
                "{" nil
                :post-handlers '((init-el-smartparens-create-and-enter-block "RET")))
 
