@@ -233,26 +233,6 @@
        ((t (:foreground "#880000" :background ,bg)))))))
 (enable-theme 'init-el-overrides)
 
-;;; Highlight special forms and macros in Emacs Lisp
-;; Emacs 25 already does that by default
-(when (< emacs-major-version 25)
-  (add-hook 'emacs-lisp-mode-hook
-            (lambda ()
-              (font-lock-add-keywords
-               nil '((init-el-highlight-special-forms-and-macros . 1))))))
-
-(defun init-el-highlight-special-forms-and-macros (end)
-  (catch 'break
-    (while (re-search-forward "([[:space:]]*\\(\\_<.+?\\_>\\)" end t)
-      (let ((symbol (intern-soft (buffer-substring-no-properties
-                                  (match-beginning 1) (match-end 1)))))
-        (when (fboundp symbol)
-          (let ((func (indirect-function symbol t)))
-            (when (or (macrop func)
-                      (and (subrp func) (eq 'unevalled (cdr (subr-arity func)))))
-              (throw 'break t))))))
-    nil))
-
 ;;; highlight-quoted
 (init-el-require-package highlight-quoted)
 (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
