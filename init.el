@@ -216,7 +216,13 @@
 
 ;;; Set the theme
 (init-el-require-package aurora-theme emacs)
-(load-theme 'aurora t)
+(let ((theme 'aurora))
+  (load-theme theme t)
+  ;; So Emacs under X11 can set the cursor color correctly.
+  (add-hook 'after-make-frame-functions
+            (lambda (frame)
+              (when (eq (window-system frame) 'x)
+                (enable-theme theme)))))
 (deftheme init-el-overrides)
 (cl-macrolet
     ((inherit
