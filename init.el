@@ -386,6 +386,9 @@
 (init-el-require-package company-irony)
 (push #'company-irony company-backends)
 
+;;; edit-indirect
+(init-el-require-package edit-indirect)
+
 ;;; Indentation
 (setq-default indent-tabs-mode nil)
 (init-el-with-eval-after-load cc-vars
