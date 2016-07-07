@@ -220,6 +220,22 @@
 (load-theme init-el-default-theme t)
 (add-hook 'after-make-frame-functions #'init-el-enable-theme)
 (deftheme init-el-overrides)
+(cl-macrolet
+    ((set-face
+      (face &rest attributes)
+      `'(,face ((((class color) (min-colors 89)) (,@attributes))))))
+  (custom-theme-set-faces
+   'init-el-overrides
+   (set-face cursor :background "#bb6666")
+   (set-face rainbow-delimiters-depth-1-face :foreground "#e67c7c")
+   (set-face rainbow-delimiters-depth-2-face :foreground "#cf9d9d")
+   (set-face rainbow-delimiters-depth-3-face :foreground "#edb082")
+   (set-face rainbow-delimiters-depth-4-face :foreground "#d4d484")
+   (set-face rainbow-delimiters-depth-5-face :foreground "#a0cca0")
+   (set-face rainbow-delimiters-depth-6-face :foreground "#b3cc8b")
+   (set-face rainbow-delimiters-depth-7-face :foreground "#9f9fdf")
+   (set-face rainbow-delimiters-depth-8-face :foreground "#88aabb")
+   (set-face rainbow-delimiters-depth-9-face :foreground "#c08ad6")))
 
 (defun init-el-enable-theme (_frame)
   (enable-theme init-el-default-theme)
