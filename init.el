@@ -378,13 +378,6 @@
                 (derived-mode-p #'emacs-lisp-mode))
         (eldoc-mode)))))
 
-;;; Rust
-(init-el-require-package rust-mode)
-(init-el-require-package racer)
-(add-hook 'rust-mode-hook #'racer-mode)
-(init-el-with-eval-after-load racer
-  (setq racer-rust-src-path (expand-file-name "projects/rust/rustc-nightly/src/" (getenv "HOME"))))
-
 ;;; Irony
 (init-el-require-package irony)
 (add-hook 'c++-mode-hook #'irony-mode)
