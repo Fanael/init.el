@@ -215,24 +215,11 @@
 (setq show-paren-delay 0)
 
 ;;; Set the theme
-(init-el-require-package aurora-theme emacs)
-(defconst init-el-default-theme 'aurora)
+(init-el-require-package color-theme-sanityinc-tomorrow emacs)
+(defconst init-el-default-theme 'sanityinc-tomorrow-eighties)
 (load-theme init-el-default-theme t)
 (add-hook 'after-make-frame-functions #'init-el-enable-theme)
 (deftheme init-el-overrides)
-(cl-macrolet
-    ((inherit
-      (face other-face)
-      `'(,face
-         ((t (:foreground unspecified :background unspecified :inherit ,other-face))))))
-  (custom-theme-set-faces
-   'init-el-overrides
-   (inherit helm-buffer-directory font-lock-function-name-face)
-   (inherit helm-ff-dotted-directory helm-ff-directory)
-   (inherit helm-ff-dotted-symlink-directory helm-ff-symlink)
-   (let ((bg (face-attribute 'font-lock-warning-face :foreground)))
-     `(rainbow-delimiters-unmatched-face
-       ((t (:foreground "#880000" :background ,bg)))))))
 
 (defun init-el-enable-theme (_frame)
   (enable-theme init-el-default-theme)
