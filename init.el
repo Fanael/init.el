@@ -76,8 +76,7 @@
 (setq initial-major-mode #'fundamental-mode)
 
 ;;; Set the font
-(let ((family (if (eq system-type 'windows-nt) "Consolas" "Monospace")))
-  (set-face-attribute 'default nil :family family :height 100))
+(set-face-attribute 'default nil :family "Monospace" :height 100)
 
 ;;; Disable lock files
 (setq create-lockfiles nil)
@@ -100,8 +99,7 @@
 (prefer-coding-system 'utf-8)
 (set-language-environment "UTF-8")
 (setq locale-coding-system 'utf-8)
-(unless (eq system-type 'windows-nt)
-  (set-selection-coding-system 'utf-8))
+(set-selection-coding-system 'utf-8)
 (setq-default buffer-file-coding-system 'utf-8-unix)
 
 ;;; Fix scrolling
@@ -597,11 +595,9 @@ current buffer, if any; otherwise open `default-directory'."
      (list (if buffer-file
                (file-name-directory buffer-file)
              default-directory))))
-  (if (fboundp 'w32-shell-execute)
-      (w32-shell-execute "open" directory nil 1)
-    (condition-case nil
-        (start-process "" nil "xdg-open" directory)
-      (file-error (error "Don't know how to open a directory on this system")))))
+  (condition-case nil
+      (start-process "" nil "xdg-open" directory)
+    (file-error (error "Don't know how to open a directory on this system"))))
 
 (autoload 'server-buffer-done "server")
 
