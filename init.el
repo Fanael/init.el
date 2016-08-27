@@ -584,20 +584,6 @@ buffer."
                 (delete-region bol (point))
               (setq previous-line current-line))))))))
 
-(defun open-directory-in-external-browser (directory)
-  "Open DIRECTORY in the system's default file browser.
-
-When called interactively, open the directory containing the file visited in the
-current buffer, if any; otherwise open `default-directory'."
-  (interactive
-   (let ((buffer-file (buffer-file-name)))
-     (list (if buffer-file
-               (file-name-directory buffer-file)
-             default-directory))))
-  (condition-case nil
-      (start-process "" nil "xdg-open" directory)
-    (file-error (error "Don't know how to open a directory on this system"))))
-
 (autoload 'server-buffer-done "server")
 
 (defun bury-buffer-delete-window-or-frame ()
