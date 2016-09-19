@@ -339,15 +339,6 @@
   (forward-line -1)
   (indent-according-to-mode))
 
-;;; flycheck
-(init-el-require-package flycheck)
-(add-hook 'prog-mode-hook #'flycheck-mode)
-(init-el-with-eval-after-load flycheck
-  (setq flycheck-idle-change-delay 1)
-  (setq-default flycheck-cppcheck-checks '("style" "missingInclude")
-                flycheck-cppcheck-inconclusive t
-                flycheck-disabled-checkers '(c/c++-clang c/c++-gcc)))
-
 ;;; avy
 (init-el-require-package avy)
 (init-el-with-eval-after-load avy
