@@ -298,11 +298,11 @@
 (add-hook 'haskell-mode-hook #'haskell-indentation-mode)
 (init-el-require-package ghc)
 (add-hook 'haskell-mode-hook #'init-el-ghc-init)
+(push (expand-file-name ".cabal/bin/" (getenv "HOME")) exec-path)
 (init-el-require-package company-ghc)
 (push '(company-ghc :with company-dabbrev-code) company-backends)
 
 (defun init-el-ghc-init ()
-  (push (expand-file-name ".cabal/bin/" (getenv "HOME")) exec-path)
   (with-demoted-errors "ghc-init error: %S"
     (ghc-init)))
 
