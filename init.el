@@ -147,7 +147,7 @@
 (setq history-length 1024)
 (setq search-ring-max 1024)
 (setq regexp-search-ring-max 1024)
-(setq savehist-additional-variables '(file-name-history search-ring regexp-search-ring))
+(setq savehist-additional-variables '(extended-command-history file-name-history search-ring regexp-search-ring))
 (setq savehist-file (expand-file-name ".savehist" user-emacs-directory))
 (savehist-mode)
 
