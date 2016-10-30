@@ -56,8 +56,7 @@
     `(init-el-install-package ',package-name)))
 
 ;;; Set window size
-(push '(width . 130) default-frame-alist)
-(push '(height . 45) default-frame-alist)
+(setq default-frame-alist '((width . 130) (height . 45)))
 
 ;;; Disable useless GUI stuff
 (tool-bar-mode -1)
