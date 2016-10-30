@@ -52,9 +52,6 @@
 ;; spend too much time collecting garbage in alloc-heavy code.
 (setq gc-cons-threshold (* 24 1024 1024))
 
-;;; Use new byte codes
-(setq byte-compile--use-old-handlers nil)
-
 ;;; Set window size
 (push '(width . 130) default-frame-alist)
 (push '(height . 45) default-frame-alist)
