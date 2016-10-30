@@ -27,9 +27,10 @@
 ;;; Code:
 
 ;;; Tune the GC
-;; The default setting is too conservative on modern machines making Emacs
+;; The default settings are too conservative on modern machines making Emacs
 ;; spend too much time collecting garbage in alloc-heavy code.
-(setq gc-cons-threshold (* 24 1024 1024))
+(setq gc-cons-threshold (* 4 1024 1024))
+(setq gc-cons-percentage 0.3)
 
 ;;; Initialize the package manager
 (eval-and-compile
