@@ -502,7 +502,7 @@
 (setq-default fill-column 80)
 
 ;;; Echo keystrokes
-(setq echo-keystrokes 5.391063232E-44)
+(setq echo-keystrokes 1.0E-50)
 
 ;;; windmove
 (require 'windmove)
