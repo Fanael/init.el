@@ -25,6 +25,13 @@
 ;; SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ;;; Commentary:
 ;;; Code:
+
+;;; Tune the GC
+;; The default setting is too conservative on modern machines making Emacs
+;; spend too much time collecting garbage in alloc-heavy code.
+(setq gc-cons-threshold (* 24 1024 1024))
+
+;;; Initialize the package manager
 (eval-and-compile
   (require 'package)
   (setq package-archives '(("melpa" . "http://melpa.org/packages/")
@@ -46,11 +53,6 @@
     (init-el-install-package package-name)
     (require (or feature-name package-name))
     `(init-el-install-package ',package-name)))
-
-;;; Tune the GC
-;; The default setting is too conservative on modern machines making Emacs
-;; spend too much time collecting garbage in alloc-heavy code.
-(setq gc-cons-threshold (* 24 1024 1024))
 
 ;;; Set window size
 (push '(width . 130) default-frame-alist)
