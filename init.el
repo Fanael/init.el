@@ -72,7 +72,6 @@
 (fset #'display-startup-echo-area-message #'ignore)
 (setq inhibit-splash-screen t)
 (setq initial-scratch-message "")
-(setq initial-major-mode #'fundamental-mode)
 
 ;;; Set the font
 (set-face-attribute 'default nil :family "Monospace" :height 100)
