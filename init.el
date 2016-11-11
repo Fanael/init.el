@@ -477,6 +477,8 @@
               (add-string "Macro" font-lock-type-face))
             (when (buffer-narrowed-p)
               (add-string "Narrow" font-lock-type-face))
+            (when current-input-method
+              (add-string "IME" font-lock-type-face))
             (when buffer-read-only
               (add-string "RO" font-lock-type-face))
             (pcase overwrite-mode
