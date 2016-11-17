@@ -222,7 +222,8 @@
       `'(,face ((((class color) (min-colors 89)) (,@attributes))))))
   (custom-theme-set-faces
    'init-el-overrides
-   (set-face cursor :background "#bb6666")
+   (set-face show-paren-match :foreground nil :background nil :underline "#66cccc")
+   (set-face show-paren-mismatch :foreground nil :background nil :underline "#f2777a")
    (set-face rainbow-delimiters-depth-1-face :foreground "#e67c7c")
    (set-face rainbow-delimiters-depth-2-face :foreground "#cf9d9d")
    (set-face rainbow-delimiters-depth-3-face :foreground "#edb082")
