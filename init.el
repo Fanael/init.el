@@ -1,5 +1,5 @@
 ;;; init.el --- -*- lexical-binding: t -*-
-;; Copyright (c) 2013-2016, Fanael Linithien
+;; Copyright (c) 2013-2017, Fanael Linithien
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
@@ -79,16 +79,10 @@
 ;;; Disable lock files
 (setq create-lockfiles nil)
 
-;;; Backup files
-(setq backup-by-copying t)
-(setq delete-old-versions t)
-(setq kept-old-versions 0)
-(setq kept-new-versions 10)
-(setq version-control t)
-(let ((backup-dir (expand-file-name "backups" user-emacs-directory)))
-  (setq backup-directory-alist (list (cons "." backup-dir))))
+;;; Disable backup files
+(setq make-backup-files nil)
 
-;;; Auto-save
+;;; Move auto-save files to saner location
 (let ((auto-save-dir (file-name-as-directory (expand-file-name "autosave" user-emacs-directory))))
   (setq auto-save-list-file-prefix (expand-file-name ".saves-" auto-save-dir))
   (setq auto-save-file-name-transforms (list (list ".*" (replace-quote auto-save-dir) t))))
