@@ -237,6 +237,7 @@
 (init-el-require-package highlight-quoted)
 (add-hook 'emacs-lisp-mode-hook #'highlight-quoted-mode)
 (add-hook 'lisp-mode-hook #'highlight-quoted-mode)
+(add-hook 'scheme-mode-hook #'highlight-quoted-mode)
 
 ;;; company
 (init-el-require-package company)
@@ -301,7 +302,9 @@
 
 ;;; rainbow-delimiters
 (init-el-require-package rainbow-delimiters)
-(add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
+(add-hook 'lisp-mode-hook #'rainbow-delimiters-mode)
+(add-hook 'emacs-lisp-mode-hook #'rainbow-delimiters-mode)
+(add-hook 'scheme-mode-hook #'rainbow-delimiters-mode)
 
 ;;; smartparens
 (init-el-require-package smartparens)
