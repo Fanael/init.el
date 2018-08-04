@@ -151,7 +151,7 @@
 (setq helm-move-to-line-cycle-in-source t)
 (setq helm-prevent-escaping-from-minibuffer nil)
 (setq helm-display-header-line nil)
-(setq helm-split-window-in-side-p t)
+(setq helm-split-window-inside-p t)
 (setq helm-autoresize-min-height 30)
 (setq helm-autoresize-max-height 30)
 (init-el-with-eval-after-load helm-command
@@ -373,6 +373,17 @@
 
 ;;; edit-indirect
 (init-el-require-package edit-indirect)
+
+;;; Rust stuff
+(init-el-require-package rust-mode)
+(init-el-require-package racer)
+(add-hook 'rust-mode-hook #'racer-mode)
+(add-hook 'rust-mode-hook #'init-el-set-company-for-rust)
+(add-hook 'racer-mode-hook #'eldoc-mode)
+
+(defun init-el-set-company-for-rust ()
+  (make-local-variable 'company-backends)
+  (push 'company-capf company-backends))
 
 ;;; Indentation
 (setq-default indent-tabs-mode nil)
