@@ -60,7 +60,8 @@
 
 ;;; Disable useless GUI stuff
 (tool-bar-mode -1)
-(scroll-bar-mode -1)
+(when (fboundp 'scroll-bar-mode)
+  (scroll-bar-mode -1))
 (when (fboundp 'horizontal-scroll-bar-mode)
   (horizontal-scroll-bar-mode -1))
 (menu-bar-mode -1)
