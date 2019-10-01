@@ -1,5 +1,5 @@
 ;;; init.el --- -*- lexical-binding: t -*-
-;; Copyright (c) 2013-2017, Fanael Linithien
+;; Copyright (c) 2013-2019, Fanael Linithien
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
@@ -267,13 +267,9 @@
 
 ;;; SLIME
 (init-el-require-package slime)
-(add-hook 'lisp-mode-hook #'init-el-setup-slime-first-time)
 (init-el-with-eval-after-load slime
   (setq slime-lisp-implementations '((sbcl ("sbcl"))))
-  (setq slime-default-lisp 'sbcl))
-(init-el-require-package slime-company)
-
-(defun init-el-setup-slime-first-time ()
+  (setq slime-default-lisp 'sbcl)
   (slime-setup '(slime-asdf
                  slime-autodoc
                  slime-company
@@ -285,8 +281,8 @@
                  slime-references
                  slime-repl
                  slime-trace-dialog
-                 slime-xref-browser))
-  (remove-hook 'lisp-mode-hook #'init-el-setup-slime-first-time))
+                 slime-xref-browser)))
+(init-el-require-package slime-company)
 
 ;;; haskell-mode
 (init-el-require-package haskell-mode)
