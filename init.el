@@ -255,6 +255,7 @@
 (setq company-idle-delay nil)
 (setq company-selection-wrap-around t)
 (setq company-require-match nil)
+(setq company-tooltip-align-annotations t)
 (init-el-with-eval-after-load company-dabbrev
   (setq company-dabbrev-minimum-length 3)
   (setq company-dabbrev-other-buffers t))
