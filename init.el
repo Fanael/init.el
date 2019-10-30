@@ -259,6 +259,11 @@
 (init-el-with-eval-after-load company-dabbrev
   (setq company-dabbrev-minimum-length 3)
   (setq company-dabbrev-other-buffers t))
+(init-el-require-package company-quickhelp)
+(company-quickhelp-mode)
+(setq company-quickhelp-delay 1)
+(setq company-quickhelp-max-lines 30)
+(setq company-quickhelp-use-propertized-text t)
 
 ;;; anaconda
 (init-el-require-package company-anaconda)
@@ -447,6 +452,19 @@
 (global-set-key (kbd "C-c s") #'helm-swoop)
 (define-key helm-map "\t" #'helm-execute-persistent-action)
 (define-key helm-map (kbd "C-z") #'helm-select-action)
+(define-key company-active-map (kbd "C-c h") #'company-quickhelp-manual-begin)
+;; Resolve the weird incompatibility between Evil and company-quicklisp
+(defun init-el-unbind-up-down-for-company (_)
+  (define-key evil-insert-state-map [up] nil)
+  (define-key evil-insert-state-map [down] nil))
+
+(defun init-el-rebind-up-down-for-company (_)
+  (define-key evil-insert-state-map [up] #'evil-previous-visual-line)
+  (define-key evil-insert-state-map [down] #'evil-next-visual-line))
+
+(add-hook 'company-completion-started-hook #'init-el-unbind-up-down-for-company)
+(add-hook 'company-completion-finished-hook #'init-el-rebind-up-down-for-company)
+(add-hook 'company-completion-cancelled-hook #'init-el-rebind-up-down-for-company)
 
 ;; Mode line format
 (setq-default
