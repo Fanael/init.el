@@ -270,6 +270,7 @@
 (init-el-with-eval-after-load slime
   (setq slime-lisp-implementations '((sbcl ("sbcl"))))
   (setq slime-default-lisp 'sbcl)
+  (setq slime-company-completion 'fuzzy)
   (slime-setup '(slime-asdf
                  slime-autodoc
                  slime-company
@@ -277,6 +278,7 @@
                  slime-fancy-inspector
                  slime-fancy-trace
                  slime-fontifying-fu
+                 slime-fuzzy
                  slime-package-fu
                  slime-references
                  slime-repl
