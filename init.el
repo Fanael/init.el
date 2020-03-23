@@ -384,6 +384,7 @@
 (init-el-require-package lsp-mode)
 (setq lsp-rust-server 'rust-analyzer)
 (setq lsp-diagnostic-package :none)
+(setq lsp-enable-snippet nil)
 
 ;;; Indentation
 (setq-default indent-tabs-mode nil)
