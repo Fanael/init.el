@@ -381,14 +381,9 @@
 
 ;;; Rust stuff
 (init-el-require-package rust-mode)
-(init-el-require-package racer)
-(add-hook 'rust-mode-hook #'racer-mode)
-(add-hook 'rust-mode-hook #'init-el-set-company-for-rust)
-(add-hook 'racer-mode-hook #'eldoc-mode)
-
-(defun init-el-set-company-for-rust ()
-  (make-local-variable 'company-backends)
-  (push 'company-capf company-backends))
+(init-el-require-package lsp-mode)
+(setq lsp-rust-server 'rust-analyzer)
+(setq lsp-diagnostic-package :none)
 
 ;;; Indentation
 (setq-default indent-tabs-mode nil)
