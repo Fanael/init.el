@@ -382,9 +382,12 @@
 ;;; Rust stuff
 (init-el-require-package rust-mode)
 (init-el-require-package lsp-mode)
-(setq lsp-rust-server 'rust-analyzer)
-(setq lsp-diagnostic-package :none)
-(setq lsp-enable-snippet nil)
+(init-el-require-package yasnippet)
+(init-el-with-eval-after-load lsp-mode
+  (setq lsp-rust-server 'rust-analyzer)
+  (setq lsp-diagnostic-package :none)
+  (add-hook 'lsp-after-initialize-hook #'yas-minor-mode)
+  (add-hook 'lsp-after-open-hook #'yas-minor-mode))
 
 ;;; Indentation
 (setq-default indent-tabs-mode nil)
