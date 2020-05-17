@@ -383,6 +383,7 @@
 (init-el-require-package rust-mode)
 (init-el-require-package lsp-mode)
 (init-el-require-package yasnippet)
+(setq lsp-keymap-prefix "C-c l")
 (init-el-with-eval-after-load lsp-mode
   (setq lsp-rust-server 'rust-analyzer)
   (setq lsp-diagnostic-package :none)
