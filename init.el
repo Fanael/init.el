@@ -138,6 +138,7 @@
 ;;; History saving
 (require 'savehist)
 (setq history-length 1024)
+(setq history-delete-duplicates t)
 (setq search-ring-max 1024)
 (setq regexp-search-ring-max 1024)
 (setq savehist-additional-variables '(extended-command-history file-name-history search-ring regexp-search-ring))
