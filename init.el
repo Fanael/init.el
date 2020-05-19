@@ -159,7 +159,6 @@
 (init-el-with-eval-after-load helm-command
   (setq helm-M-x-always-save-history t))
 (init-el-require-package helm-swoop)
-(init-el-require-package helm-ag)
 
 ;;; evil
 (init-el-require-package evil)
