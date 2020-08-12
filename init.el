@@ -386,7 +386,7 @@
 (setq lsp-keymap-prefix "C-c l")
 (init-el-with-eval-after-load lsp-mode
   (setq lsp-rust-server 'rust-analyzer)
-  (setq lsp-diagnostic-package :none)
+  (setq lsp-diagnostics-provider :none)
   (add-hook 'lsp-after-initialize-hook #'yas-minor-mode)
   (add-hook 'lsp-after-open-hook #'yas-minor-mode))
 
