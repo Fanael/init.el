@@ -167,6 +167,8 @@
 (setq evil-want-fine-undo t)
 (setq evil-echo-state nil)
 (setq evil-ex-substitute-global t)
+(setq evil-undo-system 'undo-tree)
+(evil-set-undo-system 'undo-tree)
 (evil-set-command-properties
  #'smart-beginning-of-line :repeat 'motion :type 'exclusive :keep-visual t)
 
