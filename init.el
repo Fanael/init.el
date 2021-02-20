@@ -1,5 +1,5 @@
 ;;; init.el --- -*- lexical-binding: t -*-
-;; Copyright (c) 2013-2019, Fanael Linithien
+;; Copyright (c) 2013-2021, Fanael Linithien
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
@@ -275,6 +275,7 @@
 
 ;;; SLIME
 (init-el-require-package slime)
+(init-el-require-package slime-company)
 (init-el-with-eval-after-load slime
   (setq slime-lisp-implementations '((sbcl ("sbcl"))))
   (setq slime-default-lisp 'sbcl)
@@ -292,20 +293,10 @@
                  slime-repl
                  slime-trace-dialog
                  slime-xref-browser)))
-(init-el-require-package slime-company)
 
 ;;; haskell-mode
 (init-el-require-package haskell-mode)
 (add-hook 'haskell-mode-hook #'haskell-indentation-mode)
-(init-el-require-package ghc)
-(add-hook 'haskell-mode-hook #'init-el-ghc-init)
-(push (expand-file-name ".cabal/bin/" (getenv "HOME")) exec-path)
-(init-el-require-package company-ghc)
-(push '(company-ghc :with company-dabbrev-code) company-backends)
-
-(defun init-el-ghc-init ()
-  (with-demoted-errors "ghc-init error: %S"
-    (ghc-init)))
 
 ;;; rainbow-delimiters
 (init-el-require-package rainbow-delimiters)
