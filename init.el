@@ -380,6 +380,7 @@
 (init-el-with-eval-after-load lsp-mode
   (setq lsp-rust-server 'rust-analyzer)
   (setq lsp-diagnostics-provider :none)
+  (setq lsp-headerline-breadcrumb-enable nil)
   (add-hook 'lsp-after-initialize-hook #'yas-minor-mode)
   (add-hook 'lsp-after-open-hook #'yas-minor-mode))
 
