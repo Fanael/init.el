@@ -185,11 +185,6 @@
 (setq search-highlight t)
 (setq query-replace-highlight t)
 
-;;; emmet-mode
-(init-el-require-package emmet-mode)
-(add-hook 'sgml-mode-hook #'emmet-mode)
-(add-hook 'css-mode-hook #'emmet-mode)
-
 ;;; dabbrev
 (init-el-with-eval-after-load dabbrev
   (setq dabbrev-case-replace nil)
@@ -410,7 +405,6 @@
 (global-set-key [remap find-file] #'helm-find-files)
 (define-key evil-insert-state-map (kbd "RET") #'newline-and-indent)
 (define-key evil-insert-state-map (kbd "C-<SPC>") #'company-complete)
-(define-key evil-insert-state-map (kbd "C-e") #'emmet-expand-line)
 (define-key evil-motion-state-map "," nil)
 (define-key evil-motion-state-map " " #'evil-repeat-find-char-reverse)
 (define-key evil-motion-state-map ",e" #'find-file)
