@@ -1,5 +1,5 @@
 ;;; init.el --- -*- lexical-binding: t -*-
-;; Copyright (c) 2013-2021, Fanael Linithien
+;; Copyright (c) 2013-2022, Fanael Linithien
 ;; All rights reserved.
 ;;
 ;; Redistribution and use in source and binary forms, with or without
@@ -78,7 +78,8 @@
 (setq initial-scratch-message "")
 
 ;;; Set the font
-(set-face-attribute 'default nil :family "Monospace" :height 100)
+(let ((height (or (bound-and-true-p init-el-font-height) 100)))
+  (set-face-attribute 'default nil :family "Monospace" :height height))
 
 ;;; Disable lock files
 (setq create-lockfiles nil)
