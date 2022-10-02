@@ -266,7 +266,8 @@
 (setq company-quickhelp-max-lines 30)
 (setq company-quickhelp-use-propertized-text t)
 
-;;; anaconda
+;;; Python and anaconda
+(setq python-shell-interpreter "python3")
 (init-el-require-package company-anaconda)
 (init-el-require-package anaconda-mode)
 (add-hook 'python-mode-hook #'anaconda-mode)
